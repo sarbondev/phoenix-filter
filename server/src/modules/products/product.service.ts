@@ -94,7 +94,7 @@ export class ProductService {
     } as any);
 
     const response = toProductResponse(product);
-    emitToAll('product:created', response);
+    emitToAll("product:created", response);
     return response;
   }
 
@@ -233,7 +233,7 @@ export class ProductService {
     const updated = await this.productRepository.update(id, updateData as any);
     if (!updated) throw new NotFoundError("Product");
     const response = toProductResponse(updated);
-    emitToAll('product:updated', response);
+    emitToAll("product:updated", response);
     return response;
   }
 
@@ -243,6 +243,6 @@ export class ProductService {
     // Clean up uploaded images
     deleteFiles(product.images || []);
     await this.productRepository.delete(id);
-    emitToAll('product:deleted', { id });
+    emitToAll("product:deleted", { id });
   }
 }

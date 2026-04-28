@@ -162,7 +162,7 @@ function HeroCarousel({
                 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.4rem] font-bold text-white leading-[1.1] tracking-tight drop-shadow-lg"
               >
                 {dict.hero.title}
-                <span className="block text-primary mt-1 drop-shadow-none">
+                <span className="block mt-1 drop-shadow-none">
                   {dict.hero.subtitle}
                 </span>
               </motion.h1>
@@ -196,57 +196,6 @@ function HeroCarousel({
                     {dict.hero.viewCatalog}
                   </Button>
                 </Link>
-              </motion.div>
-            </div>
-
-            {/* Right — feature cards */}
-            <div className="hidden lg:flex lg:col-span-5 justify-end">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.4 }}
-                className="space-y-3 w-full max-w-[280px]"
-              >
-                {[
-                  {
-                    icon: Droplets,
-                    title: dict.hero.waterFilters,
-                    desc: dict.hero.waterFiltersCount,
-                    accent: "bg-blue-500",
-                  },
-                  {
-                    icon: Wind,
-                    title: dict.hero.airFilters,
-                    desc: dict.hero.airFiltersCount,
-                    accent: "bg-emerald-500",
-                  },
-                  {
-                    icon: Shield,
-                    title: dict.hero.efficiency,
-                    desc: "99.9%",
-                    accent: "bg-amber-500",
-                  },
-                ].map((card, i) => (
-                  <motion.div
-                    key={card.title}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.45, delay: 0.5 + i * 0.08 }}
-                    className="flex items-center gap-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 px-4 py-3.5 transition-colors duration-200 hover:bg-white/[0.16]"
-                  >
-                    <div
-                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${card.accent}/20`}
-                    >
-                      <card.icon className="h-[18px] w-[18px] text-white" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-sm font-semibold text-white truncate">
-                        {card.title}
-                      </div>
-                      <div className="text-xs text-white/50">{card.desc}</div>
-                    </div>
-                  </motion.div>
-                ))}
               </motion.div>
             </div>
           </div>

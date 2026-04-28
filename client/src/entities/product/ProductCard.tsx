@@ -12,7 +12,7 @@ import {
   getDiscountPercent,
   getImageUrl,
 } from "@/shared/lib/utils";
-import { Badge } from "@/shared/ui";
+
 import { useAppDispatch, useAppSelector } from "@/shared/hooks";
 import { addToCart } from "@/store/cartSlice";
 import { toggleWishlist } from "@/store/wishlistSlice";
@@ -126,8 +126,6 @@ export function ProductCard({
             <h3 className="text-sm font-semibold text-slate-900 line-clamp-1 group-hover:text-primary transition-colors">
               {t(product.name, locale)}
             </h3>
-
-
 
             {/* Price */}
             <div className="mt-auto pt-3 flex items-baseline gap-2">
