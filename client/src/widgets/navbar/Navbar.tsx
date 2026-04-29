@@ -14,7 +14,6 @@ import {
   Package,
   ChevronDown,
   Settings,
-  Globe,
 } from "lucide-react";
 import type { Locale } from "@/shared/types";
 import type { Dictionary } from "@/shared/i18n/dictionaries/en";
@@ -55,7 +54,10 @@ export function Navbar({ locale, dict }: NavbarProps) {
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node))
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(e.target as Node)
+      )
         setUserMenuOpen(false);
     };
     document.addEventListener("mousedown", handler);
@@ -108,11 +110,17 @@ export function Navbar({ locale, dict }: NavbarProps) {
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between lg:h-[68px]">
-
             {/* Logo + Nav */}
             <div className="flex items-center gap-8">
-              <Link href={`/${locale}`} className="flex items-center gap-2.5 flex-shrink-0">
-                <img src="/logo.png" alt="FilterSystem Logo" className="h-8 w-auto" />
+              <Link
+                href={`/${locale}`}
+                className="flex items-center gap-2.5 flex-shrink-0"
+              >
+                <img
+                  src="/logo.png"
+                  alt="FilterSystem Logo"
+                  className="h-8 w-auto"
+                />
               </Link>
 
               {/* Desktop Nav */}
@@ -120,7 +128,8 @@ export function Navbar({ locale, dict }: NavbarProps) {
                 {navLinks.map((link) => {
                   const isActive =
                     pathname === link.href ||
-                    (link.href !== `/${locale}` && pathname.startsWith(link.href));
+                    (link.href !== `/${locale}` &&
+                      pathname.startsWith(link.href));
                   return (
                     <Link
                       key={link.href}
@@ -138,10 +147,15 @@ export function Navbar({ locale, dict }: NavbarProps) {
 
             {/* Right Actions */}
             <div className="flex items-center gap-1">
-              <LanguageSwitcher currentLang={locale} transparent={transparent} />
+              <LanguageSwitcher
+                currentLang={locale}
+                transparent={transparent}
+              />
 
               {/* Divider */}
-              <div className={`hidden sm:block w-px h-5 mx-1 ${dividerColor}`} />
+              <div
+                className={`hidden sm:block w-px h-5 mx-1 ${dividerColor}`}
+              />
 
               {/* User / Auth */}
               {auth.user ? (
@@ -172,7 +186,10 @@ export function Navbar({ locale, dict }: NavbarProps) {
                         exit={{ opacity: 0, y: -6, scale: 0.97 }}
                         transition={{ duration: 0.13, ease: "easeOut" }}
                         className="absolute right-0 top-full mt-2 w-56 rounded-2xl bg-white border border-slate-200/80 overflow-hidden z-50"
-                        style={{ boxShadow: "0 8px 24px -4px rgba(0,0,0,0.08), 0 2px 8px -2px rgba(0,0,0,0.04)" }}
+                        style={{
+                          boxShadow:
+                            "0 8px 24px -4px rgba(0,0,0,0.08), 0 2px 8px -2px rgba(0,0,0,0.04)",
+                        }}
                       >
                         {/* Header */}
                         <div className="flex items-center gap-3 px-4 py-3.5 border-b border-slate-100">
@@ -232,7 +249,9 @@ export function Navbar({ locale, dict }: NavbarProps) {
                   href={`/${locale}/auth`}
                   className={`hidden sm:flex items-center gap-2 rounded-xl border px-3 py-1.5 text-sm font-medium transition-all duration-150 ${authBtn}`}
                 >
-                  <User className={`h-4 w-4 ${transparent ? "text-white/60" : "text-slate-400"}`} />
+                  <User
+                    className={`h-4 w-4 ${transparent ? "text-white/60" : "text-slate-400"}`}
+                  />
                   {dict.auth.login}
                 </Link>
               )}
@@ -268,7 +287,11 @@ export function Navbar({ locale, dict }: NavbarProps) {
                 className={`lg:hidden rounded-[9px] p-2 transition-colors duration-150 ${iconBtn}`}
                 onClick={() => setMobileOpen(!mobileOpen)}
               >
-                {mobileOpen ? <X className="h-[18px] w-[18px]" /> : <Menu className="h-[18px] w-[18px]" />}
+                {mobileOpen ? (
+                  <X className="h-[18px] w-[18px]" />
+                ) : (
+                  <Menu className="h-[18px] w-[18px]" />
+                )}
               </button>
             </div>
           </div>
@@ -290,7 +313,8 @@ export function Navbar({ locale, dict }: NavbarProps) {
               {navLinks.map((link) => {
                 const isActive =
                   pathname === link.href ||
-                  (link.href !== `/${locale}` && pathname.startsWith(link.href));
+                  (link.href !== `/${locale}` &&
+                    pathname.startsWith(link.href));
                 return (
                   <Link
                     key={link.href}
@@ -329,8 +353,12 @@ export function Navbar({ locale, dict }: NavbarProps) {
                       {auth.user.name.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <p className="text-[13.5px] font-semibold text-slate-900">{auth.user.name}</p>
-                      <p className="text-xs text-slate-400">{auth.user.phoneNumber}</p>
+                      <p className="text-[13.5px] font-semibold text-slate-900">
+                        {auth.user.name}
+                      </p>
+                      <p className="text-xs text-slate-400">
+                        {auth.user.phoneNumber}
+                      </p>
                     </div>
                   </div>
 

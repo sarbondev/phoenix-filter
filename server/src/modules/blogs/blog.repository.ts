@@ -1,6 +1,6 @@
-import { FilterQuery } from 'mongoose';
-import { BlogModel } from './blog.schema';
-import { IBlog } from './blog.entity';
+import { FilterQuery } from "mongoose";
+import { BlogModel } from "./blog.schema";
+import { IBlog } from "./blog.entity";
 
 export class BlogRepository {
   async create(data: Partial<IBlog>): Promise<IBlog> {
@@ -22,14 +22,22 @@ export class BlogRepository {
     limit: number,
   ): Promise<{ data: IBlog[]; total: number }> {
     const [data, total] = await Promise.all([
-      BlogModel.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean<IBlog[]>(),
+      BlogModel.find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean<IBlog[]>(),
       BlogModel.countDocuments(filter),
     ]);
     return { data, total };
   }
 
   async update(id: string, data: Partial<IBlog>): Promise<IBlog | null> {
-    return BlogModel.findByIdAndUpdate(id, { $set: data }, { new: true }).lean<IBlog>();
+    return BlogModel.findByIdAndUpdate(
+      id,
+      { $set: data },
+      { new: true },
+    ).lean<IBlog>();
   }
 
   async delete(id: string): Promise<void> {
