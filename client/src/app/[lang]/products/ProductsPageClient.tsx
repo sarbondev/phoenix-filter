@@ -11,6 +11,7 @@ import { ProductCard } from '@/entities/product/ProductCard';
 import { ProductCardSkeleton, Input, Button } from '@/shared/ui';
 import { t } from '@/shared/lib/utils';
 import { useQueryParams } from '@/shared/hooks';
+import { ProductRequestForm } from '@/features/product-request/ProductRequestForm';
 
 interface Props { locale: Locale; dict: Dictionary }
 
@@ -125,8 +126,20 @@ export function ProductsPageClient({ locale, dict }: Props) {
               ? Array.from({ length: 9 }).map((_, i) => <ProductCardSkeleton key={i} />)
               : products.length === 0
               ? (
-                <div className="col-span-full py-20 text-center">
-                  <p className="text-lg text-slate-500">{dict.products.noProducts}</p>
+                <div className="col-span-full">
+                  <div className="py-12 text-center">
+                    <p className="text-lg text-slate-500">{dict.products.noProducts}</p>
+                    {search && (
+                      <p className="mt-1 text-sm text-slate-400">&ldquo;{search}&rdquo;</p>
+                    )}
+                  </div>
+                  <div id="request" className="max-w-2xl mx-auto">
+                    <ProductRequestForm
+                      locale={locale}
+                      dict={dict}
+                      searchQuery={search}
+                    />
+                  </div>
                 </div>
               )
               : products.map((product, i) => (

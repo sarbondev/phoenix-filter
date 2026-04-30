@@ -248,6 +248,22 @@ export interface CreateIndustryRequest {
   sortOrder?: number;
 }
 
+// Product Request (customer-searched products that returned no results)
+export type ProductRequestStatus = 'NEW' | 'CONTACTED' | 'RESOLVED' | 'REJECTED';
+
+export interface ProductRequest {
+  id: string;
+  productName: string;
+  name?: string;
+  phoneNumber: string;
+  note?: string;
+  searchQuery?: string;
+  locale?: string;
+  status: ProductRequestStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
 // Dashboard
 export interface DashboardStats {
   orders: { total: number; pending: number };

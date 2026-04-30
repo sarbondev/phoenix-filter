@@ -1,5 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 
 interface AuthUser {
   id: string;
@@ -14,25 +14,27 @@ interface AuthState {
 }
 
 function loadAuth(): AuthState {
-  if (typeof window === 'undefined') return { token: null, user: null };
+  if (typeof window === "undefined") return { token: null, user: null };
   try {
-    const stored = localStorage.getItem('client_auth');
+    const stored = localStorage.getItem("client_auth");
     return stored ? JSON.parse(stored) : { token: null, user: null };
-  } catch { return { token: null, user: null }; }
+  } catch {
+    return { token: null, user: null };
+  }
 }
 
 function saveAuth(state: AuthState) {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     if (state.token) {
-      localStorage.setItem('client_auth', JSON.stringify(state));
+      localStorage.setItem("client_auth", JSON.stringify(state));
     } else {
-      localStorage.removeItem('client_auth');
+      localStorage.removeItem("client_auth");
     }
   }
 }
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState: { token: null, user: null } as AuthState,
   reducers: {
     initAuth(state) {
@@ -50,7 +52,10 @@ const authSlice = createSlice({
       state.user = null;
       saveAuth(state);
     },
-    updateUserData(state, action: PayloadAction<Partial<{ name: string; phoneNumber: string }>>) {
+    updateUserData(
+      state,
+      action: PayloadAction<Partial<{ name: string; phoneNumber: string }>>,
+    ) {
       if (state.user) {
         Object.assign(state.user, action.payload);
         saveAuth(state);
@@ -59,5 +64,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { initAuth, setAuth, clearAuth, updateUserData } = authSlice.actions;
+export const { initAuth, setAuth, clearAuth, updateUserData } =
+  authSlice.actions;
 export default authSlice.reducer;

@@ -8,20 +8,12 @@ import {
   useTransform,
 } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
-import {
-  ArrowRight,
-  ChevronLeft,
-  ChevronRight,
-  Droplets,
-  Wind,
-  Shield,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Locale } from "@/shared/types";
 import type { Dictionary } from "@/shared/i18n/dictionaries/en";
 import { useGetBannersQuery } from "@/store/api/bannerApi";
 import { getImageUrl } from "@/shared/lib/utils";
-import { Button } from "@/shared/ui";
+import { HotButtonNavigator } from "./HotButtonNavigator";
 
 /* ─── Static fallback images ──────────────────────────────────────── */
 const STATIC_SLIDES = [
@@ -176,27 +168,7 @@ function HeroCarousel({
                 {dict.hero.description}
               </motion.p>
 
-              <motion.div
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.32 }}
-                className="mt-8 flex flex-wrap gap-3"
-              >
-                <Link href={`/${locale}/products`}>
-                  <Button size="lg" icon={<ArrowRight className="h-4 w-4" />}>
-                    {dict.hero.shopNow}
-                  </Button>
-                </Link>
-                <Link href={`/${locale}/categories`}>
-                  <Button
-                    variant="ghost"
-                    size="lg"
-                    className="text-white border border-white/25 hover:bg-white/15 hover:text-white backdrop-blur-sm"
-                  >
-                    {dict.hero.viewCatalog}
-                  </Button>
-                </Link>
-              </motion.div>
+              <HotButtonNavigator locale={locale} dict={dict} />
             </div>
           </div>
         </div>

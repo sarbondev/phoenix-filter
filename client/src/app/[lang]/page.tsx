@@ -18,7 +18,7 @@ export default async function HomePage({
   const dict = await getDictionary(locale);
 
   return (
-    <div className="-mt-16 lg:-mt-[72px]">
+    <div>
       <Hero locale={locale} dict={dict} />
       <TrustBadges locale={locale} />
       <CategoriesSection locale={locale} dict={dict} />

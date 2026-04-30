@@ -12,6 +12,7 @@ import {
   Factory,
   Filter,
   Settings,
+  PackageSearch,
 } from "lucide-react";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
@@ -24,6 +25,7 @@ const navigation = [
   { key: "orders", href: "/orders", icon: ShoppingCart },
   { key: "users", href: "/users", icon: Users },
   { key: "reviews", href: "/reviews", icon: Star },
+  { key: "productRequests", href: "/product-requests", icon: PackageSearch },
   { key: "banners", href: "/banners", icon: Image },
   { key: "blogs", href: "/blogs", icon: FileText },
   { key: "partners", href: "/partners", icon: Handshake },
@@ -38,7 +40,7 @@ export function Sidebar() {
 
   const visibleNav = navigation.filter((item) => {
     if (user?.role === "CALL_MANAGER") {
-      return ["dashboard", "orders", "reviews", "settings"].includes(item.key);
+      return ["dashboard", "orders", "reviews", "productRequests", "settings"].includes(item.key);
     }
     return true;
   });

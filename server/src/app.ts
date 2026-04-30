@@ -21,6 +21,7 @@ import uploadRoutes from "./modules/upload/upload.routes";
 import blogRoutes from "./modules/blogs/blog.routes";
 import partnerRoutes from "./modules/partners/partner.routes";
 import industryRoutes from "./modules/industries/industry.routes";
+import productRequestRoutes from "./modules/product-requests/product-request.routes";
 
 export const createApp = (): Application => {
   const app = express();
@@ -89,6 +90,7 @@ export const createApp = (): Application => {
   app.use(`${api}/blogs`, blogRoutes);
   app.use(`${api}/partners`, partnerRoutes);
   app.use(`${api}/industries`, industryRoutes);
+  app.use(`${api}/product-requests`, productRequestRoutes);
   // ── 404 ────────────────────────────────────────────────────────────────────
   app.use((_req: Request, res: Response) => {
     res.status(404).json({ success: false, message: "Route not found" });

@@ -13,6 +13,7 @@ import BannersPage from '@/pages/banners/BannersPage';
 import BlogsPage from '@/pages/blogs/BlogsPage';
 import PartnersPage from '@/pages/partners/PartnersPage';
 import IndustriesPage from '@/pages/industries/IndustriesPage';
+import ProductRequestsPage from '@/pages/product-requests/ProductRequestsPage';
 import SettingsPage from '@/pages/settings/SettingsPage';
 
 function AdminOnly({ children }: { children: React.ReactNode }) {
@@ -31,6 +32,7 @@ export default function App() {
         <Route path="/" element={<DashboardPage />} />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/reviews" element={<ReviewsPage />} />
+        <Route path="/product-requests" element={<ProductRequestsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/products" element={<AdminOnly><ProductsPage /></AdminOnly>} />
         <Route path="/categories" element={<AdminOnly><CategoriesPage /></AdminOnly>} />

@@ -1,10 +1,10 @@
-import { IndustryRepository } from './industry.repository';
-import { IndustryResponse, toIndustryResponse } from './industry.entity';
-import { CreateIndustryDto, UpdateIndustryDto } from './industry.schema';
-import { NotFoundError } from '../../shared/middleware/error-handler.middleware';
-import { deleteFile } from '../upload/upload.service';
-import { emitToAll } from '../../shared/services/socket.service';
-import { geminiService } from '../../shared/services/gemini.service';
+import { IndustryRepository } from "./industry.repository";
+import { IndustryResponse, toIndustryResponse } from "./industry.entity";
+import { CreateIndustryDto, UpdateIndustryDto } from "./industry.schema";
+import { NotFoundError } from "../../shared/middleware/error-handler.middleware";
+import { deleteFile } from "../upload/upload.service";
+import { emitToAll } from "../../shared/services/socket.service";
+import { geminiService } from "../../shared/services/gemini.service";
 
 export class IndustryService {
   constructor(private readonly industryRepository: IndustryRepository) {}
@@ -20,7 +20,7 @@ export class IndustryService {
     } as any);
 
     const response = toIndustryResponse(industry);
-    emitToAll('industry:created', response);
+    emitToAll("industry:created", response);
     return response;
   }
 
@@ -36,13 +36,13 @@ export class IndustryService {
 
   async findOne(id: string): Promise<IndustryResponse> {
     const industry = await this.industryRepository.findById(id);
-    if (!industry) throw new NotFoundError('Industry');
+    if (!industry) throw new NotFoundError("Industry");
     return toIndustryResponse(industry);
   }
 
   async update(id: string, dto: UpdateIndustryDto): Promise<IndustryResponse> {
     const existing = await this.industryRepository.findById(id);
-    if (!existing) throw new NotFoundError('Industry');
+    if (!existing) throw new NotFoundError("Industry");
 
     const updateData: Record<string, unknown> = {};
 
@@ -59,17 +59,17 @@ export class IndustryService {
     if (dto.sortOrder !== undefined) updateData.sortOrder = dto.sortOrder;
 
     const updated = await this.industryRepository.update(id, updateData as any);
-    if (!updated) throw new NotFoundError('Industry');
+    if (!updated) throw new NotFoundError("Industry");
     const response = toIndustryResponse(updated);
-    emitToAll('industry:updated', response);
+    emitToAll("industry:updated", response);
     return response;
   }
 
   async remove(id: string): Promise<void> {
     const industry = await this.industryRepository.findById(id);
-    if (!industry) throw new NotFoundError('Industry');
+    if (!industry) throw new NotFoundError("Industry");
     if (industry.image) deleteFile(industry.image);
     await this.industryRepository.delete(id);
-    emitToAll('industry:deleted', { id });
+    emitToAll("industry:deleted", { id });
   }
 }
