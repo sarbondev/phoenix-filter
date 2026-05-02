@@ -86,7 +86,7 @@ router.post("/migrate-phones", async (_req: Request, res: Response) => {
 
 /**
  * POST /api/seed/retranslate
- * Re-translates all categories, products, and banners using Gemini.
+ * Re-translates all categories and products using Gemini.
  */
 router.post("/retranslate", async (_req: Request, res: Response) => {
   try {
@@ -139,8 +139,6 @@ router.post("/retranslate", async (_req: Request, res: Response) => {
       logger.error({ id: prod._id, err }, "Failed to re-translate product");
     }
   }
-
-  // Banners are image-only now, no translation needed
 
   res.json({ success: true, message: `Re-translated ${count} items` });
   } catch (error) {

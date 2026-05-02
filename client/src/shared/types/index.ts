@@ -5,7 +5,7 @@ export interface TranslatedField {
   kz: string;
 }
 
-export type Locale = 'uz' | 'ru' | 'en' | 'kz';
+export type Locale = "uz" | "ru" | "en" | "kz";
 
 export interface PaginationMeta {
   total: number;
@@ -56,7 +56,9 @@ export interface Product {
   price: number;
   discountPercent?: number;
   discountPrice?: number;
-  category: string | { id?: string; _id?: string; name?: TranslatedField; slug?: string };
+  category:
+    | string
+    | { id?: string; _id?: string; name?: TranslatedField; slug?: string };
   images: string[];
   specifications: ProductSpecification[];
   tags: TranslatedField;

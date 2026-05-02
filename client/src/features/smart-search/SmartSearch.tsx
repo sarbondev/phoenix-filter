@@ -145,7 +145,7 @@ export function SmartSearch({
     <div ref={containerRef} className={`relative ${className}`}>
       <form onSubmit={handleSubmit}>
         <div className="relative group">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-[var(--color-brand-soft)]0 transition-colors" />
           <input
             ref={inputRef}
             type="text"
@@ -158,7 +158,7 @@ export function SmartSearch({
             onFocus={() => setOpen(true)}
             onKeyDown={handleKey}
             placeholder={dict.nav.search}
-            className="w-full h-10 pl-10 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-[13.5px] text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+            className="w-full h-10 pl-10 pr-10 rounded-xl bg-slate-50 border border-slate-200 text-[13.5px] text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[var(--color-brand)] focus:ring-2 focus:ring-[var(--color-brand)]/10 transition-all"
             role="combobox"
             aria-autocomplete="list"
             aria-expanded={showDropdown}
@@ -214,9 +214,9 @@ export function SmartSearch({
                   &ldquo;{debounced}&rdquo;
                 </p>
                 <Link
-                  href={`/${locale}/products?search=${encodeURIComponent(debounced)}#request`}
+                  href={`/${locale}?request=${encodeURIComponent(debounced)}#product-request`}
                   onClick={() => setOpen(false)}
-                  className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-indigo-50 px-3 py-2 text-[12.5px] font-semibold text-indigo-600 hover:bg-indigo-100 transition-colors"
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-[var(--color-brand-soft)] px-3 py-2 text-[12.5px] font-semibold text-[var(--color-brand)] hover:bg-[var(--color-brand)]/10 transition-colors"
                 >
                   <PackageSearch className="h-3.5 w-3.5" />
                   {dict.productRequest.bannerCta}
@@ -244,7 +244,7 @@ export function SmartSearch({
                         onMouseEnter={() => setActiveIndex(i)}
                         onClick={() => goToProduct(product)}
                         className={`group flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors ${
-                          isActive ? "bg-indigo-50" : "hover:bg-slate-50"
+                          isActive ? "bg-[var(--color-brand-soft)]" : "hover:bg-slate-50"
                         }`}
                       >
                         {/* Image */}
@@ -268,7 +268,7 @@ export function SmartSearch({
                         <div className="flex-1 min-w-0">
                           <p
                             className={`text-[13.5px] font-medium truncate ${
-                              isActive ? "text-indigo-700" : "text-slate-800"
+                              isActive ? "text-[var(--color-brand-strong)]" : "text-slate-800"
                             }`}
                           >
                             {t(product.name, locale)}
@@ -307,8 +307,8 @@ export function SmartSearch({
                   onClick={() => goToResults(debounced)}
                   className={`group flex w-full items-center justify-between gap-3 px-4 py-3 border-t border-slate-100 transition-colors ${
                     activeIndex === results.length
-                      ? "bg-indigo-600 text-white"
-                      : "text-indigo-600 hover:bg-indigo-50"
+                      ? "bg-[var(--color-brand)] text-white"
+                      : "text-[var(--color-brand)] hover:bg-[var(--color-brand-soft)]"
                   }`}
                 >
                   <span className="text-[13px] font-semibold">

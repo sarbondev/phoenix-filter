@@ -1,12 +1,35 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #1e40af;
-  --color-primary-hover: #1e3a8a;
-  --color-primary-light: #dbeafe;
-  --color-surface: #f8fafc;
-  --color-border: #e2e8f0;
-  --color-muted: #64748b;
+  /* Brand — Prestige Filter */
+  --color-brand: #1f4dff;
+  --color-brand-hover: #1a3fdc;
+  --color-brand-soft: #eef2ff;
+  --color-brand-strong: #0a1f7a;
+
+  /* Accent (logo "FILTER" red, badges) */
+  --color-accent: #ef2531;
+  --color-accent-hover: #d11e29;
+
+  /* Highlight (CTA yellow from hero card) */
+  --color-highlight: #ffb800;
+  --color-highlight-hover: #e6a600;
+
+  /* Dark surfaces (footer / WhyUs / info cards) */
+  --color-ink: #0f1729;
+  --color-ink-2: #1a2238;
+  --color-ink-3: #232b45;
+
+  /* Neutrals */
+  --color-surface: #f6f7fb;
+  --color-surface-2: #eef0f6;
+  --color-border: #e4e7ef;
+  --color-muted: #6b7280;
+
+  /* Legacy aliases (kept so existing widgets keep building) */
+  --color-primary: var(--color-brand);
+  --color-primary-hover: var(--color-brand-hover);
+  --color-primary-light: var(--color-brand-soft);
 }
 
 :root {
@@ -23,29 +46,90 @@ html {
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   letter-spacing: -0.011em;
 }
 
 /* Headings */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   letter-spacing: -0.025em;
 }
 
+/* Section title underline accent (used across all sections) */
+.section-title {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 6px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.section-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 56px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--color-brand);
+}
+.section-title.is-center {
+  display: block;
+  text-align: center;
+}
+.section-title.is-center::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Diagonal split background — used in hero card + CTA banner */
+.bg-diagonal-blue-ink {
+  background: linear-gradient(
+    105deg,
+    var(--color-brand) 0%,
+    var(--color-brand) 58%,
+    var(--color-ink) 58%,
+    var(--color-ink) 100%
+  );
+}
+.bg-diagonal-ink-blue {
+  background: linear-gradient(
+    105deg,
+    var(--color-ink) 0%,
+    var(--color-ink) 42%,
+    var(--color-brand) 42%,
+    var(--color-brand) 100%
+  );
+}
+
 /* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
 
 /* Selection */
 ::selection {
-  background-color: var(--color-primary);
+  background-color: var(--color-brand);
   color: white;
 }
 
-/* Focus visible for keyboard users */
+/* Focus visible */
 :focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }

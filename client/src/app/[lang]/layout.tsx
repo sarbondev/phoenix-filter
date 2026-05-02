@@ -6,8 +6,14 @@ import StoreProvider from "@/providers/StoreProvider";
 import { Header } from "@/widgets/header/Header";
 import { Navbar } from "@/widgets/navbar/Navbar";
 import { Footer } from "@/widgets/footer/Footer";
+import { MobileBottomNav } from "@/widgets/navbar/MobileBottomNav";
 import { ToastContainer } from "@/features/toast/Toast";
 import { ProgressBar } from "@/features/progress-bar/ProgressBar";
+import {
+  EditModeProvider,
+  EditModeToggle,
+  InlineEditPanel,
+} from "@/features/inline-editor";
 
 export async function generateMetadata({
   params,
@@ -52,14 +58,19 @@ export default async function LangLayout({
     <html lang={locale}>
       <body className="antialiased">
         <StoreProvider>
-          <ProgressBar />
-          <div className="sticky top-0 z-50">
-            <Header locale={locale} dict={dict} />
-            <Navbar locale={locale} dict={dict} />
-          </div>
-          <main className="min-h-screen">{children}</main>
-          <Footer locale={locale} dict={dict} />
-          <ToastContainer />
+          <EditModeProvider>
+            <ProgressBar />
+            <div className="sticky top-0 z-50">
+              <Header locale={locale} dict={dict} />
+              <Navbar locale={locale} dict={dict} />
+            </div>
+            <main className="min-h-screen pb-20 lg:pb-0">{children}</main>
+            <Footer locale={locale} dict={dict} />
+            <MobileBottomNav locale={locale} dict={dict} />
+            <ToastContainer />
+            <EditModeToggle />
+            <InlineEditPanel />
+          </EditModeProvider>
         </StoreProvider>
       </body>
     </html>

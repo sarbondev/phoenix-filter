@@ -106,7 +106,7 @@ export function ProductRequestForm({
       }
     >
       <div className="flex items-start gap-3 mb-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 flex-shrink-0">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--color-brand-soft)] text-[var(--color-brand)] flex-shrink-0">
           <PackageSearch className="h-5 w-5" />
         </div>
         <div>
@@ -132,7 +132,7 @@ export function ProductRequestForm({
             placeholder={dict.productRequest.productPlaceholder}
             required
             maxLength={300}
-            className="w-full h-10 px-3 rounded-lg bg-slate-50 border border-slate-200 text-[13.5px] text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+            className="w-full h-10 px-3 rounded-lg bg-slate-50 border border-slate-200 text-[13.5px] text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[var(--color-brand)]/70 focus:ring-2 focus:ring-[var(--color-brand)]/10 transition-all"
           />
         </div>
 
@@ -147,7 +147,7 @@ export function ProductRequestForm({
               onChange={(e) => setName(e.target.value)}
               placeholder={dict.productRequest.namePlaceholder}
               maxLength={200}
-              className="w-full h-10 px-3 rounded-lg bg-slate-50 border border-slate-200 text-[13.5px] text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+              className="w-full h-10 px-3 rounded-lg bg-slate-50 border border-slate-200 text-[13.5px] text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[var(--color-brand)]/70 focus:ring-2 focus:ring-[var(--color-brand)]/10 transition-all"
             />
           </div>
           <div>
@@ -162,7 +162,7 @@ export function ProductRequestForm({
               placeholder={dict.productRequest.phonePlaceholder}
               required
               maxLength={30}
-              className="w-full h-10 px-3 rounded-lg bg-slate-50 border border-slate-200 text-[13.5px] text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+              className="w-full h-10 px-3 rounded-lg bg-slate-50 border border-slate-200 text-[13.5px] text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[var(--color-brand)]/70 focus:ring-2 focus:ring-[var(--color-brand)]/10 transition-all"
             />
           </div>
         </div>
@@ -177,14 +177,14 @@ export function ProductRequestForm({
             placeholder={dict.productRequest.notePlaceholder}
             rows={3}
             maxLength={2000}
-            className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-[13.5px] text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all resize-none"
+            className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-[13.5px] text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[var(--color-brand)]/70 focus:ring-2 focus:ring-[var(--color-brand)]/10 transition-all resize-none"
           />
         </div>
 
         <button
           type="submit"
           disabled={isLoading}
-          className="mt-1 inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-colors"
+          className="mt-1 inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--color-brand)] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[var(--color-brand-hover)] disabled:bg-[var(--color-brand)]/70 disabled:cursor-not-allowed transition-colors"
         >
           {isLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />

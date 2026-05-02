@@ -6,7 +6,6 @@ import {
   ShoppingCart,
   Users,
   Star,
-  Image,
   FileText,
   Handshake,
   Factory,
@@ -26,7 +25,6 @@ const navigation = [
   { key: "users", href: "/users", icon: Users },
   { key: "reviews", href: "/reviews", icon: Star },
   { key: "productRequests", href: "/product-requests", icon: PackageSearch },
-  { key: "banners", href: "/banners", icon: Image },
   { key: "blogs", href: "/blogs", icon: FileText },
   { key: "partners", href: "/partners", icon: Handshake },
   { key: "industries", href: "/industries", icon: Factory },
@@ -79,6 +77,21 @@ export function Sidebar() {
           </NavLink>
         ))}
       </nav>
+
+      <div className="px-3 pb-4">
+        <div className="rounded-xl bg-slate-800/60 border border-slate-700/60 p-3">
+          <p className="text-[10px] uppercase tracking-wider font-bold text-slate-500 mb-1">
+            {t("sidebar.inlineEditTip")}
+          </p>
+          <p className="text-[12px] text-slate-300 leading-snug">
+            {t("sidebar.inlineEditTipBody")}
+            <span className="inline-flex items-center gap-1 mx-1 px-1.5 py-0.5 rounded bg-blue-600 text-white text-[10px] font-bold">
+              ✏️ {t("sidebar.inlineEditButton")}
+            </span>
+            {t("sidebar.inlineEditTipBodyEnd")}
+          </p>
+        </div>
+      </div>
     </aside>
   );
 }

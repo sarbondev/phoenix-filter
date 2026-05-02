@@ -58,8 +58,8 @@ export function ProductsPageClient({ locale, dict }: Props) {
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-        <h1 className="text-3xl font-bold text-slate-900">{dict.products.title}</h1>
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
+        <h1 className="section-title text-2xl sm:text-3xl text-slate-900">{dict.products.title}</h1>
       </motion.div>
 
       <div className="flex gap-8">
@@ -90,7 +90,7 @@ export function ProductsPageClient({ locale, dict }: Props) {
               <select
                 value={`${sortBy}-${sortOrder}`}
                 onChange={(e) => handleSort(e.target.value)}
-                className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 focus:border-primary focus:outline-none"
+                className="rounded-xl border border-[var(--color-border)] bg-white px-4 py-3 text-sm text-slate-900 focus:border-[var(--color-brand)] focus:outline-none"
               >
                 {sortOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -98,7 +98,7 @@ export function ProductsPageClient({ locale, dict }: Props) {
               </select>
               {/* Mobile filter toggle */}
               <button
-                className="lg:hidden flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                className="lg:hidden flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-white px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
                 onClick={() => setMobileSidebar(true)}
               >
                 <SlidersHorizontal className="h-4 w-4" />
@@ -111,9 +111,9 @@ export function ProductsPageClient({ locale, dict }: Props) {
           {selectedCat && (
             <div className="flex items-center gap-2 mb-5">
               <span className="text-sm text-slate-500">{dict.categories.title}:</span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1 text-sm font-medium">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-brand-soft)] text-[var(--color-brand)] px-3 py-1 text-sm font-medium">
                 {t(selectedCat.name, locale)}
-                <button onClick={() => selectCategory('')} className="hover:bg-primary/20 rounded-full p-0.5 transition-colors">
+                <button onClick={() => selectCategory('')} className="hover:bg-[var(--color-brand)]/20 rounded-full p-0.5 transition-colors">
                   <X className="h-3 w-3" />
                 </button>
               </span>
@@ -237,7 +237,7 @@ function CategorySidebar({
       <button
         onClick={() => onSelect('')}
         className={`w-full text-left rounded-lg px-3 py-2 text-sm font-medium transition-colors mb-1 ${
-          !selected ? 'bg-primary/10 text-primary' : 'text-slate-600 hover:bg-slate-50'
+          !selected ? 'bg-[var(--color-brand-soft)] text-[var(--color-brand)]' : 'text-slate-600 hover:bg-slate-50'
         }`}
       >
         {dict.categories.all}
@@ -248,7 +248,7 @@ function CategorySidebar({
         <CategoryItem
           key={cat.id}
           category={cat}
-          children={childrenMap.get(cat.id)}
+          subItems={childrenMap.get(cat.id)}
           selected={selected}
           locale={locale}
           onSelect={onSelect}
@@ -260,19 +260,19 @@ function CategorySidebar({
 
 function CategoryItem({
   category,
-  children,
+  subItems,
   selected,
   locale,
   onSelect,
 }: {
   category: Category;
-  children?: Category[];
+  subItems?: Category[];
   selected: string;
   locale: Locale;
   onSelect: (id: string) => void;
 }) {
-  const [open, setOpen] = useState(selected === category.id || !!children?.some((c) => c.id === selected));
-  const hasChildren = children && children.length > 0;
+  const [open, setOpen] = useState(selected === category.id || !!subItems?.some((c) => c.id === selected));
+  const hasChildren = subItems && subItems.length > 0;
   const isActive = selected === category.id;
 
   return (
@@ -281,7 +281,7 @@ function CategoryItem({
         <button
           onClick={() => onSelect(category.id)}
           className={`flex-1 text-left rounded-lg px-3 py-2 text-sm transition-colors ${
-            isActive ? 'bg-primary/10 text-primary font-medium' : 'text-slate-600 hover:bg-slate-50'
+            isActive ? 'bg-[var(--color-brand-soft)] text-[var(--color-brand)] font-medium' : 'text-slate-600 hover:bg-slate-50'
           }`}
         >
           {t(category.name, locale)}
@@ -298,12 +298,12 @@ function CategoryItem({
 
       {hasChildren && open && (
         <div className="ml-3 pl-3 border-l border-slate-100">
-          {children.map((child) => (
+          {subItems!.map((child) => (
             <button
               key={child.id}
               onClick={() => onSelect(child.id)}
               className={`w-full text-left rounded-lg px-3 py-1.5 text-[13px] transition-colors ${
-                selected === child.id ? 'bg-primary/10 text-primary font-medium' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
+                selected === child.id ? 'bg-[var(--color-brand-soft)] text-[var(--color-brand)] font-medium' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
               }`}
             >
               {t(child.name, locale)}

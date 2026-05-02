@@ -1,11 +1,19 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { User, Mail, Phone, Shield, Edit2, Package, Settings } from 'lucide-react';
-import Link from 'next/link';
-import type { Locale } from '@/shared/types';
-import type { Dictionary } from '@/shared/i18n/dictionaries/en';
-import { useAppSelector } from '@/shared/hooks';
+import { useRouter } from "next/navigation";
+import {
+  User,
+  Mail,
+  Phone,
+  Shield,
+  Edit2,
+  Package,
+  Settings,
+} from "lucide-react";
+import Link from "next/link";
+import type { Locale } from "@/shared/types";
+import type { Dictionary } from "@/shared/i18n/dictionaries/en";
+import { useAppSelector } from "@/shared/hooks";
 
 interface Props {
   locale: Locale;
@@ -22,20 +30,14 @@ export function ProfilePageClient({ locale, dict }: Props) {
   }
 
   const initials = auth.user.name
-    .split(' ')
+    .split(" ")
     .map((n) => n[0])
-    .join('')
+    .join("")
     .toUpperCase();
 
   return (
     <main className="min-h-[calc(100vh-200px)] bg-gradient-to-br from-slate-50 to-slate-100 pt-24 pb-16 px-4">
       <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-900">{dict.settings.profile}</h1>
-          <p className="text-slate-500 mt-2">{dict.auth.login}</p>
-        </div>
-
         {/* Profile Card */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200">
           {/* Avatar Section */}
@@ -43,13 +45,15 @@ export function ProfilePageClient({ locale, dict }: Props) {
             <div className="h-24 w-24 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-4xl font-bold text-white shadow-lg">
               {initials}
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 mt-4">{auth.user.name}</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mt-4">
+              {auth.user.name}
+            </h2>
             <p className="text-sm text-slate-500 mt-1">
-              {auth.user.role === 'ADMIN'
-                ? 'Administrator'
-                : auth.user.role === 'CALL_MANAGER'
-                  ? 'Call Manager'
-                  : 'Customer'}
+              {auth.user.role === "ADMIN"
+                ? "Administrator"
+                : auth.user.role === "CALL_MANAGER"
+                  ? "Call Manager"
+                  : "Customer"}
             </p>
           </div>
 
@@ -68,7 +72,9 @@ export function ProfilePageClient({ locale, dict }: Props) {
                   <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
                     {dict.auth.phoneNumber}
                   </p>
-                  <p className="text-slate-900 font-medium mt-1">{auth.user.phoneNumber}</p>
+                  <p className="text-slate-900 font-medium mt-1">
+                    {auth.user.phoneNumber}
+                  </p>
                 </div>
               </div>
 
@@ -79,7 +85,9 @@ export function ProfilePageClient({ locale, dict }: Props) {
                   <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
                     {dict.auth.name}
                   </p>
-                  <p className="text-slate-900 font-medium mt-1">{auth.user.name}</p>
+                  <p className="text-slate-900 font-medium mt-1">
+                    {auth.user.name}
+                  </p>
                 </div>
               </div>
 
@@ -91,11 +99,11 @@ export function ProfilePageClient({ locale, dict }: Props) {
                     Account Type
                   </p>
                   <p className="text-slate-900 font-medium mt-1">
-                    {auth.user.role === 'ADMIN'
-                      ? 'Administrator'
-                      : auth.user.role === 'CALL_MANAGER'
-                        ? 'Call Manager'
-                        : 'Customer'}
+                    {auth.user.role === "ADMIN"
+                      ? "Administrator"
+                      : auth.user.role === "CALL_MANAGER"
+                        ? "Call Manager"
+                        : "Customer"}
                   </p>
                 </div>
               </div>
@@ -104,14 +112,18 @@ export function ProfilePageClient({ locale, dict }: Props) {
 
           {/* Actions Section */}
           <div className="border-t border-slate-200 px-6 py-6">
-            <h3 className="text-sm font-semibold text-slate-900 mb-4">Quick Actions</h3>
+            <h3 className="text-sm font-semibold text-slate-900 mb-4">
+              Quick Actions
+            </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <Link
                 href={`/${locale}/orders`}
                 className="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/5 hover:bg-primary/10 border border-primary/10 hover:border-primary/20 transition-colors text-slate-700 hover:text-primary"
               >
                 <Package className="h-4 w-4" />
-                <span className="text-sm font-medium">{dict.checkout.myOrders}</span>
+                <span className="text-sm font-medium">
+                  {dict.checkout.myOrders}
+                </span>
               </Link>
 
               <Link
@@ -119,7 +131,9 @@ export function ProfilePageClient({ locale, dict }: Props) {
                 className="flex items-center gap-3 px-4 py-3 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-colors text-slate-700"
               >
                 <Edit2 className="h-4 w-4" />
-                <span className="text-sm font-medium">{dict.settings.title}</span>
+                <span className="text-sm font-medium">
+                  {dict.settings.title}
+                </span>
               </Link>
 
               <button className="flex items-center gap-3 px-4 py-3 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-colors text-slate-700">
@@ -133,7 +147,8 @@ export function ProfilePageClient({ locale, dict }: Props) {
         {/* Footer Note */}
         <div className="mt-8 text-center">
           <p className="text-sm text-slate-500">
-            {dict.auth.loginRequired && 'Need to manage your account? Visit Settings to update your information.'}
+            {dict.auth.loginRequired &&
+              "Need to manage your account? Visit Settings to update your information."}
           </p>
         </div>
       </div>

@@ -54,10 +54,10 @@ export function CatalogMenu({ locale, dict }: CatalogMenuProps) {
     <div ref={containerRef} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
+        className={`flex items-center gap-2 rounded-xl px-4 h-11 text-sm font-semibold transition-colors ${
           open
-            ? "bg-indigo-600 text-white"
-            : "bg-indigo-600 text-white hover:bg-indigo-700"
+            ? "bg-[var(--color-brand-strong)] text-white"
+            : "bg-[var(--color-brand)] text-white hover:bg-[var(--color-brand-hover)]"
         }`}
       >
         {open ? (
@@ -96,16 +96,16 @@ export function CatalogMenu({ locale, dict }: CatalogMenuProps) {
                       onClick={() => setActiveRootId(cat.id)}
                       className={`group flex w-full items-center justify-between gap-2 px-4 py-2.5 text-left text-[13.5px] transition-colors ${
                         activeRoot?.id === cat.id
-                          ? "bg-white text-indigo-600 font-semibold"
-                          : "text-slate-700 hover:bg-white hover:text-indigo-600"
+                          ? "bg-white text-[var(--color-brand)] font-semibold"
+                          : "text-slate-700 hover:bg-white hover:text-[var(--color-brand)]"
                       }`}
                     >
                       <span className="truncate">{t(cat.name, locale)}</span>
                       <ChevronRight
                         className={`h-3.5 w-3.5 flex-shrink-0 transition-colors ${
                           activeRoot?.id === cat.id
-                            ? "text-indigo-500"
-                            : "text-slate-300 group-hover:text-indigo-400"
+                            ? "text-[var(--color-brand-soft)]0"
+                            : "text-slate-300 group-hover:text-[var(--color-brand)]/70"
                         }`}
                       />
                     </button>
@@ -151,7 +151,7 @@ function CategoryColumn({
         <Link
           href={`/${locale}/categories/${category.slug}`}
           onClick={onSelect}
-          className="group flex items-center gap-2 text-base font-bold text-slate-900 hover:text-indigo-600 transition-colors"
+          className="group flex items-center gap-2 text-base font-bold text-slate-900 hover:text-[var(--color-brand)] transition-colors"
         >
           {category.image ? (
             <span className="relative h-8 w-8 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
@@ -164,12 +164,12 @@ function CategoryColumn({
               />
             </span>
           ) : (
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-50 text-indigo-500 flex-shrink-0">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-brand-soft)] text-[var(--color-brand-soft)]0 flex-shrink-0">
               <FolderTree className="h-4 w-4" />
             </span>
           )}
           <span className="truncate">{t(category.name, locale)}</span>
-          <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition-all" />
+          <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-[var(--color-brand-soft)]0 group-hover:translate-x-0.5 transition-all" />
         </Link>
       </div>
 
@@ -180,11 +180,11 @@ function CategoryColumn({
               key={child.id}
               href={`/${locale}/categories/${child.slug}`}
               onClick={onSelect}
-              className="group flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-[13.5px] text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+              className="group flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-[13.5px] text-slate-600 hover:bg-[var(--color-brand-soft)] hover:text-[var(--color-brand)] transition-colors"
             >
               <span className="truncate">{t(child.name, locale)}</span>
               {child.children && child.children.length > 0 && (
-                <span className="text-[11px] text-slate-400 group-hover:text-indigo-400">
+                <span className="text-[11px] text-slate-400 group-hover:text-[var(--color-brand)]/70">
                   {child.children.length}
                 </span>
               )}
@@ -201,7 +201,7 @@ function CategoryColumn({
         <Link
           href={`/${locale}/categories/${category.slug}`}
           onClick={onSelect}
-          className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-indigo-600 hover:text-indigo-700"
+          className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-brand)] hover:text-[var(--color-brand-hover)]"
         >
           {dict.categories.viewAll}
           <ChevronRight className="h-3.5 w-3.5" />

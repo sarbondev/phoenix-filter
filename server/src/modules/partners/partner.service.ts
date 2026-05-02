@@ -1,9 +1,9 @@
-import { PartnerRepository } from './partner.repository';
-import { PartnerResponse, toPartnerResponse } from './partner.entity';
-import { CreatePartnerDto, UpdatePartnerDto } from './partner.schema';
-import { NotFoundError } from '../../shared/middleware/error-handler.middleware';
-import { deleteFile } from '../upload/upload.service';
-import { emitToAll } from '../../shared/services/socket.service';
+import { PartnerRepository } from "./partner.repository";
+import { PartnerResponse, toPartnerResponse } from "./partner.entity";
+import { CreatePartnerDto, UpdatePartnerDto } from "./partner.schema";
+import { NotFoundError } from "../../shared/middleware/error-handler.middleware";
+import { deleteFile } from "../upload/upload.service";
+import { emitToAll } from "../../shared/services/socket.service";
 
 export class PartnerService {
   constructor(private readonly partnerRepository: PartnerRepository) {}
@@ -16,7 +16,7 @@ export class PartnerService {
     } as any);
 
     const response = toPartnerResponse(partner);
-    emitToAll('partner:created', response);
+    emitToAll("partner:created", response);
     return response;
   }
 
@@ -32,13 +32,13 @@ export class PartnerService {
 
   async findOne(id: string): Promise<PartnerResponse> {
     const partner = await this.partnerRepository.findById(id);
-    if (!partner) throw new NotFoundError('Partner');
+    if (!partner) throw new NotFoundError("Partner");
     return toPartnerResponse(partner);
   }
 
   async update(id: string, dto: UpdatePartnerDto): Promise<PartnerResponse> {
     const existing = await this.partnerRepository.findById(id);
-    if (!existing) throw new NotFoundError('Partner');
+    if (!existing) throw new NotFoundError("Partner");
 
     // Delete old image if replaced
     if (dto.image && existing.image && dto.image !== existing.image) {
@@ -46,17 +46,17 @@ export class PartnerService {
     }
 
     const updated = await this.partnerRepository.update(id, dto as any);
-    if (!updated) throw new NotFoundError('Partner');
+    if (!updated) throw new NotFoundError("Partner");
     const response = toPartnerResponse(updated);
-    emitToAll('partner:updated', response);
+    emitToAll("partner:updated", response);
     return response;
   }
 
   async remove(id: string): Promise<void> {
     const partner = await this.partnerRepository.findById(id);
-    if (!partner) throw new NotFoundError('Partner');
+    if (!partner) throw new NotFoundError("Partner");
     if (partner.image) deleteFile(partner.image);
     await this.partnerRepository.delete(id);
-    emitToAll('partner:deleted', { id });
+    emitToAll("partner:deleted", { id });
   }
 }

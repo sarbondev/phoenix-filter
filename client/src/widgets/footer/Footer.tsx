@@ -1,119 +1,248 @@
+"use client";
+
 import Link from "next/link";
-import { Filter, Mail, Phone, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import type { Locale } from "@/shared/types";
 import type { Dictionary } from "@/shared/i18n/dictionaries/en";
+import { FacebookIcon, InstagramIcon, TelegramIcon } from "@/shared/ui";
+import { useGetSiteSettingsQuery } from "@/store/api/siteSettingsApi";
+import { t } from "@/shared/lib/utils";
+import { Editable, useEditorDict } from "@/features/inline-editor";
+import { SiteSettingsBlockEditor } from "@/features/inline-editor/blocks/SiteSettingsBlockEditor";
 
 interface FooterProps {
   locale: Locale;
   dict: Dictionary;
 }
 
+const localized = {
+  en: {
+    consultationFallback: "Get a consultation",
+    consultationSubFallback: "by phone or via messengers",
+    shop: "Shop",
+    delivery: "Delivery",
+    payment: "Payment",
+    returns: "Exchange & return",
+    serviceCenter: "Service center",
+    repair: "Repair of equipment",
+    operator: "Operator services",
+    contacts: "Contacts",
+    rightsFallback: "All rights reserved",
+  },
+  ru: {
+    consultationFallback: "Получите консультацию",
+    consultationSubFallback: "по телефону или в мессенджерах",
+    shop: "Магазин",
+    delivery: "Доставка",
+    payment: "Оплата",
+    returns: "Обмен и возврат",
+    serviceCenter: "Сервисный центр",
+    repair: "Ремонт оборудования",
+    operator: "Услуги оператора",
+    contacts: "Контакты",
+    rightsFallback: "Все права защищены",
+  },
+  uz: {
+    consultationFallback: "Konsultatsiya oling",
+    consultationSubFallback: "telefon yoki messenjer orqali",
+    shop: "Do'kon",
+    delivery: "Yetkazib berish",
+    payment: "To'lov",
+    returns: "Almashtirish va qaytarish",
+    serviceCenter: "Servis markazi",
+    repair: "Uskunalar ta'mirlash",
+    operator: "Operator xizmatlari",
+    contacts: "Kontaktlar",
+    rightsFallback: "Barcha huquqlar himoyalangan",
+  },
+  kz: {
+    consultationFallback: "Кеңес алыңыз",
+    consultationSubFallback: "телефон немесе мессенджер арқылы",
+    shop: "Дүкен",
+    delivery: "Жеткізу",
+    payment: "Төлем",
+    returns: "Айырбас және қайтару",
+    serviceCenter: "Сервис орталығы",
+    repair: "Жабдықты жөндеу",
+    operator: "Оператор қызметтері",
+    contacts: "Байланыс",
+    rightsFallback: "Барлық құқықтар қорғалған",
+  },
+};
+
 export function Footer({ locale, dict }: FooterProps) {
+  const c = localized[locale] ?? localized.ru;
+  const { data: settings } = useGetSiteSettingsQuery();
+  const ed = useEditorDict();
+
+  const phone = settings?.phone || dict.footer.phone;
+  const email = settings?.email || dict.footer.email;
+  const consultation =
+    t(settings?.consultationCta, locale) || c.consultationFallback;
+  const consultationSub =
+    t(settings?.consultationSubtitle, locale) || c.consultationSubFallback;
+  const offices = settings?.offices ?? [];
+  const socials = settings?.socials ?? {};
+  const brandName = settings?.brandName || "PRESTIGE";
+  const brandAccent = settings?.brandAccent || "FILTR";
+  const rights = t(settings?.copyright, locale) || c.rightsFallback;
+
   return (
-    <footer className="bg-slate-950 text-slate-400">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Brand */}
-          <div className="lg:col-span-1">
-            <img src="/logo.png" alt="FilterSystem Logo" />
-            <p className="text-sm leading-relaxed text-slate-500">
-              {dict.footer.description}
-            </p>
-            <div className="mt-6 space-y-2.5">
-              <div className="flex items-center gap-3 text-sm">
-                <MapPin className="h-4 w-4 text-slate-500 flex-shrink-0" />
-                <span>{dict.footer.address}</span>
+    <Editable
+      id="footer"
+      label={ed.settingsLabel}
+      block={{
+        title: ed.siteSettingsTitle,
+        description: ed.siteSettingsDesc,
+        wide: true,
+        render: (close) => <SiteSettingsBlockEditor close={close} />,
+      }}
+    >
+      <footer className="bg-[var(--color-ink)] text-slate-300 mt-12">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 lg:py-12">
+          {/* Top — consultation + contacts + socials */}
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-8 border-b border-white/10">
+            <div>
+              <h3 className="text-lg sm:text-xl font-bold text-white">
+                {consultation}
+              </h3>
+              <p className="text-[13px] text-slate-400 mt-0.5">
+                {consultationSub}
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div className="flex items-center gap-3">
+                <a
+                  href={`tel:${phone.replace(/\s/g, "")}`}
+                  className="text-[14px] font-semibold text-white hover:text-[var(--color-brand)] transition-colors"
+                >
+                  {phone}
+                </a>
+                {email && (
+                  <>
+                    <span className="h-4 w-px bg-white/15" />
+                    <a
+                      href={`mailto:${email}`}
+                      className="text-[13px] text-slate-300 hover:text-white transition-colors"
+                    >
+                      {email}
+                    </a>
+                  </>
+                )}
               </div>
-              <div className="flex items-center gap-3 text-sm">
-                <Phone className="h-4 w-4 text-slate-500 flex-shrink-0" />
-                <span>{dict.footer.phone}</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm">
-                <Mail className="h-4 w-4 text-slate-500 flex-shrink-0" />
-                <span>{dict.footer.email}</span>
+              <div className="flex items-center gap-2">
+                {socials.facebook && (
+                  <a
+                    href={socials.facebook}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="Facebook"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1877F2] text-white hover:opacity-90 transition-opacity"
+                  >
+                    <FacebookIcon className="h-4 w-4" />
+                  </a>
+                )}
+                {socials.instagram && (
+                  <a
+                    href={socials.instagram}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="Instagram"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#FEDA75] via-[#D62976] to-[#4F5BD5] text-white hover:opacity-90 transition-opacity"
+                  >
+                    <InstagramIcon className="h-4 w-4" />
+                  </a>
+                )}
+                {socials.telegram && (
+                  <a
+                    href={socials.telegram}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="Telegram"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-[#229ED9] text-white hover:opacity-90 transition-opacity"
+                  >
+                    <TelegramIcon className="h-4 w-4" />
+                  </a>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-300">
-              {dict.footer.quickLinks}
-            </h3>
-            <ul className="space-y-2.5">
-              <li>
-                <Link
-                  href={`/${locale}`}
-                  className="text-sm hover:text-white transition-colors"
-                >
-                  {dict.nav.home}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`/${locale}/products`}
-                  className="text-sm hover:text-white transition-colors"
-                >
-                  {dict.nav.products}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`/${locale}/categories`}
-                  className="text-sm hover:text-white transition-colors"
-                >
-                  {dict.nav.categories}
-                </Link>
-              </li>
-            </ul>
+          {/* Columns */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 py-8">
+            <div>
+              <h4 className="text-[13px] font-bold text-white uppercase tracking-wider mb-4">
+                {c.shop}
+              </h4>
+              <ul className="space-y-2.5 text-[13px] text-slate-400">
+                <li>
+                  <Link
+                    href={`/${locale}/products`}
+                    className="hover:text-white transition-colors"
+                  >
+                    {c.delivery}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-white transition-colors">
+                    {c.payment}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-white transition-colors">
+                    {c.returns}
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-[13px] font-bold text-white uppercase tracking-wider mb-4">
+                {c.serviceCenter}
+              </h4>
+              <ul className="space-y-2.5 text-[13px] text-slate-400">
+                <li>
+                  <Link href="#" className="hover:text-white transition-colors">
+                    {c.repair}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-white transition-colors">
+                    {c.operator}
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Offices — render all configured offices, fall back to placeholder */}
+            {offices.length > 0
+              ? offices.slice(0, 2).map((office, i) => (
+                  <div key={i}>
+                    <h4 className="text-[13px] font-bold text-white uppercase tracking-wider mb-4">
+                      {t(office.label, locale)}
+                    </h4>
+                    <p className="flex items-start gap-2 text-[13px] text-slate-400">
+                      <MapPin className="h-4 w-4 mt-0.5 text-[var(--color-brand)] flex-shrink-0" />
+                      <span>{t(office.address, locale)}</span>
+                    </p>
+                  </div>
+                ))
+              : null}
           </div>
 
-          {/* Support */}
-          <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-300">
-              {dict.footer.support}
-            </h3>
-            <ul className="space-y-2.5">
-              <li>
-                <span className="text-sm">{dict.footer.faq}</span>
-              </li>
-              <li>
-                <span className="text-sm">{dict.footer.shippingInfo}</span>
-              </li>
-              <li>
-                <span className="text-sm">{dict.footer.returns}</span>
-              </li>
-              <li>
-                <span className="text-sm">{dict.footer.contactUs}</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Newsletter */}
-          <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-300">
-              {dict.footer.followUs}
-            </h3>
-            <p className="text-sm mb-4 text-slate-500">
-              {dict.footer.newsletter}
-            </p>
-            <div className="flex gap-2">
-              <input
-                type="email"
-                placeholder="Email"
-                className="flex-1 rounded-lg bg-slate-900 border border-slate-800 px-3.5 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-colors"
-              />
-              <button className="rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary-hover transition-colors">
-                <Mail className="h-4 w-4" />
-              </button>
+          {/* Bottom row */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t border-white/10 text-[12px] text-slate-500">
+            <div>
+              © {new Date().getFullYear()} {rights}
+            </div>
+            <div className="flex items-center gap-1 font-bold tracking-widest">
+              <span className="text-[var(--color-brand)]">{brandName}</span>
+              <span className="text-[var(--color-accent)]">{brandAccent}</span>
             </div>
           </div>
         </div>
-
-        <div className="mt-14 border-t border-slate-800/60 pt-8 text-center text-sm text-slate-600">
-          © {new Date().getFullYear()} FilterSystem. {dict.footer.rights}
-        </div>
-      </div>
-    </footer>
+      </footer>
+    </Editable>
   );
 }

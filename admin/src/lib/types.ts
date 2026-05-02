@@ -264,6 +264,99 @@ export interface ProductRequest {
   updatedAt: string;
 }
 
+// Site Settings
+export interface SiteOffice {
+  label: TranslatedField;
+  address: TranslatedField;
+  mapUrl?: string;
+}
+
+export interface SiteSocials {
+  facebook?: string;
+  instagram?: string;
+  telegram?: string;
+  youtube?: string;
+  whatsapp?: string;
+}
+
+export interface SiteSections {
+  hero: boolean;
+  about: boolean;
+  brands: boolean;
+  industries: boolean;
+  whyUs: boolean;
+  categories: boolean;
+  products: boolean;
+  ctaBanners: boolean;
+  process: boolean;
+  certificates: boolean;
+  integration: boolean;
+  productRequest: boolean;
+  contactFaq: boolean;
+}
+
+export interface SiteSettings {
+  brandName: string;
+  brandAccent: string;
+  logo?: string;
+  consultationCta: TranslatedField;
+  consultationSubtitle: TranslatedField;
+  phone: string;
+  phoneSecondary?: string;
+  email: string;
+  emailSecondary?: string;
+  workingHours: TranslatedField;
+  offices: SiteOffice[];
+  socials: SiteSocials;
+  sections: SiteSections;
+  copyright: TranslatedField;
+}
+
+// Hero Content
+export type HeroSmallCardVariant = 'blue' | 'ink';
+
+export interface HeroSmallCard {
+  title: TranslatedField;
+  subtitle: TranslatedField;
+  description: TranslatedField;
+  ctaLabel: TranslatedField;
+  ctaHref: string;
+  image: string;
+  variant: HeroSmallCardVariant;
+}
+
+export interface HeroMainCard {
+  title: TranslatedField;
+  subtitle: TranslatedField;
+  features: TranslatedField[];
+  ctaLabel: TranslatedField;
+  ctaHref: string;
+  image: string;
+}
+
+export interface HeroContent {
+  mainCard: HeroMainCard;
+  smallCard1: HeroSmallCard;
+  smallCard2: HeroSmallCard;
+}
+
+// FAQ
+export interface Faq {
+  id: string;
+  question: TranslatedField;
+  answer: TranslatedField;
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+}
+
+export interface CreateFaqRequest {
+  question: string;
+  answer: string;
+  isActive?: boolean;
+  sortOrder?: number;
+}
+
 // Dashboard
 export interface DashboardStats {
   orders: { total: number; pending: number };

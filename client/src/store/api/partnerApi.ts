@@ -14,7 +14,7 @@ export const partnerApi = baseApi.injectEndpoints({
     getPartners: builder.query<Partner[], void>({
       query: () => '/partners',
       transformResponse: (res: ApiResponse<Partner[]>) => res.data,
-      providesTags: ['Banner'],
+      providesTags: ['Partner'],
     }),
   }),
 });

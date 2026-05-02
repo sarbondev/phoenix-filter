@@ -15,7 +15,11 @@ const userMongoSchema = new Schema<IUser>(
     },
     password: { type: String, required: true, select: false },
     name: { type: String, required: true, trim: true },
-    role: { type: String, enum: ["ADMIN", "CALL_MANAGER", "CLIENT"], default: "CLIENT" },
+    role: {
+      type: String,
+      enum: ["ADMIN", "CALL_MANAGER", "CLIENT"],
+      default: "CLIENT",
+    },
   },
   {
     timestamps: true,

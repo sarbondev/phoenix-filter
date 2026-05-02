@@ -12,3 +12,4 @@ export { StatCard } from './StatCard';
 export { ConfirmDialog } from './ConfirmDialog';
 export { PhoneInput } from './PhoneInput';
 export { ImageUpload } from './ImageUpload';
+export { TranslatedInput, TranslatedListInput } from './TranslatedInput';
