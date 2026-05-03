@@ -264,7 +264,7 @@ export function SmartSearch({
                           )}
                         </div>
 
-                        {/* Name + category */}
+                        {/* Name + match info */}
                         <div className="flex-1 min-w-0">
                           <p
                             className={`text-[13.5px] font-medium truncate ${
@@ -273,12 +273,7 @@ export function SmartSearch({
                           >
                             {t(product.name, locale)}
                           </p>
-                          <p className="text-[11.5px] text-slate-400 truncate mt-0.5">
-                            {typeof product.category === "object" &&
-                            product.category?.name
-                              ? t(product.category.name, locale)
-                              : product.sku}
-                          </p>
+                          <MatchHint product={product} query={debounced} locale={locale} />
                         </div>
 
                         {/* Price */}
@@ -333,5 +328,57 @@ export function SmartSearch({
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+/**
+ * Inline hint shown under the product name explaining *why* this result matched
+ * the user's query. For a filter shop the hot path is "I have a FIAT 71769795,
+ * what fits?" — so when the query matches a cross-reference or OEM, surface
+ * it explicitly.
+ */
+function MatchHint({
+  product,
+  query,
+  locale,
+}: {
+  product: Product;
+  query: string;
+  locale: Locale;
+}) {
+  const q = query.toLowerCase();
+
+  if (q && product.oem && product.oem.toLowerCase().includes(q)) {
+    return (
+      <p className="text-[11.5px] text-[var(--color-brand)] font-semibold truncate mt-0.5">
+        OEM: <span className="font-mono">{product.oem}</span>
+      </p>
+    );
+  }
+
+  if (q && product.crossReferences) {
+    const match = product.crossReferences.find((r) =>
+      r.partNumber.toLowerCase().includes(q),
+    );
+    if (match) {
+      return (
+        <p className="text-[11.5px] text-[var(--color-brand)] font-semibold truncate mt-0.5">
+          <span className="font-mono">{match.partNumber}</span>{" "}
+          <span className="font-normal text-slate-500">({match.manufacturer})</span>
+        </p>
+      );
+    }
+  }
+
+  // Default: SKU when product has Phoenix-style identifier; otherwise category
+  return (
+    <p className="text-[11.5px] text-slate-400 truncate mt-0.5">
+      {typeof product.category === "object" && product.category?.name
+        ? t(product.category.name, locale)
+        : product.sku}
+      {product.sku && typeof product.category === "object" && (
+        <span className="ml-2 font-mono text-slate-300">· {product.sku}</span>
+      )}
+    </p>
   );
 }

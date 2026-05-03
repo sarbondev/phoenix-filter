@@ -8,6 +8,8 @@
     "build": "rimraf dist && tsc --project tsconfig.build.json",
     "start": "node dist/server.js",
     "seed": "tsx src/seed.ts",
+    "seed:phoenix": "tsx src/seed-phoenix.ts",
+    "parse:phoenix": "python3 scripts/parse-phoenix-catalogue.py",
     "lint": "eslint src --ext .ts",
     "typecheck": "tsc --noEmit"
   },

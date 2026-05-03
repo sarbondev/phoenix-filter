@@ -5,3 +5,5 @@ export { Skeleton, ProductCardSkeleton } from './Skeleton';
 export { Badge } from './Badge';
 export { PhoneInput } from './PhoneInput';
 export { FacebookIcon, InstagramIcon, TelegramIcon } from './SocialIcons';
+export { Breadcrumbs } from './Breadcrumbs';
+export type { BreadcrumbItem } from './Breadcrumbs';

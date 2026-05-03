@@ -43,16 +43,14 @@ export default function ProductRequestsPage() {
 
         <div className="w-56">
           <Select
+            placeholder={t('productRequests.allStatuses')}
+            options={STATUSES.map((s) => ({
+              value: s,
+              label: t(`productRequests.statuses.${s}`),
+            }))}
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as ProductRequestStatus | '')}
-          >
-            <option value="">{t('productRequests.allStatuses')}</option>
-            {STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {t(`productRequests.statuses.${s}`)}
-              </option>
-            ))}
-          </Select>
+          />
         </div>
       </div>
 

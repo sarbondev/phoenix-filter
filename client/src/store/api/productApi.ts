@@ -9,6 +9,8 @@ interface ProductsQuery {
   minPrice?: string;
   maxPrice?: string;
   isFeatured?: string;
+  manufacturer?: string;
+  vehicleBrand?: string;
   sortBy?: string;
   sortOrder?: string;
 }

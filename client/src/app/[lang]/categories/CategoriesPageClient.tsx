@@ -14,6 +14,8 @@ interface Props { locale: Locale; dict: Dictionary }
 
 export function CategoriesPageClient({ locale, dict }: Props) {
   const { data: categories, isLoading } = useGetCategoriesQuery();
+  // Only show top-level (Avto / Maishiy). Subcategories are reached by clicking through.
+  const topLevel = (categories ?? []).filter((c) => !c.parent);
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
@@ -21,10 +23,10 @@ export function CategoriesPageClient({ locale, dict }: Props) {
         <h1 className="text-3xl font-bold text-slate-900">{dict.categories.title}</h1>
       </motion.div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         {isLoading
-          ? Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-60 rounded-2xl" />)
-          : categories?.map((cat, i) => (
+          ? Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-60 rounded-2xl" />)
+          : topLevel.map((cat, i) => (
               <motion.div
                 key={cat.id}
                 initial={{ opacity: 0, y: 25 }}

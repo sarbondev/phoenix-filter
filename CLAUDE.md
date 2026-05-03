@@ -16,7 +16,7 @@ Run inside the relevant package directory.
 
 | Package | Dev | Build | Lint | Other |
 |---|---|---|---|---|
-| `server` | `npm run dev` | `npm run build` | `npm run lint` | `npm run typecheck`, `npm run seed`, `npm start` (prod) |
+| `server` | `npm run dev` | `npm run build` | `npm run lint` | `npm run typecheck`, `npm run seed`, `npm run seed:phoenix`, `npm run parse:phoenix`, `npm start` (prod) |
 | `admin` | `npm run dev` | `npm run build` (runs `tsc -b` then Vite) | `npm run lint` | `npm run preview` |
 | `client` | `npm run dev` | `npm run build` | `npm run lint` | `npm start` |
 
@@ -85,9 +85,58 @@ Locale routing is enforced by `client/src/middleware.ts`: any path without one o
 
 Same RTK Query pattern as admin — single `baseApi` with `injectEndpoints` per resource under `client/src/store/api/`.
 
+## Filter catalogue domain
+
+This is a B2B/B2C filter shop built around the **Phoenix Catalogue 2024** (~3,300 SKUs). The killer use case is *cross-reference search*: a customer types their old filter's part number (e.g. `71769795` from a FIAT) and lands on the matching Phoenix product. Treat that flow as the most important UX path.
+
+### Category hierarchy
+
+Two top-level roots, set up in `server/src/scripts/restructure-categories.ts`:
+
+- **Avto** (`slug: avto`) — all 18 catalogue subcategories nest under it (Air Filter EUR/JP/KR/USA, Cabin Air, Channel Air, ECO Oil & Fuel, Heavy Duty ×4, In-Tank Fuel, Inline Fuel, LPG, Spin-On Oil ×3, Transmission)
+- **Maishiy** (`slug: maishiy`) — empty placeholder for future household filters
+
+Filtering by parent category traverses descendants: `ProductService.expandCategoryFilter` → `CategoryRepository.collectDescendants` returns `[parentId, ...allChildIds]`, then `ProductRepository.findAll` matches `category.$in: [...ids]`. The product page accepts both `?category=<id>` and `?categorySlug=<slug>` (slug→id resolved client-side via `useGetCategoriesQuery`).
+
+### Filter-specific Product fields
+
+Beyond standard e-commerce fields, `Product` carries six filter-domain fields (defined in `server/src/modules/products/product.entity.ts`):
+
+- `oem?: string` — primary OEM number from the vehicle manufacturer
+- `crossReferences: Array<{ partNumber, manufacturer }>` — equivalent part numbers from other brands (MANN, FRAM, WIX, etc.). **Indexed and text-searchable** — this is what powers the cross-reference search.
+- `material?: string` (e.g. "Aluminum Case")
+- `application?: string` — vehicle compatibility text (e.g. "Sonata 99'~05' Trajet 2.0 2.7")
+- `dimensions?: { height, outerDiameter, innerDiameter, threadSize, inletDiameter, outletDiameter }`
+- `vehicleBrand?: string` — uppercase brand from PDF section header (HYUNDAI, OPEL, etc.)
+
+`ProductRepository.findAll` `search` filter ORs across `name.{uz,ru,en}`, `description.*`, `sku`, `oem`, `application`, and `crossReferences.partNumber` — so a customer's free-text query hits any of these.
+
+### Phoenix import pipeline
+
+- Source PDFs live in `~/Downloads/PHOENIX CATALOGUE 2024/` (not in repo)
+- `server/scripts/parse-phoenix-catalogue.py` (Python, requires `pdftotext` from `brew install poppler`) parses all 18 PDFs:
+  - Format A (LPG, Channel, Spin-On Oil ×3, In-Tank, Inline Fuel) — split-by-2-spaces row parsing
+  - Format B (Air filters, Cabin Air, Heavy Duty ×4, ECO, Transmission) — TSV bounding-box parsing via `pdftotext -tsv` (column anchors derived from header word x-positions)
+- Output: `server/seeds/phoenix-products.json` (~875 KB, 3,353 SKUs, 23,000 cross-references) — committed so seeding is deterministic without re-parsing
+- `server/src/seed-phoenix.ts` reads the JSON, ensures the 18 categories exist (idempotent by slug), and bulk-inserts products skipping any SKU already in the DB
+- One-off helper scripts in `server/src/scripts/` for re-parenting categories under Avto and toggling activation/stock
+
+When you add a new filter category to the catalogue, you must:
+1. Add a mapping in `category_for()` in the parser script
+2. Add a parser config block in `parse_pdf()` for that PDF's format
+3. Re-run `npm run parse:phoenix` then `npm run seed:phoenix`
+
+### Where the filter UX lives
+
+- Smart search dropdown (`client/src/features/smart-search/SmartSearch.tsx`) — `MatchHint` subcomponent inspects each result against the user's query and surfaces *which field matched* (OEM, cross-reference + manufacturer, or default category/SKU). This is essential — without it, a customer typing "71769795" sees a product called "Phoenix NF-G2911" and has no idea why it matched.
+- Product detail (`client/src/app/[lang]/products/[slug]/ProductDetailClient.tsx`) — renders SKU/OEM/brand pills, application box, dimensions table, and the grouped cross-reference table.
+- Product card (`client/src/entities/product/ProductCard.tsx`) — shows SKU, vehicleBrand pill, and application as a one-line subtitle.
+- Admin product form (`admin/src/pages/products/ProductForm.tsx`) — fieldsets for filter details, dimensions, and a dynamic cross-reference list editor.
+
 ## Conventions worth following
 
 - New REST resources go through the six-file module pattern above; don't shortcut by putting logic in routes/controllers.
 - Throw `AppError` subclasses from services rather than returning error objects — the global handler does the rest.
 - Don't bypass `localizeResponse` by hand-picking a language in the controller; the middleware + util exist precisely so controllers stay locale-agnostic.
-- When deleting a module (e.g. the `banners` removal currently in progress), remove all of: server module folder, server route registration in `app.ts`, admin/client `*Api.ts` slice, the `Banner` entry in `baseApi.tagTypes`, socket listeners in `useSocket.ts`, and any UI pages — these are all coupled.
+- When deleting a module (e.g. the `banners` removal already done), remove all of: server module folder, server route registration in `app.ts`, admin/client `*Api.ts` slice, the tag entry in `baseApi.tagTypes`, socket listeners in `useSocket.ts`, and any UI pages — these are all coupled.
+- The admin's `Select` component takes `options` as a prop (array of `{value, label}`) — passing JSX `<option>` children breaks it (`options.map` on undefined). See `admin/src/components/ui/Select.tsx`.

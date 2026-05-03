@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
-import type { Locale, TranslatedField } from "@/shared/types";
+import type { Locale } from "@/shared/types";
 import type { Dictionary } from "@/shared/i18n/dictionaries/en";
 import { t, getImageUrl } from "@/shared/lib/utils";
 import {
@@ -20,47 +20,110 @@ interface HeroProps {
   dict: Dictionary;
 }
 
-const EMPTY_TF: TranslatedField = { uz: "", ru: "", en: "", kz: "" };
-
 const FALLBACK: HeroContent = {
   mainCard: {
     title: {
-      uz: "Premium filtratsiya",
-      ru: "Премиальная фильтрация",
-      en: "Premium filtration",
-      kz: "Премиум сүзу",
+      uz: "Avtomobil filtrlari uchun",
+      ru: "Фильтры для автомобилей",
+      en: "Filters for any vehicle",
+      kz: "Көлік сүзгілері үшін",
     },
     subtitle: {
-      uz: "Universal texnologiyalar",
-      ru: "Универсальные технологии",
-      en: "Universal technologies",
-      kz: "Әмбебап технологиялар",
+      uz: "yagona manzil",
+      ru: "в одном месте",
+      en: "all in one place",
+      kz: "бір жерде",
     },
-    features: [],
+    features: [
+      {
+        uz: "3000+ filter — yengil avtomobil va og'ir texnika uchun",
+        ru: "3000+ фильтров — для легковых и грузовых авто",
+        en: "3000+ filters for cars, trucks and machinery",
+        kz: "3000+ сүзгі — жеңіл және ауыр техника үшін",
+      },
+      {
+        uz: "MANN, FRAM, WIX, MAHLE va boshqa brendlar bo'yicha kross-katalog",
+        ru: "Кросс-каталог по MANN, FRAM, WIX, MAHLE и другим брендам",
+        en: "Cross-reference catalog with MANN, FRAM, WIX, MAHLE & more",
+        kz: "MANN, FRAM, WIX, MAHLE және басқа брендтер бойынша кросс-каталог",
+      },
+      {
+        uz: "OEM raqami orqali bir zumda topish",
+        ru: "Поиск по OEM-номеру за секунды",
+        en: "Find by OEM number in seconds",
+        kz: "OEM нөмірі бойынша секундта табу",
+      },
+      {
+        uz: "Toshkent bo'ylab tezkor yetkazib berish",
+        ru: "Быстрая доставка по Ташкенту",
+        en: "Fast delivery across Tashkent",
+        kz: "Ташкент бойынша жедел жеткізу",
+      },
+    ],
     ctaLabel: {
-      uz: "Katalog",
-      ru: "В каталог",
-      en: "View catalog",
-      kz: "Каталог",
+      uz: "Katalogni ko'rish",
+      ru: "Открыть каталог",
+      en: "Browse catalog",
+      kz: "Каталогты ашу",
     },
-    ctaHref: "/products",
+    ctaHref: "/categories",
     image: "",
   },
   smallCard1: {
-    title: { ...EMPTY_TF },
-    subtitle: { ...EMPTY_TF },
-    description: { ...EMPTY_TF },
-    ctaLabel: { ...EMPTY_TF },
-    ctaHref: "/products",
+    title: {
+      uz: "Avto filterlar",
+      ru: "Авто фильтры",
+      en: "Auto filters",
+      kz: "Авто сүзгілер",
+    },
+    subtitle: {
+      uz: "Avtomobil va og'ir texnika",
+      ru: "Авто и спецтехника",
+      en: "Vehicles & heavy equipment",
+      kz: "Көлік пен ауыр техника",
+    },
+    description: {
+      uz: "3000+ filter — yengil avtomobil, yuk va qishloq xo‘jalik texnikasi uchun",
+      ru: "3000+ фильтров — для легковых, грузовых и сельхозмашин",
+      en: "3000+ filters for cars, trucks and agricultural machinery",
+      kz: "3000+ сүзгі — жеңіл, жүк және ауыл шаруашылық техникасы үшін",
+    },
+    ctaLabel: {
+      uz: "Ko'rish",
+      ru: "Смотреть",
+      en: "Browse",
+      kz: "Қарау",
+    },
+    ctaHref: "/products?categorySlug=avto",
     image: "",
     variant: "blue",
   },
   smallCard2: {
-    title: { ...EMPTY_TF },
-    subtitle: { ...EMPTY_TF },
-    description: { ...EMPTY_TF },
-    ctaLabel: { ...EMPTY_TF },
-    ctaHref: "/products",
+    title: {
+      uz: "Maishiy filterlar",
+      ru: "Бытовые фильтры",
+      en: "Household filters",
+      kz: "Тұрмыстық сүзгілер",
+    },
+    subtitle: {
+      uz: "Uy va maishiy ehtiyojlar",
+      ru: "Для дома и быта",
+      en: "Home & household",
+      kz: "Үй және тұрмыс",
+    },
+    description: {
+      uz: "Tez kunda — uy uchun suv va havo filtrlari",
+      ru: "Скоро — фильтры воды и воздуха для дома",
+      en: "Coming soon — home water and air filters",
+      kz: "Жақында — үйге арналған су және ауа сүзгілері",
+    },
+    ctaLabel: {
+      uz: "Tez kunda",
+      ru: "Скоро",
+      en: "Coming soon",
+      kz: "Жақында",
+    },
+    ctaHref: "/products?categorySlug=maishiy",
     image: "",
     variant: "ink",
   },
@@ -119,7 +182,7 @@ function HeroContent({
             transition={{ duration: 0.4 }}
             className="relative lg:col-span-2 overflow-hidden rounded-2xl bg-diagonal-blue-ink min-h-[340px] lg:min-h-[400px] p-7 lg:p-10 text-white"
           >
-            <div className="relative z-10 max-w-[55%]">
+            <div className="relative z-10 ml-auto max-w-full sm:max-w-[55%] sm:text-right">
               <h1 className="text-2xl sm:text-3xl lg:text-[36px] font-extrabold leading-[1.1] tracking-tight">
                 {mainTitle}
                 <span className="block mt-1 text-white/95">{mainSubtitle}</span>
@@ -130,7 +193,7 @@ function HeroContent({
                   {features.map((f, i) => (
                     <li
                       key={i}
-                      className="flex items-start gap-2 text-[13.5px] text-white/90"
+                      className="flex items-start gap-2 text-[13.5px] text-white/90 sm:flex-row-reverse sm:text-right"
                     >
                       <CheckCircle2 className="h-4 w-4 mt-0.5 text-[var(--color-highlight)] flex-shrink-0" />
                       <span>{f}</span>
@@ -148,19 +211,19 @@ function HeroContent({
               </Link>
             </div>
 
-            {/* Optional uploaded image, otherwise SVG collage */}
+            {/* Optional uploaded image, otherwise SVG collage — now on the LEFT */}
             {hero.mainCard.image ? (
-              <div className="hidden sm:block absolute right-0 bottom-0 top-0 w-[55%] pointer-events-none">
+              <div className="hidden sm:block absolute left-0 bottom-0 top-0 w-[55%] pointer-events-none">
                 <Image
                   src={getImageUrl(hero.mainCard.image)}
                   alt=""
                   fill
                   sizes="(max-width: 1024px) 50vw, 700px"
-                  className="object-contain object-right p-4"
+                  className="object-contain object-left p-4"
                 />
               </div>
             ) : (
-              <div className="hidden sm:block absolute right-[-2%] bottom-0 top-0 w-[55%] pointer-events-none">
+              <div className="hidden sm:block absolute left-[-2%] bottom-0 top-0 w-[55%] pointer-events-none">
                 <div className="absolute inset-0 flex items-end justify-center pb-6">
                   <FilterCollage />
                 </div>
@@ -174,17 +237,17 @@ function HeroContent({
               card={hero.smallCard1}
               locale={locale}
               dict={dict}
-              fallbackTitle="Воздушные фильтры"
-              fallbackSubtitle="WIX"
-              fallbackDescription="Эффективный воздушный фильтр"
+              fallbackTitle="Avto filterlar"
+              fallbackSubtitle="Avtomobil va texnika"
+              fallbackDescription="Yengil va og'ir transport uchun"
             />
             <SmallBanner
               card={hero.smallCard2}
               locale={locale}
               dict={dict}
-              fallbackTitle="Масляные фильтры"
-              fallbackSubtitle="Raf filter"
-              fallbackDescription="Высокая степень очистки"
+              fallbackTitle="Maishiy filterlar"
+              fallbackSubtitle="Uy uchun"
+              fallbackDescription="Tez kunda"
             />
           </div>
         </div>
@@ -226,7 +289,7 @@ function SmallBanner({
           : "bg-[var(--color-ink)] text-white"
       }`}
     >
-      <div className="relative z-10 max-w-[60%]">
+      <div className="relative z-10 ml-auto max-w-[60%] text-right">
         <h3 className="text-[15px] font-bold leading-tight">{title}</h3>
         <p className="text-[18px] font-extrabold mt-0.5">{subtitle}</p>
         <p className="mt-2 text-[12px] text-white/80 leading-snug">
@@ -236,7 +299,7 @@ function SmallBanner({
 
       <Link
         href={href}
-        className={`relative z-10 inline-flex items-center justify-center w-fit rounded-lg px-4 py-2 text-[13px] font-semibold transition-colors ${
+        className={`relative z-10 inline-flex items-center justify-center w-fit ml-auto rounded-lg px-4 py-2 text-[13px] font-semibold transition-colors ${
           isBlue
             ? "bg-white text-[var(--color-brand)] hover:bg-white/90"
             : "bg-[var(--color-brand)] text-white hover:bg-[var(--color-brand-hover)]"
@@ -246,17 +309,17 @@ function SmallBanner({
       </Link>
 
       {card.image ? (
-        <div className="absolute right-0 top-0 bottom-0 w-[45%] pointer-events-none">
+        <div className="absolute left-0 top-0 bottom-0 w-[45%] pointer-events-none">
           <Image
             src={getImageUrl(card.image)}
             alt=""
             fill
             sizes="200px"
-            className="object-contain object-right p-2"
+            className="object-contain object-left p-2"
           />
         </div>
       ) : (
-        <div className="absolute right-0 top-0 bottom-0 w-[45%] pointer-events-none opacity-90">
+        <div className="absolute left-0 top-0 bottom-0 w-[45%] pointer-events-none opacity-90">
           <div className="absolute inset-0 flex items-center justify-center">
             <SmallFilterShape />
           </div>

@@ -20,6 +20,26 @@ const specificationSchema = new Schema(
   { _id: false },
 );
 
+const crossReferenceSchema = new Schema(
+  {
+    partNumber: { type: String, required: true, trim: true },
+    manufacturer: { type: String, required: true, trim: true },
+  },
+  { _id: false },
+);
+
+const dimensionsSchema = new Schema(
+  {
+    height: { type: Number },
+    outerDiameter: { type: Number },
+    innerDiameter: { type: Number },
+    threadSize: { type: String, trim: true },
+    inletDiameter: { type: Number },
+    outletDiameter: { type: Number },
+  },
+  { _id: false },
+);
+
 const productMongoSchema = new Schema<IProduct>(
   {
     name: { type: translatedFieldSchema, required: true },
@@ -38,6 +58,12 @@ const productMongoSchema = new Schema<IProduct>(
       uppercase: true,
       trim: true,
     },
+    oem: { type: String, trim: true },
+    crossReferences: { type: [crossReferenceSchema], default: [] },
+    material: { type: String, trim: true },
+    application: { type: String, trim: true },
+    dimensions: { type: dimensionsSchema },
+    vehicleBrand: { type: String, trim: true, uppercase: true },
     price: { type: Number, required: true, min: 0 },
     discountPercent: { type: Number, min: 0, max: 100 },
     category: { type: Schema.Types.ObjectId, ref: "Category", required: true },
@@ -57,12 +83,20 @@ productMongoSchema.index({ sku: 1 });
 productMongoSchema.index({ category: 1 });
 productMongoSchema.index({ isActive: 1, isFeatured: 1 });
 productMongoSchema.index({ price: 1 });
+productMongoSchema.index({ oem: 1 });
+productMongoSchema.index({ vehicleBrand: 1 });
+productMongoSchema.index({ "crossReferences.partNumber": 1 });
+productMongoSchema.index({ "crossReferences.manufacturer": 1 });
 productMongoSchema.index({
   "name.uz": "text",
   "name.ru": "text",
   "name.en": "text",
   "name.kz": "text",
   "description.en": "text",
+  sku: "text",
+  oem: "text",
+  application: "text",
+  "crossReferences.partNumber": "text",
 });
 
 export const ProductModel = model<IProduct>("Product", productMongoSchema);
@@ -73,11 +107,31 @@ const specificationInputSchema = z.object({
   value: z.string().min(1),
 });
 
+const crossReferenceInputSchema = z.object({
+  partNumber: z.string().min(1),
+  manufacturer: z.string().min(1),
+});
+
+const dimensionsInputSchema = z.object({
+  height: z.number().optional(),
+  outerDiameter: z.number().optional(),
+  innerDiameter: z.number().optional(),
+  threadSize: z.string().optional(),
+  inletDiameter: z.number().optional(),
+  outletDiameter: z.number().optional(),
+});
+
 export const createProductSchema = z.object({
   name: z.string().min(1).max(300),
   description: z.string().min(1).max(5000),
   slug: z.string().max(300).optional(),
   sku: z.string().max(50).optional(),
+  oem: z.string().max(200).optional(),
+  crossReferences: z.array(crossReferenceInputSchema).default([]),
+  material: z.string().max(100).optional(),
+  application: z.string().max(1000).optional(),
+  dimensions: dimensionsInputSchema.optional(),
+  vehicleBrand: z.string().max(100).optional(),
   price: z.number().min(0),
   discountPercent: z.number().min(0).max(100).optional(),
   category: z.string().min(1),
@@ -101,6 +155,8 @@ export const productQuerySchema = z.object({
   minPrice: z.string().optional(),
   maxPrice: z.string().optional(),
   isFeatured: z.string().optional(),
+  vehicleBrand: z.string().optional(),
+  manufacturer: z.string().optional(),
   sortBy: z.enum(["price", "createdAt", "views", "name"]).optional(),
   sortOrder: z.enum(["asc", "desc"]).optional(),
 });

@@ -142,9 +142,25 @@ export function ProductCard({
               {t(product.name, locale)}
             </h3>
 
-            {/* SKU */}
-            {product.sku && (
-              <p className="mt-1 text-[11px] text-slate-400">SKU: {product.sku}</p>
+            {/* SKU + Vehicle brand pills */}
+            <div className="mt-1.5 flex flex-wrap items-center gap-1">
+              {product.sku && (
+                <span className="text-[11px] font-mono text-slate-500">
+                  {product.sku}
+                </span>
+              )}
+              {product.vehicleBrand && (
+                <span className="inline-flex items-center rounded-sm bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-600">
+                  {product.vehicleBrand}
+                </span>
+              )}
+            </div>
+
+            {/* Application — small subtitle */}
+            {product.application && (
+              <p className="mt-1 text-[11px] text-slate-400 line-clamp-1">
+                {product.application}
+              </p>
             )}
 
             {/* Price */}

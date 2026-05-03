@@ -6,12 +6,32 @@ export interface ISpecification {
   value: TranslatedField;
 }
 
+export interface ICrossReference {
+  partNumber: string;
+  manufacturer: string;
+}
+
+export interface IDimensions {
+  height?: number;
+  outerDiameter?: number;
+  innerDiameter?: number;
+  threadSize?: string;
+  inletDiameter?: number;
+  outletDiameter?: number;
+}
+
 export interface IProduct extends Document {
   _id: Types.ObjectId;
   name: TranslatedField;
   description: TranslatedField;
   slug: string;
   sku: string;
+  oem?: string;
+  crossReferences: ICrossReference[];
+  material?: string;
+  application?: string;
+  dimensions?: IDimensions;
+  vehicleBrand?: string;
   price: number;
   discountPercent?: number;
   category: Types.ObjectId;
@@ -32,6 +52,12 @@ export interface ProductResponse {
   description: TranslatedField;
   slug: string;
   sku: string;
+  oem?: string;
+  crossReferences: ICrossReference[];
+  material?: string;
+  application?: string;
+  dimensions?: IDimensions;
+  vehicleBrand?: string;
   price: number;
   discountPercent?: number;
   discountPrice?: number;
@@ -52,6 +78,12 @@ export const toProductResponse = (product: IProduct): ProductResponse => ({
   description: product.description,
   slug: product.slug,
   sku: product.sku,
+  oem: product.oem,
+  crossReferences: product.crossReferences ?? [],
+  material: product.material,
+  application: product.application,
+  dimensions: product.dimensions,
+  vehicleBrand: product.vehicleBrand,
   price: product.price,
   discountPercent: product.discountPercent,
   discountPrice: product.discountPercent

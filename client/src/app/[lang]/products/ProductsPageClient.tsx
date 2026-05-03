@@ -21,17 +21,25 @@ export function ProductsPageClient({ locale, dict }: Props) {
 
   const page = Number(params.page) || 1;
   const search = params.search ?? '';
-  const category = params.category ?? '';
+  const categoryParam = params.category ?? '';
+  const categorySlug = params.categorySlug ?? '';
+  const manufacturer = params.manufacturer ?? '';
   const sortBy = params.sortBy ?? 'createdAt';
   const sortOrder = params.sortOrder ?? 'desc';
+
+  const { data: categories } = useGetCategoriesQuery();
+  // Allow URL to pass either ?category=<id> or ?categorySlug=<slug>; resolve slug → id.
+  const category = categoryParam || (categorySlug
+    ? categories?.find((c) => c.slug === categorySlug)?.id ?? ''
+    : '');
 
   const { data, isLoading } = useGetProductsQuery({
     page, limit: 12,
     search: search || undefined,
     category: category || undefined,
+    manufacturer: manufacturer || undefined,
     sortBy, sortOrder,
   });
-  const { data: categories } = useGetCategoriesQuery();
 
   const products = data?.data ?? [];
   const meta = data?.meta;
@@ -64,13 +72,18 @@ export function ProductsPageClient({ locale, dict }: Props) {
 
       <div className="flex gap-8">
         {/* ── Left Sidebar (desktop) ── */}
-        <aside className="hidden lg:block w-64 shrink-0">
+        <aside className="hidden lg:block w-64 shrink-0 space-y-6">
           <CategorySidebar
             categories={categories ?? []}
             selected={category}
             locale={locale}
             dict={dict}
             onSelect={selectCategory}
+          />
+          <ManufacturerFilter
+            selected={manufacturer}
+            dict={dict}
+            onSelect={(m) => setParams({ manufacturer: m || undefined, page: undefined })}
           />
         </aside>
 
@@ -182,13 +195,21 @@ export function ProductsPageClient({ locale, dict }: Props) {
                   <X className="h-5 w-5 text-slate-500" />
                 </button>
               </div>
-              <div className="p-4">
+              <div className="p-4 space-y-6">
                 <CategorySidebar
                   categories={categories ?? []}
                   selected={category}
                   locale={locale}
                   dict={dict}
                   onSelect={selectCategory}
+                />
+                <ManufacturerFilter
+                  selected={manufacturer}
+                  dict={dict}
+                  onSelect={(m) => {
+                    setParams({ manufacturer: m || undefined, page: undefined });
+                    setMobileSidebar(false);
+                  }}
                 />
               </div>
             </motion.div>
@@ -202,6 +223,57 @@ export function ProductsPageClient({ locale, dict }: Props) {
 /* ═══════════════════════════════════════════════════════════════════ */
 /*  Category Sidebar                                                  */
 /* ═══════════════════════════════════════════════════════════════════ */
+
+// Most-frequent cross-reference manufacturers in the Phoenix catalogue
+// (top 12 by occurrence — these cover the vast majority of customer searches).
+const TOP_MANUFACTURERS = [
+  'MANN', 'MAHLE', 'HENGST', 'FRAM', 'WIX', 'BALDWIN',
+  'PUROLATOR', 'KNECHT', 'DONALDSON', 'FLEETGUARD', 'LUBER-FINER', 'SAKURA',
+];
+
+function ManufacturerFilter({
+  selected,
+  dict,
+  onSelect,
+}: {
+  selected: string;
+  dict: Dictionary;
+  onSelect: (m: string) => void;
+}) {
+  return (
+    <div>
+      <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-3">
+        {dict.products.manufacturerFilter}
+      </h3>
+      <button
+        onClick={() => onSelect('')}
+        className={`w-full text-left rounded-lg px-3 py-2 text-sm font-medium transition-colors mb-1 ${
+          !selected ? 'bg-[var(--color-brand-soft)] text-[var(--color-brand)]' : 'text-slate-600 hover:bg-slate-50'
+        }`}
+      >
+        {dict.products.allManufacturers}
+      </button>
+      <div className="grid grid-cols-2 gap-1">
+        {TOP_MANUFACTURERS.map((m) => {
+          const active = selected.toUpperCase() === m;
+          return (
+            <button
+              key={m}
+              onClick={() => onSelect(active ? '' : m)}
+              className={`text-left rounded-lg px-3 py-1.5 text-[12.5px] font-mono transition-colors ${
+                active
+                  ? 'bg-[var(--color-brand-soft)] text-[var(--color-brand)] font-semibold'
+                  : 'text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              {m}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 function CategorySidebar({
   categories,

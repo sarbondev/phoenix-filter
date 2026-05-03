@@ -47,12 +47,32 @@ export interface ProductSpecification {
   value: TranslatedField;
 }
 
+export interface CrossReference {
+  partNumber: string;
+  manufacturer: string;
+}
+
+export interface ProductDimensions {
+  height?: number;
+  outerDiameter?: number;
+  innerDiameter?: number;
+  threadSize?: string;
+  inletDiameter?: number;
+  outletDiameter?: number;
+}
+
 export interface Product {
   id: string;
   name: TranslatedField;
   description: TranslatedField;
   slug: string;
   sku: string;
+  oem?: string;
+  crossReferences?: CrossReference[];
+  material?: string;
+  application?: string;
+  dimensions?: ProductDimensions;
+  vehicleBrand?: string;
   price: number;
   discountPercent?: number;
   discountPrice?: number;

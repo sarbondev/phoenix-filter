@@ -74,19 +74,6 @@ export function useSocket() {
       dispatch(baseApi.util.invalidateTags(['Review']));
     });
 
-    // Banner events
-    socket.on('banner:created', () => {
-      dispatch(baseApi.util.invalidateTags(['Banner']));
-    });
-
-    socket.on('banner:updated', () => {
-      dispatch(baseApi.util.invalidateTags(['Banner']));
-    });
-
-    socket.on('banner:deleted', () => {
-      dispatch(baseApi.util.invalidateTags(['Banner']));
-    });
-
     // User events
     socket.on('user:created', () => {
       dispatch(baseApi.util.invalidateTags(['User', 'Dashboard']));

@@ -1,4 +1,5 @@
 import { ProductRepository, ProductFilter } from "./product.repository";
+import { CategoryRepository } from "../categories/category.repository";
 import { ProductResponse, toProductResponse } from "./product.entity";
 import {
   CreateProductDto,
@@ -13,7 +14,13 @@ import { buildPaginatedResponse } from "../../shared/utils/pagination";
 import { emitToAll } from "../../shared/services/socket.service";
 
 export class ProductService {
+  private readonly categoryRepository = new CategoryRepository();
   constructor(private readonly productRepository: ProductRepository) {}
+
+  private async expandCategoryFilter(category: string | undefined): Promise<string[] | undefined> {
+    if (!category) return undefined;
+    return this.categoryRepository.collectDescendants(category);
+  }
 
   private slugify(text: string): string {
     return text
@@ -91,6 +98,12 @@ export class ProductService {
       description: translations.description,
       ...(dto.tags && translations.tags?.uz ? { tags: translations.tags } : {}),
       specifications: translatedSpecs,
+      ...(dto.oem !== undefined ? { oem: dto.oem } : {}),
+      ...(dto.material !== undefined ? { material: dto.material } : {}),
+      ...(dto.application !== undefined ? { application: dto.application } : {}),
+      ...(dto.vehicleBrand !== undefined ? { vehicleBrand: dto.vehicleBrand } : {}),
+      ...(dto.dimensions ? { dimensions: dto.dimensions } : {}),
+      ...(dto.crossReferences ? { crossReferences: dto.crossReferences } : {}),
     } as any);
 
     const response = toProductResponse(product);
@@ -108,11 +121,13 @@ export class ProductService {
       isActive: true,
     };
 
-    if (query.category) filter.category = query.category;
+    if (query.category) filter.categoryIds = await this.expandCategoryFilter(query.category);
     if (query.isFeatured === "true") filter.isFeatured = true;
     if (query.minPrice) filter.minPrice = parseFloat(query.minPrice);
     if (query.maxPrice) filter.maxPrice = parseFloat(query.maxPrice);
     if (query.search) filter.search = query.search;
+    if (query.vehicleBrand) filter.vehicleBrand = query.vehicleBrand;
+    if (query.manufacturer) filter.manufacturer = query.manufacturer;
 
     const { data, total } = await this.productRepository.findAll(
       filter,
@@ -137,11 +152,13 @@ export class ProductService {
     const skip = (page - 1) * limit;
     const filter: ProductFilter = {};
 
-    if (query.category) filter.category = query.category;
+    if (query.category) filter.categoryIds = await this.expandCategoryFilter(query.category);
     if (query.isFeatured === "true") filter.isFeatured = true;
     if (query.minPrice) filter.minPrice = parseFloat(query.minPrice);
     if (query.maxPrice) filter.maxPrice = parseFloat(query.maxPrice);
     if (query.search) filter.search = query.search;
+    if (query.vehicleBrand) filter.vehicleBrand = query.vehicleBrand;
+    if (query.manufacturer) filter.manufacturer = query.manufacturer;
 
     const { data, total } = await this.productRepository.findAll(
       filter,
@@ -201,6 +218,12 @@ export class ProductService {
     if (dto.stock !== undefined) updateData.stock = dto.stock;
     if (dto.isActive !== undefined) updateData.isActive = dto.isActive;
     if (dto.isFeatured !== undefined) updateData.isFeatured = dto.isFeatured;
+    if (dto.oem !== undefined) updateData.oem = dto.oem;
+    if (dto.material !== undefined) updateData.material = dto.material;
+    if (dto.application !== undefined) updateData.application = dto.application;
+    if (dto.vehicleBrand !== undefined) updateData.vehicleBrand = dto.vehicleBrand;
+    if (dto.dimensions !== undefined) updateData.dimensions = dto.dimensions;
+    if (dto.crossReferences !== undefined) updateData.crossReferences = dto.crossReferences;
 
     // Translatable fields
     const fieldsToTranslate: Record<string, string> = {};

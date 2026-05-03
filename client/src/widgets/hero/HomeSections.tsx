@@ -9,7 +9,6 @@ import { AboutSection } from "./AboutSection";
 import { BrandsSection } from "./BrandsSection";
 import { IndustriesSection } from "./IndustriesSection";
 import { WhyUs } from "./WhyUs";
-import { CategoriesSection } from "./CategoriesSection";
 import { ProductCatalogSlider } from "./ProductCatalogSlider";
 import { ProductRequestSection } from "./ProductRequestSection";
 import { CTASection } from "./CTASection";
@@ -89,11 +88,6 @@ export function HomeSections({ locale, dict }: Props) {
         <IndustriesSection locale={locale} />,
       )}
       {wrap(sections.whyUs, ed.secWhyUs, <WhyUs locale={locale} />)}
-      {wrap(
-        sections.categories,
-        ed.secCategories,
-        <CategoriesSection locale={locale} dict={dict} />,
-      )}
       {wrap(
         sections.products,
         ed.secProducts,

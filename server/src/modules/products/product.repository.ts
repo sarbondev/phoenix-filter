@@ -4,11 +4,14 @@ import { IProduct } from './product.entity';
 
 export interface ProductFilter {
   category?: string;
+  categoryIds?: string[];
   isActive?: boolean;
   isFeatured?: boolean;
   minPrice?: number;
   maxPrice?: number;
   search?: string;
+  vehicleBrand?: string;
+  manufacturer?: string;
 }
 
 export class ProductRepository {
@@ -38,7 +41,11 @@ export class ProductRepository {
   ): Promise<{ data: IProduct[]; total: number }> {
     const query: FilterQuery<IProduct> = {};
 
-    if (filter.category) query.category = filter.category;
+    if (filter.categoryIds && filter.categoryIds.length > 0) {
+      query.category = { $in: filter.categoryIds };
+    } else if (filter.category) {
+      query.category = filter.category;
+    }
     if (filter.isActive !== undefined) query.isActive = filter.isActive;
     if (filter.isFeatured !== undefined) query.isFeatured = filter.isFeatured;
     if (filter.minPrice !== undefined || filter.maxPrice !== undefined) {
@@ -46,6 +53,8 @@ export class ProductRepository {
       if (filter.minPrice !== undefined) query.price.$gte = filter.minPrice;
       if (filter.maxPrice !== undefined) query.price.$lte = filter.maxPrice;
     }
+    if (filter.vehicleBrand) query.vehicleBrand = filter.vehicleBrand.toUpperCase();
+    if (filter.manufacturer) query['crossReferences.manufacturer'] = { $regex: filter.manufacturer, $options: 'i' };
     if (filter.search) {
       query.$or = [
         { 'name.uz': { $regex: filter.search, $options: 'i' } },
@@ -54,6 +63,10 @@ export class ProductRepository {
         { 'description.uz': { $regex: filter.search, $options: 'i' } },
         { 'description.ru': { $regex: filter.search, $options: 'i' } },
         { 'description.en': { $regex: filter.search, $options: 'i' } },
+        { sku: { $regex: filter.search, $options: 'i' } },
+        { oem: { $regex: filter.search, $options: 'i' } },
+        { application: { $regex: filter.search, $options: 'i' } },
+        { 'crossReferences.partNumber': { $regex: filter.search, $options: 'i' } },
       ];
     }
 

@@ -80,6 +80,7 @@ export function Navbar({ locale, dict }: NavbarProps) {
 
   const navLinks = [
     { href: `/${locale}`, label: dict.nav.home },
+    { href: `/${locale}/categories`, label: dict.nav.categories },
     { href: `/${locale}/products`, label: dict.nav.products },
     { href: `/${locale}/blog`, label: dict.blog.title },
     { href: `/${locale}/contact`, label: dict.nav.contact },

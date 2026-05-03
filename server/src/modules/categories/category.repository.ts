@@ -35,4 +35,28 @@ export class CategoryRepository {
   async countByParent(parentId: string): Promise<number> {
     return CategoryModel.countDocuments({ parent: parentId });
   }
+
+  /** Return [id, ...descendantIds] for the given category. Used when a parent
+   * category is passed as a product filter and we need to include every leaf
+   * underneath it. */
+  async collectDescendants(rootId: string): Promise<string[]> {
+    const all = await CategoryModel.find({}, { _id: 1, parent: 1 }).lean<{ _id: any; parent: any }[]>();
+    const childrenByParent = new Map<string, string[]>();
+    for (const c of all) {
+      const pid = c.parent ? String(c.parent) : "__root__";
+      if (!childrenByParent.has(pid)) childrenByParent.set(pid, []);
+      childrenByParent.get(pid)!.push(String(c._id));
+    }
+    const result: string[] = [rootId];
+    const queue = [rootId];
+    while (queue.length) {
+      const next = queue.shift()!;
+      const kids = childrenByParent.get(next) || [];
+      for (const k of kids) {
+        result.push(k);
+        queue.push(k);
+      }
+    }
+    return result;
+  }
 }
