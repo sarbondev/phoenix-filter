@@ -100,6 +100,19 @@ export function useSocket() {
       dispatch(baseApi.util.invalidateTags(['Blog']));
     });
 
+    // Presentation events
+    socket.on('presentation:created', () => {
+      dispatch(baseApi.util.invalidateTags(['Presentation']));
+    });
+
+    socket.on('presentation:updated', () => {
+      dispatch(baseApi.util.invalidateTags(['Presentation']));
+    });
+
+    socket.on('presentation:deleted', () => {
+      dispatch(baseApi.util.invalidateTags(['Presentation']));
+    });
+
     return () => {
       socket.disconnect();
     };

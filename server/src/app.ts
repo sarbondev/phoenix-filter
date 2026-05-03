@@ -26,6 +26,7 @@ import heroContentRoutes from "./modules/hero-content/hero-content.routes";
 import homeContentRoutes from "./modules/home-content/home-content.routes";
 import certificateRoutes from "./modules/certificates/certificate.routes";
 import faqRoutes from "./modules/faq/faq.routes";
+import presentationRoutes from "./modules/presentations/presentation.routes";
 
 export const createApp = (): Application => {
   const app = express();
@@ -99,6 +100,7 @@ export const createApp = (): Application => {
   app.use(`${api}/home-content`, homeContentRoutes);
   app.use(`${api}/certificates`, certificateRoutes);
   app.use(`${api}/faq`, faqRoutes);
+  app.use(`${api}/presentations`, presentationRoutes);
   // ── 404 ────────────────────────────────────────────────────────────────────
   app.use((_req: Request, res: Response) => {
     res.status(404).json({ success: false, message: "Route not found" });

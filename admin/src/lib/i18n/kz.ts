@@ -76,6 +76,7 @@ const kz = {
     filterSystem: 'Сүзгі жүйесі',
     partners: 'Серіктестер',
     industries: 'Салалар',
+    presentations: 'Презентациялар',
     settings: 'Баптаулар',
     inlineEditTip: 'Кеңес',
     inlineEditTipBody: 'Сайт мазмұнын өңдеу үшін клиенттік қосымшаға әкімші ретінде кіріп, төменгі оң жақтағы',

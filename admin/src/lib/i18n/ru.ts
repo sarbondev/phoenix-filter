@@ -76,6 +76,7 @@ const ru = {
     filterSystem: 'Система фильтров',
     partners: 'Партнёры',
     industries: 'Отрасли',
+    presentations: 'Презентации',
     settings: 'Настройки',
     inlineEditTip: 'Tip',
     inlineEditTipBody: 'Чтобы редактировать контент сайта, войдите в клиентское приложение как администратор и нажмите кнопку',

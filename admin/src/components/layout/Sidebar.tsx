@@ -12,6 +12,7 @@ import {
   Filter,
   Settings,
   PackageSearch,
+  Presentation,
 } from "lucide-react";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
@@ -28,6 +29,7 @@ const navigation = [
   { key: "blogs", href: "/blogs", icon: FileText },
   { key: "partners", href: "/partners", icon: Handshake },
   { key: "industries", href: "/industries", icon: Factory },
+  { key: "presentations", href: "/presentations", icon: Presentation },
   { key: "settings", href: "/settings", icon: Settings },
 ];
 

@@ -383,6 +383,23 @@ export interface CreateFaqRequest {
   sortOrder?: number;
 }
 
+// Presentation
+export interface Presentation {
+  id: string;
+  title: string;
+  url: string;
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+}
+
+export interface CreatePresentationRequest {
+  title: string;
+  url: string;
+  isActive?: boolean;
+  sortOrder?: number;
+}
+
 // Dashboard
 export interface DashboardStats {
   orders: { total: number; pending: number };

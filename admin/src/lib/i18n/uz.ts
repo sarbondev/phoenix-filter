@@ -76,6 +76,7 @@ const uz = {
     filterSystem: 'Filtr tizimi',
     partners: 'Hamkorlar',
     industries: 'Sohalar',
+    presentations: 'Prezentatsiyalar',
     settings: 'Sozlamalar',
     inlineEditTip: 'Maslahat',
     inlineEditTipBody: "Sayt kontentini tahrirlash uchun client'ga admin sifatida kiring va o'ng pastdagi",

@@ -76,6 +76,7 @@ const en = {
     filterSystem: 'Filter System',
     partners: 'Partners',
     industries: 'Industries',
+    presentations: 'Presentations',
     settings: 'Settings',
     inlineEditTip: 'Tip',
     inlineEditTipBody: 'To edit site content, log into the client app as admin and press the',

@@ -12,6 +12,7 @@ import ReviewsPage from '@/pages/reviews/ReviewsPage';
 import BlogsPage from '@/pages/blogs/BlogsPage';
 import PartnersPage from '@/pages/partners/PartnersPage';
 import IndustriesPage from '@/pages/industries/IndustriesPage';
+import PresentationsPage from '@/pages/presentations/PresentationsPage';
 import ProductRequestsPage from '@/pages/product-requests/ProductRequestsPage';
 import SettingsPage from '@/pages/settings/SettingsPage';
 
@@ -39,6 +40,7 @@ export default function App() {
         <Route path="/blogs" element={<AdminOnly><BlogsPage /></AdminOnly>} />
         <Route path="/partners" element={<AdminOnly><PartnersPage /></AdminOnly>} />
         <Route path="/industries" element={<AdminOnly><IndustriesPage /></AdminOnly>} />
+        <Route path="/presentations" element={<AdminOnly><PresentationsPage /></AdminOnly>} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
