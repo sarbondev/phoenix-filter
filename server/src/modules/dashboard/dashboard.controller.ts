@@ -26,7 +26,7 @@ export class DashboardController {
       CategoryModel.countDocuments(),
       ReviewModel.countDocuments(),
       OrderModel.aggregate([
-        { $match: { paymentStatus: "PAID" } },
+        { $match: { status: "DELIVERED" } },
         { $group: { _id: null, total: { $sum: "$totalAmount" } } },
       ]),
     ]);

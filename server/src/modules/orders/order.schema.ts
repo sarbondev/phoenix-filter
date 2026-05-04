@@ -37,16 +37,6 @@ const orderMongoSchema = new Schema<IOrder>(
       enum: ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'],
       default: 'PENDING',
     },
-    paymentStatus: {
-      type: String,
-      enum: ['PENDING', 'PAID', 'FAILED', 'REFUNDED'],
-      default: 'PENDING',
-    },
-    paymentMethod: {
-      type: String,
-      enum: ['CASH', 'CARD', 'BANK_TRANSFER'],
-      required: true,
-    },
     shippingAddress: { type: shippingAddressSchema, required: true },
     note: { type: String },
     cancelReason: { type: String },
@@ -77,7 +67,6 @@ const shippingAddressInputSchema = z.object({
 
 export const createOrderSchema = z.object({
   items: z.array(orderItemInputSchema).min(1),
-  paymentMethod: z.enum(['CASH', 'CARD', 'BANK_TRANSFER']),
   shippingAddress: shippingAddressInputSchema,
   note: z.string().max(500).optional(),
 });
@@ -88,8 +77,3 @@ export const updateOrderStatusSchema = z.object({
   cancelReason: z.string().max(500).optional(),
 });
 export type UpdateOrderStatusDto = z.infer<typeof updateOrderStatusSchema>;
-
-export const updatePaymentStatusSchema = z.object({
-  paymentStatus: z.enum(['PENDING', 'PAID', 'FAILED', 'REFUNDED']),
-});
-export type UpdatePaymentStatusDto = z.infer<typeof updatePaymentStatusSchema>;

@@ -10,6 +10,9 @@ import { useGetBlogsQuery } from '@/store/api/blogApi';
 import { t, getImageUrl } from '@/shared/lib/utils';
 import { Skeleton, Button } from '@/shared/ui';
 import { useQueryParams } from '@/shared/hooks';
+import { Editable } from '@/features/inline-editor';
+import { BlogsBlockEditor } from '@/features/inline-editor/blocks/BlogsBlockEditor';
+import { useEditorDict } from '@/features/inline-editor/useEditorDict';
 
 interface Props { locale: Locale; dict: Dictionary }
 
@@ -17,11 +20,21 @@ export function BlogPageClient({ locale, dict }: Props) {
   const { params, setParams } = useQueryParams();
   const page = Number(params.page) || 1;
   const { data, isLoading } = useGetBlogsQuery({ page, limit: 12 });
+  const ed = useEditorDict();
 
   const blogs = data?.data ?? [];
   const meta = data?.meta;
 
   return (
+    <Editable
+      id="blogs"
+      label={ed.blogsLabel}
+      block={() => ({
+        title: ed.blogsTitle,
+        description: ed.blogsDesc,
+        render: (close) => <BlogsBlockEditor close={close} />,
+      })}
+    >
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
         <h1 className="text-3xl font-bold text-slate-900">{dict.blog.title}</h1>
@@ -103,5 +116,6 @@ export function BlogPageClient({ locale, dict }: Props) {
         </>
       )}
     </div>
+    </Editable>
   );
 }

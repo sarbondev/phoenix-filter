@@ -39,7 +39,6 @@ interface ShippingAddress {
 
 interface CreateOrderRequest {
   items: OrderItem[];
-  paymentMethod: 'CASH' | 'CARD' | 'BANK_TRANSFER';
   shippingAddress: ShippingAddress;
   note?: string;
 }

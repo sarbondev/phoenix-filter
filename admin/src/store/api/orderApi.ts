@@ -30,11 +30,6 @@ export const orderApi = baseApi.injectEndpoints({
       transformResponse: (res: ApiResponse<Order>) => res.data,
       invalidatesTags: (_r, _e, { id }) => [{ type: 'Order', id }, 'Order', 'Dashboard'],
     }),
-    updatePaymentStatus: builder.mutation<Order, { id: string; paymentStatus: string }>({
-      query: ({ id, ...body }) => ({ url: `/orders/${id}/payment`, method: 'PATCH', body }),
-      transformResponse: (res: ApiResponse<Order>) => res.data,
-      invalidatesTags: (_r, _e, { id }) => [{ type: 'Order', id }, 'Order', 'Dashboard'],
-    }),
   }),
 });
 
@@ -42,5 +37,4 @@ export const {
   useGetOrdersQuery,
   useGetOrderStatsQuery,
   useUpdateOrderStatusMutation,
-  useUpdatePaymentStatusMutation,
 } = orderApi;

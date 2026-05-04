@@ -18,6 +18,6 @@ export const baseApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Product', 'Category', 'Cart', 'Review', 'Order', 'Blog', 'ProductRequest', 'SiteSettings', 'HeroContent', 'HomeContent', 'Faq', 'Certificate', 'Partner'],
+  tagTypes: ['Product', 'Category', 'Cart', 'Review', 'Order', 'Blog', 'ProductRequest', 'SiteSettings', 'HeroContent', 'HomeContent', 'Faq', 'Certificate', 'Partner', 'Industry'],
   endpoints: () => ({}),
 });

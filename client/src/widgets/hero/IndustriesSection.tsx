@@ -7,6 +7,9 @@ import { ArrowRight } from "lucide-react";
 import type { Locale } from "@/shared/types";
 import { useGetIndustriesQuery } from "@/store/api/industryApi";
 import { getImageUrl, t } from "@/shared/lib/utils";
+import { Editable } from "@/features/inline-editor";
+import { IndustriesBlockEditor } from "@/features/inline-editor/blocks/IndustriesBlockEditor";
+import { useEditorDict } from "@/features/inline-editor/useEditorDict";
 
 const titles: Record<string, string> = {
   en: "Industries we serve",
@@ -32,8 +35,18 @@ const noData: Record<string, string> = {
 export function IndustriesSection({ locale }: { locale: Locale }) {
   const { data: industries } = useGetIndustriesQuery();
   const active = industries?.filter((i) => i.isActive) ?? [];
+  const ed = useEditorDict();
 
   return (
+    <Editable
+      id="industries"
+      label={ed.industriesLabel}
+      block={() => ({
+        title: ed.industriesTitle,
+        description: ed.industriesDesc,
+        render: (close) => <IndustriesBlockEditor close={close} />,
+      })}
+    >
     <section className="py-12 lg:py-16 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
@@ -90,5 +103,6 @@ export function IndustriesSection({ locale }: { locale: Locale }) {
         )}
       </div>
     </section>
+    </Editable>
   );
 }

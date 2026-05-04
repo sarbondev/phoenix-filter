@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { CheckCircle, ArrowLeft, Banknote, CreditCard, Building2 } from 'lucide-react';
+import { CheckCircle, ArrowLeft } from 'lucide-react';
 import type { Locale } from '@/shared/types';
 import type { Dictionary } from '@/shared/i18n/dictionaries/en';
 import { Button, Input, PhoneInput } from '@/shared/ui';
@@ -32,7 +32,6 @@ export function CheckoutPageClient({ locale, dict }: Props) {
     district: '',
     address: '',
     note: '',
-    paymentMethod: 'CASH' as 'CASH' | 'CARD' | 'BANK_TRANSFER',
   });
 
   const set = (key: string, value: string) => setForm((f) => ({ ...f, [key]: value }));
@@ -91,7 +90,6 @@ export function CheckoutPageClient({ locale, dict }: Props) {
     try {
       await createOrder({
         items: cartItems.map((i) => ({ product: i.product.id, quantity: i.quantity })),
-        paymentMethod: form.paymentMethod,
         shippingAddress: {
           fullName: form.fullName,
           phoneNumber: form.phoneNumber,
@@ -109,12 +107,6 @@ export function CheckoutPageClient({ locale, dict }: Props) {
       setError(apiErr.data?.message || 'Failed to place order');
     }
   };
-
-  const paymentMethods = [
-    { value: 'CASH', label: dict.checkout.cash, icon: <Banknote className="h-5 w-5" /> },
-    { value: 'CARD', label: dict.checkout.card, icon: <CreditCard className="h-5 w-5" /> },
-    { value: 'BANK_TRANSFER', label: dict.checkout.bankTransfer, icon: <Building2 className="h-5 w-5" /> },
-  ];
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
@@ -148,27 +140,6 @@ export function CheckoutPageClient({ locale, dict }: Props) {
               </div>
             </div>
 
-            {/* Payment */}
-            <div className="rounded-2xl bg-white border border-slate-200 p-6">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">{dict.checkout.paymentMethod}</h2>
-              <div className="grid sm:grid-cols-3 gap-3">
-                {paymentMethods.map((pm) => (
-                  <button
-                    key={pm.value}
-                    type="button"
-                    onClick={() => setForm((f) => ({ ...f, paymentMethod: pm.value as typeof f.paymentMethod }))}
-                    className={`flex items-center gap-3 rounded-xl border-2 p-4 text-sm font-medium transition-all ${
-                      form.paymentMethod === pm.value
-                        ? 'border-primary bg-primary/5 text-primary'
-                        : 'border-slate-200 text-slate-600 hover:border-slate-300'
-                    }`}
-                  >
-                    {pm.icon}
-                    {pm.label}
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
 
           {/* Summary */}

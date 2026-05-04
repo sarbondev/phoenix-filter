@@ -30,10 +30,6 @@ export function useSocket() {
       dispatch(baseApi.util.invalidateTags(['Order', 'Dashboard']));
     });
 
-    socket.on('order:paymentUpdated', () => {
-      dispatch(baseApi.util.invalidateTags(['Order', 'Dashboard']));
-    });
-
     // Product events
     socket.on('product:created', () => {
       dispatch(baseApi.util.invalidateTags(['Product', 'Dashboard']));
@@ -85,19 +81,6 @@ export function useSocket() {
 
     socket.on('user:deleted', () => {
       dispatch(baseApi.util.invalidateTags(['User', 'Dashboard']));
-    });
-
-    // Blog events
-    socket.on('blog:created', () => {
-      dispatch(baseApi.util.invalidateTags(['Blog']));
-    });
-
-    socket.on('blog:updated', () => {
-      dispatch(baseApi.util.invalidateTags(['Blog']));
-    });
-
-    socket.on('blog:deleted', () => {
-      dispatch(baseApi.util.invalidateTags(['Blog']));
     });
 
     // Presentation events

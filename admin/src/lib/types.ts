@@ -161,7 +161,6 @@ export interface OrderItem {
 }
 
 export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
-export type PaymentStatus = 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED';
 
 export interface Order {
   id: string;
@@ -172,8 +171,6 @@ export interface Order {
   shippingCost: number;
   totalAmount: number;
   status: OrderStatus;
-  paymentStatus: PaymentStatus;
-  paymentMethod: 'CASH' | 'CARD' | 'BANK_TRANSFER';
   shippingAddress: ShippingAddress;
   note?: string;
   cancelReason?: string;
@@ -220,58 +217,6 @@ export interface CreateUserRequest {
   password: string;
   name: string;
   role?: 'ADMIN' | 'CALL_MANAGER' | 'CLIENT';
-}
-
-// Blog
-export interface Blog {
-  id: string;
-  title: TranslatedField;
-  content: TranslatedField;
-  excerpt: TranslatedField;
-  slug: string;
-  image?: string;
-  isPublished: boolean;
-  views: number;
-  createdAt: string;
-}
-
-export interface CreateBlogRequest {
-  title: string;
-  content: string;
-  image?: string;
-  isPublished?: boolean;
-}
-
-// Partner
-export interface Partner {
-  id: string;
-  image: string;
-  isActive: boolean;
-  sortOrder: number;
-  createdAt: string;
-}
-
-export interface CreatePartnerRequest {
-  image: string;
-  isActive?: boolean;
-  sortOrder?: number;
-}
-
-// Industry
-export interface Industry {
-  id: string;
-  name: TranslatedField;
-  image: string;
-  isActive: boolean;
-  sortOrder: number;
-  createdAt: string;
-}
-
-export interface CreateIndustryRequest {
-  name: string;
-  image: string;
-  isActive?: boolean;
-  sortOrder?: number;
 }
 
 // Product Request (customer-searched products that returned no results)

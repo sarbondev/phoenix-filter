@@ -50,10 +50,6 @@ export function useSocket() {
       dispatch(baseApi.util.invalidateTags(['Order']));
     });
 
-    socket.on('order:paymentUpdated', () => {
-      dispatch(baseApi.util.invalidateTags(['Order']));
-    });
-
     // Cart events — sync across tabs/devices
     socket.on('cart:updated', () => {
       dispatch(baseApi.util.invalidateTags(['Cart']));

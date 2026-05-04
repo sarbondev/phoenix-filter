@@ -1,23 +1,18 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Eye } from 'lucide-react';
-import { useGetOrdersQuery, useUpdateOrderStatusMutation, useUpdatePaymentStatusMutation } from '@/store/api/orderApi';
+import { useGetOrdersQuery, useUpdateOrderStatusMutation } from '@/store/api/orderApi';
 import {
   Button, Select, Card, Table, Badge,
   Pagination, Modal,
 } from '@/components/ui';
 import type { Order } from '@/lib/types';
-import { useAppSelector } from '@/hooks/store';
 import { useLocale } from '@/hooks/useLocale';
 import { useQueryParams } from '@/hooks/useQueryParams';
 
 const statusVariant: Record<string, 'default' | 'success' | 'warning' | 'danger' | 'info'> = {
   PENDING: 'warning', CONFIRMED: 'info', PROCESSING: 'info',
   SHIPPED: 'info', DELIVERED: 'success', CANCELLED: 'danger',
-};
-
-const paymentVariant: Record<string, 'default' | 'success' | 'warning' | 'danger' | 'info'> = {
-  PENDING: 'warning', PAID: 'success', FAILED: 'danger', REFUNDED: 'info',
 };
 
 export default function OrdersPage() {
@@ -27,13 +22,11 @@ export default function OrdersPage() {
   const page = Number(params.page) || 1;
   const statusFilter = params.status || '';
   const [viewOrder, setViewOrder] = useState<Order | null>(null);
-  const user = useAppSelector((s) => s.auth.user);
 
   const { data: res, isLoading } = useGetOrdersQuery({
     page, limit: 10, status: statusFilter || undefined,
   });
   const [updateStatus, { isLoading: updatingStatus }] = useUpdateOrderStatusMutation();
-  const [updatePayment, { isLoading: updatingPayment }] = useUpdatePaymentStatusMutation();
 
   const orders = res?.data ?? [];
   const meta = res?.meta;
@@ -45,13 +38,6 @@ export default function OrdersPage() {
     { value: 'SHIPPED', label: t('orders.statuses.SHIPPED') },
     { value: 'DELIVERED', label: t('orders.statuses.DELIVERED') },
     { value: 'CANCELLED', label: t('orders.statuses.CANCELLED') },
-  ];
-
-  const paymentOptions: Array<{ value: string; label: string }> = [
-    { value: 'PENDING', label: t('orders.paymentStatuses.PENDING') },
-    { value: 'PAID', label: t('orders.paymentStatuses.PAID') },
-    { value: 'FAILED', label: t('orders.paymentStatuses.FAILED') },
-    { value: 'REFUNDED', label: t('orders.paymentStatuses.REFUNDED') },
   ];
 
   const formatPrice = (n: number) => new Intl.NumberFormat('uz-UZ').format(n) + ' UZS';
@@ -71,13 +57,6 @@ export default function OrdersPage() {
   const handleStatusChange = async (orderId: string, status: string) => {
     try {
       const updated = await updateStatus({ id: orderId, status }).unwrap();
-      setViewOrder((prev) => prev ? { ...prev, ...updated } : prev);
-    } catch { /* error handled by RTK Query */ }
-  };
-
-  const handlePaymentChange = async (orderId: string, paymentStatus: string) => {
-    try {
-      const updated = await updatePayment({ id: orderId, paymentStatus }).unwrap();
       setViewOrder((prev) => prev ? { ...prev, ...updated } : prev);
     } catch { /* error handled by RTK Query */ }
   };
@@ -114,9 +93,6 @@ export default function OrdersPage() {
             )},
             { key: 'status', header: t('common.status'), render: (o) => (
               <Badge variant={statusVariant[o.status] ?? 'default'}>{t(`orders.statuses.${o.status}`)}</Badge>
-            )},
-            { key: 'paymentStatus', header: t('orders.paymentStatus'), render: (o) => (
-              <Badge variant={paymentVariant[o.paymentStatus] ?? 'default'}>{t(`orders.paymentStatuses.${o.paymentStatus}`)}</Badge>
             )},
             { key: 'date', header: t('common.date'), render: (o) => new Date(o.createdAt).toLocaleDateString() },
             { key: 'actions', header: '', className: 'w-16', render: (o) => (
@@ -189,28 +165,15 @@ export default function OrdersPage() {
               </div>
             </div>
 
-            {/* Status Actions */}
-            <div className="grid grid-cols-2 gap-4 border-t pt-4">
-              <div>
-                <Select
-                  label={t('orders.orderStatus')}
-                  options={statusOptions}
-                  value={viewOrder.status}
-                  onChange={(e) => handleStatusChange(viewOrder.id, e.target.value)}
-                  disabled={updatingStatus || viewOrder.status === 'CANCELLED' || viewOrder.status === 'DELIVERED'}
-                />
-              </div>
-              {user?.role === 'ADMIN' && (
-                <div>
-                  <Select
-                    label={t('orders.paymentStatus')}
-                    options={paymentOptions}
-                    value={viewOrder.paymentStatus}
-                    onChange={(e) => handlePaymentChange(viewOrder.id, e.target.value)}
-                    disabled={updatingPayment}
-                  />
-                </div>
-              )}
+            {/* Status Action */}
+            <div className="border-t pt-4">
+              <Select
+                label={t('orders.orderStatus')}
+                options={statusOptions}
+                value={viewOrder.status}
+                onChange={(e) => handleStatusChange(viewOrder.id, e.target.value)}
+                disabled={updatingStatus || viewOrder.status === 'CANCELLED' || viewOrder.status === 'DELIVERED'}
+              />
             </div>
 
             {viewOrder.note && (

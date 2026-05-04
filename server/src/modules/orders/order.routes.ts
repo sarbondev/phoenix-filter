@@ -6,7 +6,7 @@ import { ProductRepository } from '../products/product.repository';
 import { validate } from '../../shared/middleware/validate.middleware';
 import { authenticate, authorize } from '../../shared/middleware/auth.middleware';
 import { asyncHandler } from '../../shared/middleware/error-handler.middleware';
-import { createOrderSchema, updateOrderStatusSchema, updatePaymentStatusSchema } from './order.schema';
+import { createOrderSchema, updateOrderStatusSchema } from './order.schema';
 
 const orderRepository = new OrderRepository();
 const productRepository = new ProductRepository();
@@ -44,13 +44,6 @@ router.patch(
   authorize('ADMIN', 'CALL_MANAGER'),
   validate({ body: updateOrderStatusSchema }),
   asyncHandler(orderController.updateStatus),
-);
-router.patch(
-  '/:id/payment',
-  authenticate,
-  authorize('ADMIN'),
-  validate({ body: updatePaymentStatusSchema }),
-  asyncHandler(orderController.updatePaymentStatus),
 );
 
 export default router;
