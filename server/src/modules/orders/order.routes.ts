@@ -24,6 +24,13 @@ router.post(
 );
 router.get('/my', authenticate, asyncHandler(orderController.getMyOrders as any));
 router.get('/my/:id', authenticate, asyncHandler(orderController.getOne as any));
+// Lookup the customer's own order by its human-friendly number (used by the
+// post-checkout confirmation page so it's bookmarkable).
+router.get(
+  '/by-number/:orderNumber',
+  authenticate,
+  asyncHandler(orderController.getByNumber as any),
+);
 
 // Admin routes
 router.get(

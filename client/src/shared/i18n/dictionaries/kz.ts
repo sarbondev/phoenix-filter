@@ -70,6 +70,8 @@ const kz: Dictionary = {
     outletDiameter: 'Шығыс диаметрі',
     manufacturerFilter: 'Бренд бойынша',
     allManufacturers: 'Барлық брендтер',
+    clearFilters: 'Сүзгілерді тазарту',
+    activeFilters: 'Белсенді',
   },
   categories: {
     title: 'Санаттар',
@@ -140,6 +142,8 @@ const kz: Dictionary = {
     passwordHint: 'Кемінде 8 таңба, 1 бас әріп, 1 сан',
     fieldRequired: 'міндетті',
     fieldIncomplete: 'толық емес',
+    showPassword: 'Құпиясөзді көрсету',
+    hidePassword: 'Құпиясөзді жасыру',
   },
   checkout: {
     title: 'Тапсырысты рәсімдеу',
@@ -157,6 +161,10 @@ const kz: Dictionary = {
     orderSuccessDesc: 'Тапсырысыңыз қабылданды. Жақын арада сізбен хабарласамыз.',
     backToHome: 'Басты бетке',
     myOrders: 'Менің тапсырыстарым',
+    selectRegion: 'Аймақты таңдаңыз',
+    selectDistrict: 'Ауданды таңдаңыз',
+    orderNumber: 'Тапсырыс нөмірі',
+    viewOrder: 'Тапсырысты ашу',
   },
   blog: {
     title: 'Блог',
@@ -193,6 +201,15 @@ const kz: Dictionary = {
     bannerTitle: 'Нақты бір нәрсе іздеп жүрсіз бе?',
     bannerDesc: 'Жазыңыз — біз оны сіз үшін табамыз.',
     bannerCta: 'Өнім сұрау',
+  },
+  profile: {
+    title: 'Профиль',
+    accountInfo: 'Аккаунт мәліметтері',
+    accountType: 'Аккаунт түрі',
+    quickActions: 'Жылдам әрекеттер',
+    roleAdmin: 'Әкімші',
+    roleCallManager: 'Менеджер',
+    roleClient: 'Клиент',
   },
   settings: {
     title: 'Баптаулар',

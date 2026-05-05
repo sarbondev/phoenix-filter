@@ -68,6 +68,8 @@ const en = {
     outletDiameter: 'Outlet diameter',
     manufacturerFilter: 'By brand',
     allManufacturers: 'All brands',
+    clearFilters: 'Clear filters',
+    activeFilters: 'Active',
   },
   categories: {
     title: 'Categories',
@@ -138,6 +140,8 @@ const en = {
     passwordHint: 'Min 8 chars, 1 uppercase, 1 number',
     fieldRequired: 'is required',
     fieldIncomplete: 'is incomplete',
+    showPassword: 'Show password',
+    hidePassword: 'Hide password',
   },
   checkout: {
     title: 'Checkout',
@@ -155,6 +159,10 @@ const en = {
     orderSuccessDesc: 'Your order has been placed. We will contact you shortly.',
     backToHome: 'Back to Home',
     myOrders: 'My Orders',
+    selectRegion: 'Select region',
+    selectDistrict: 'Select district',
+    orderNumber: 'Order number',
+    viewOrder: 'View order',
   },
   blog: {
     title: 'Blog',
@@ -191,6 +199,15 @@ const en = {
     bannerTitle: 'Looking for something specific?',
     bannerDesc: 'Tell us and we will source it for you.',
     bannerCta: 'Request a product',
+  },
+  profile: {
+    title: 'Profile',
+    accountInfo: 'Account Information',
+    accountType: 'Account Type',
+    quickActions: 'Quick Actions',
+    roleAdmin: 'Administrator',
+    roleCallManager: 'Call Manager',
+    roleClient: 'Customer',
   },
   settings: {
     title: 'Settings',

@@ -75,13 +75,25 @@ export function CartPageClient({ locale, dict }: Props) {
                   </p>
 
                   <div className="mt-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2 rounded-xl border border-slate-200">
-                      <button onClick={() => dispatch(updateQuantity({ id: item.product.id, quantity: item.quantity - 1 }))} className="p-2 text-slate-500 hover:text-primary">
-                        <Minus className="h-3.5 w-3.5" />
+                    <div className="flex items-center gap-1 rounded-xl border border-slate-200">
+                      <button
+                        type="button"
+                        onClick={() => dispatch(updateQuantity({ id: item.product.id, quantity: item.quantity - 1 }))}
+                        disabled={item.quantity <= 1}
+                        aria-label="Decrease quantity"
+                        className="flex h-11 w-11 items-center justify-center text-slate-500 hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        <Minus className="h-4 w-4" />
                       </button>
                       <span className="w-8 text-center text-sm font-semibold">{item.quantity}</span>
-                      <button onClick={() => dispatch(updateQuantity({ id: item.product.id, quantity: item.quantity + 1 }))} className="p-2 text-slate-500 hover:text-primary">
-                        <Plus className="h-3.5 w-3.5" />
+                      <button
+                        type="button"
+                        onClick={() => dispatch(updateQuantity({ id: item.product.id, quantity: item.quantity + 1 }))}
+                        disabled={item.product.stock != null && item.quantity >= item.product.stock}
+                        aria-label="Increase quantity"
+                        className="flex h-11 w-11 items-center justify-center text-slate-500 hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        <Plus className="h-4 w-4" />
                       </button>
                     </div>
 
@@ -89,7 +101,12 @@ export function CartPageClient({ locale, dict }: Props) {
                       <span className="font-semibold text-slate-900">
                         {formatPrice((item.product.discountPrice ?? item.product.price) * item.quantity)} UZS
                       </span>
-                      <button onClick={() => dispatch(removeFromCart(item.product.id))} className="text-slate-400 hover:text-red-500 transition-colors">
+                      <button
+                        type="button"
+                        onClick={() => dispatch(removeFromCart(item.product.id))}
+                        aria-label="Remove item"
+                        className="flex h-11 w-11 items-center justify-center text-slate-400 hover:text-red-500 transition-colors"
+                      >
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>

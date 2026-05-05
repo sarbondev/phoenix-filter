@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Lock, User, Filter } from 'lucide-react';
+import { Lock, User, Filter, Eye, EyeOff } from 'lucide-react';
 import { Phone } from 'lucide-react';
 import type { Locale } from '@/shared/types';
 import type { Dictionary } from '@/shared/i18n/dictionaries/en';
@@ -23,6 +23,7 @@ export function AuthPageClient({ locale, dict }: Props) {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const dispatch = useAppDispatch();
   const token = useAppSelector((s) => s.auth.token);
@@ -41,11 +42,11 @@ export function AuthPageClient({ locale, dict }: Props) {
     setError('');
 
     if (phone.length < 13) {
-      setError(dict.auth.phoneNumber + ' is incomplete');
+      setError(`${dict.auth.phoneNumber} ${dict.auth.fieldIncomplete}`);
       return;
     }
     if (!password) {
-      setError(dict.auth.password + ' is required');
+      setError(`${dict.auth.password} ${dict.auth.fieldRequired}`);
       return;
     }
 
@@ -56,7 +57,7 @@ export function AuthPageClient({ locale, dict }: Props) {
         dispatch(addToast({ message: `${dict.auth.login} ✓`, type: 'success' }));
       } else {
         if (!name.trim()) {
-          setError(dict.auth.name + ' is required');
+          setError(`${dict.auth.name} ${dict.auth.fieldRequired}`);
           return;
         }
         const res = await register({ phoneNumber: phone, password, name }).unwrap();
@@ -127,15 +128,23 @@ export function AuthPageClient({ locale, dict }: Props) {
                   <Lock className="h-4 w-4" />
                 </div>
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-white pl-11 pr-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                  className="w-full rounded-xl border border-slate-200 bg-white pl-11 pr-12 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={showPassword ? dict.auth.hidePassword : dict.auth.showPassword}
+                  className="absolute inset-y-0 right-0 flex h-full w-11 items-center justify-center text-slate-400 hover:text-slate-700"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
               {!isLogin && (
-                <p className="mt-1 text-xs text-slate-400">Min 8 chars, 1 uppercase, 1 number</p>
+                <p className="mt-1 text-xs text-slate-400">{dict.auth.passwordHint}</p>
               )}
             </div>
 

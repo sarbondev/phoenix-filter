@@ -14,6 +14,7 @@ import {
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import { useAppSelector } from "@/hooks/store";
+import { useGetOrderStatsQuery } from "@/store/api/orderApi";
 
 const navigation = [
   { key: "dashboard", href: "/", icon: LayoutDashboard },
@@ -31,6 +32,11 @@ export function Sidebar() {
   const { t } = useTranslation();
 
   const user = useAppSelector((s) => s.auth.user);
+  const { data: orderStats } = useGetOrderStatsQuery(undefined, {
+    skip: !user,
+    pollingInterval: 60_000,
+  });
+  const pendingOrders = orderStats?.PENDING ?? 0;
 
   const visibleNav = navigation.filter((item) => {
     if (user?.role === "CALL_MANAGER") {
@@ -54,24 +60,32 @@ export function Sidebar() {
       </div>
 
       <nav className="mt-4 flex-1 space-y-1 px-3">
-        {visibleNav.map((item) => (
-          <NavLink
-            key={item.href}
-            to={item.href}
-            end={item.href === "/"}
-            className={({ isActive }) =>
-              clsx(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-blue-600 text-white"
-                  : "text-slate-400 hover:bg-slate-800 hover:text-white",
-              )
-            }
-          >
-            <item.icon className="h-5 w-5" />
-            {t(`sidebar.${item.key}`)}
-          </NavLink>
-        ))}
+        {visibleNav.map((item) => {
+          const badge = item.key === "orders" && pendingOrders > 0 ? pendingOrders : null;
+          return (
+            <NavLink
+              key={item.href}
+              to={item.href}
+              end={item.href === "/"}
+              className={({ isActive }) =>
+                clsx(
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-blue-600 text-white"
+                    : "text-slate-400 hover:bg-slate-800 hover:text-white",
+                )
+              }
+            >
+              <item.icon className="h-5 w-5" />
+              <span className="flex-1">{t(`sidebar.${item.key}`)}</span>
+              {badge !== null && (
+                <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-amber-500 px-1.5 text-[10.5px] font-bold text-white">
+                  {badge > 99 ? "99+" : badge}
+                </span>
+              )}
+            </NavLink>
+          );
+        })}
       </nav>
 
       <div className="px-3 pb-4">

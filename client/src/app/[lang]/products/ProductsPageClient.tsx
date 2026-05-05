@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, SlidersHorizontal, ChevronDown, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import type { Locale, Category } from '@/shared/types';
@@ -8,9 +8,9 @@ import type { Dictionary } from '@/shared/i18n/dictionaries/en';
 import { useGetProductsQuery } from '@/store/api/productApi';
 import { useGetCategoriesQuery } from '@/store/api/categoryApi';
 import { ProductCard } from '@/entities/product/ProductCard';
-import { ProductCardSkeleton, Input, Button } from '@/shared/ui';
+import { ProductCardSkeleton, Input } from '@/shared/ui';
 import { t } from '@/shared/lib/utils';
-import { useQueryParams } from '@/shared/hooks';
+import { useQueryParams, useDebounce } from '@/shared/hooks';
 import { ProductRequestForm } from '@/features/product-request/ProductRequestForm';
 
 interface Props { locale: Locale; dict: Dictionary }
@@ -20,7 +20,21 @@ export function ProductsPageClient({ locale, dict }: Props) {
   const [mobileSidebar, setMobileSidebar] = useState(false);
 
   const page = Number(params.page) || 1;
-  const search = params.search ?? '';
+  const urlSearch = params.search ?? '';
+  // Local input mirror so typing stays snappy; debounce → URL → query.
+  const [searchInput, setSearchInput] = useState(urlSearch);
+  const debouncedSearch = useDebounce(searchInput, 300);
+  useEffect(() => {
+    if (debouncedSearch === urlSearch) return;
+    setParams({ search: debouncedSearch || undefined, page: undefined });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearch]);
+  // Keep input in sync if URL changes externally (e.g. clear-all).
+  useEffect(() => {
+    if (urlSearch !== searchInput) setSearchInput(urlSearch);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [urlSearch]);
+  const search = debouncedSearch;
   const categoryParam = params.category ?? '';
   const categorySlug = params.categorySlug ?? '';
   const manufacturer = params.manufacturer ?? '';
@@ -63,6 +77,33 @@ export function ProductsPageClient({ locale, dict }: Props) {
 
   const selectedCat = categories?.find((c) => c.id === category);
 
+  const activeFilterCount =
+    (search ? 1 : 0) + (category ? 1 : 0) + (manufacturer ? 1 : 0);
+
+  const clearAll = () => {
+    setSearchInput('');
+    setParams({
+      search: undefined,
+      category: undefined,
+      categorySlug: undefined,
+      manufacturer: undefined,
+      page: undefined,
+    });
+  };
+
+  // Build a compact numbered pagination: first, last, current ± 1, ellipsis fillers.
+  const buildPageList = (current: number, total: number): (number | '…')[] => {
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    const pages = new Set<number>([1, total, current, current - 1, current + 1]);
+    const sorted = Array.from(pages).filter((p) => p >= 1 && p <= total).sort((a, b) => a - b);
+    const out: (number | '…')[] = [];
+    for (let i = 0; i < sorted.length; i++) {
+      out.push(sorted[i]);
+      if (i < sorted.length - 1 && sorted[i + 1] - sorted[i] > 1) out.push('…');
+    }
+    return out;
+  };
+
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
@@ -95,8 +136,8 @@ export function ProductsPageClient({ locale, dict }: Props) {
               <Input
                 icon={<Search className="h-4 w-4" />}
                 placeholder={dict.nav.search}
-                value={search}
-                onChange={(e) => { setParams({ search: e.target.value || undefined, page: undefined }); }}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
               />
             </div>
             <div className="flex gap-2">
@@ -116,20 +157,43 @@ export function ProductsPageClient({ locale, dict }: Props) {
               >
                 <SlidersHorizontal className="h-4 w-4" />
                 {dict.products.filters}
+                {activeFilterCount > 0 && (
+                  <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[var(--color-brand)] px-1.5 text-[10.5px] font-bold text-white">
+                    {activeFilterCount}
+                  </span>
+                )}
               </button>
             </div>
           </div>
 
-          {/* Active category chip */}
-          {selectedCat && (
-            <div className="flex items-center gap-2 mb-5">
-              <span className="text-sm text-slate-500">{dict.categories.title}:</span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-brand-soft)] text-[var(--color-brand)] px-3 py-1 text-sm font-medium">
-                {t(selectedCat.name, locale)}
-                <button onClick={() => selectCategory('')} className="hover:bg-[var(--color-brand)]/20 rounded-full p-0.5 transition-colors">
-                  <X className="h-3 w-3" />
-                </button>
-              </span>
+          {/* Active filter chips + clear-all */}
+          {activeFilterCount > 0 && (
+            <div className="flex flex-wrap items-center gap-2 mb-5">
+              {selectedCat && (
+                <FilterChip
+                  label={t(selectedCat.name, locale)}
+                  onRemove={() => selectCategory('')}
+                />
+              )}
+              {manufacturer && (
+                <FilterChip
+                  label={manufacturer}
+                  onRemove={() => setParams({ manufacturer: undefined, page: undefined })}
+                />
+              )}
+              {search && (
+                <FilterChip
+                  label={`"${search}"`}
+                  onRemove={() => setSearchInput('')}
+                />
+              )}
+              <button
+                type="button"
+                onClick={clearAll}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-[var(--color-brand)] transition-colors ml-1"
+              >
+                {dict.products.clearFilters}
+              </button>
             </div>
           )}
 
@@ -162,10 +226,44 @@ export function ProductsPageClient({ locale, dict }: Props) {
 
           {/* Pagination */}
           {meta && meta.totalPages > 1 && (
-            <div className="mt-12 flex items-center justify-center gap-3">
-              <Button variant="outline" disabled={page <= 1} onClick={() => setParams({ page: String(page - 1) })}><ChevronLeft className="h-4 w-4" /></Button>
-              <span className="text-sm text-slate-500">{page} / {meta.totalPages}</span>
-              <Button variant="outline" disabled={page >= meta.totalPages} onClick={() => setParams({ page: String(page + 1) })}><ChevronRight className="h-4 w-4" /></Button>
+            <div className="mt-12 flex flex-wrap items-center justify-center gap-1.5">
+              <button
+                type="button"
+                disabled={page <= 1}
+                onClick={() => setParams({ page: page - 1 > 1 ? String(page - 1) : undefined })}
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                aria-label="Previous page"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              {buildPageList(page, meta.totalPages).map((p, idx) =>
+                p === '…' ? (
+                  <span key={`e${idx}`} className="px-2 text-sm text-slate-400">…</span>
+                ) : (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setParams({ page: p > 1 ? String(p) : undefined })}
+                    aria-current={p === page ? 'page' : undefined}
+                    className={`min-w-9 h-9 px-2.5 rounded-lg text-sm font-semibold transition-colors ${
+                      p === page
+                        ? 'bg-[var(--color-brand)] text-white'
+                        : 'border border-slate-200 bg-white text-slate-600 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)]'
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ),
+              )}
+              <button
+                type="button"
+                disabled={page >= meta.totalPages}
+                onClick={() => setParams({ page: String(page + 1) })}
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                aria-label="Next page"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
             </div>
           )}
         </div>
@@ -217,6 +315,22 @@ export function ProductsPageClient({ locale, dict }: Props) {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-brand-soft)] text-[var(--color-brand)] px-3 py-1 text-sm font-medium">
+      {label}
+      <button
+        type="button"
+        onClick={onRemove}
+        aria-label="Remove filter"
+        className="hover:bg-[var(--color-brand)]/20 rounded-full p-0.5 transition-colors"
+      >
+        <X className="h-3 w-3" />
+      </button>
+    </span>
   );
 }
 

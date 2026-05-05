@@ -70,6 +70,8 @@ const uz: Dictionary = {
     outletDiameter: "Chiqish diametri",
     manufacturerFilter: 'Brend bo\'yicha',
     allManufacturers: 'Barcha brendlar',
+    clearFilters: 'Filterlarni tozalash',
+    activeFilters: 'Faol',
   },
   categories: {
     title: 'Kategoriyalar',
@@ -140,6 +142,8 @@ const uz: Dictionary = {
     passwordHint: 'Kamida 8 belgi, 1 katta harf, 1 raqam',
     fieldRequired: 'talab qilinadi',
     fieldIncomplete: "to'liq emas",
+    showPassword: "Parolni ko'rsatish",
+    hidePassword: 'Parolni yashirish',
   },
   checkout: {
     title: 'Buyurtma rasmiylashtirish',
@@ -157,6 +161,10 @@ const uz: Dictionary = {
     orderSuccessDesc: "Buyurtmangiz qabul qilindi. Tez orada siz bilan bog'lanamiz.",
     backToHome: 'Bosh sahifaga',
     myOrders: 'Mening buyurtmalarim',
+    selectRegion: 'Viloyatni tanlang',
+    selectDistrict: 'Tumanni tanlang',
+    orderNumber: 'Buyurtma raqami',
+    viewOrder: 'Buyurtmani ochish',
   },
   blog: {
     title: 'Blog',
@@ -193,6 +201,15 @@ const uz: Dictionary = {
     bannerTitle: 'Aniq mahsulot kerakmi?',
     bannerDesc: 'Yozing — biz uni siz uchun topib beramiz.',
     bannerCta: "Mahsulot so'rash",
+  },
+  profile: {
+    title: 'Profil',
+    accountInfo: 'Akkaunt ma\'lumotlari',
+    accountType: 'Akkaunt turi',
+    quickActions: 'Tez amallar',
+    roleAdmin: 'Administrator',
+    roleCallManager: 'Menejer',
+    roleClient: 'Mijoz',
   },
   settings: {
     title: 'Sozlamalar',

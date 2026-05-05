@@ -34,11 +34,20 @@ export class OrderController {
     ResponseHelper.success(res, order);
   };
 
+  getByNumber = async (req: AuthRequest, res: Response): Promise<void> => {
+    const order = await this.orderService.findByOrderNumber(
+      req.params["orderNumber"]! as string,
+      req.user!.sub,
+    );
+    ResponseHelper.success(res, order);
+  };
+
   // Admin
   getAll = async (req: Request, res: Response): Promise<void> => {
     const { page, limit } = parsePagination(req);
     const status = req.query["status"] as string | undefined;
-    const result = await this.orderService.findAll(page, limit, status);
+    const search = req.query["search"] as string | undefined;
+    const result = await this.orderService.findAll(page, limit, status, search);
     ResponseHelper.paginated(res, result, "Orders retrieved");
   };
 

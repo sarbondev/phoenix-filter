@@ -36,9 +36,10 @@ const cartSlice = createSlice({
     },
     addToCart(state, action: PayloadAction<Product>) {
       const existing = state.items.find((i) => i.product.id === action.payload.id);
+      const stock = action.payload.stock ?? Infinity;
       if (existing) {
-        existing.quantity += 1;
-      } else {
+        existing.quantity = Math.min(existing.quantity + 1, stock);
+      } else if (stock > 0) {
         state.items.push({ product: action.payload, quantity: 1 });
       }
       saveCart(state.items);
@@ -50,11 +51,9 @@ const cartSlice = createSlice({
     updateQuantity(state, action: PayloadAction<{ id: string; quantity: number }>) {
       const item = state.items.find((i) => i.product.id === action.payload.id);
       if (item) {
-        if (action.payload.quantity <= 0) {
-          state.items = state.items.filter((i) => i.product.id !== action.payload.id);
-        } else {
-          item.quantity = action.payload.quantity;
-        }
+        const stock = item.product.stock ?? Infinity;
+        // Clamp [1, stock] — explicit removal goes through removeFromCart.
+        item.quantity = Math.max(1, Math.min(action.payload.quantity, stock));
       }
       saveCart(state.items);
     },

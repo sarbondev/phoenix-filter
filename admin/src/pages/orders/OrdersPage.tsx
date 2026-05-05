@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Eye } from 'lucide-react';
+import { Eye, Phone, MapPin, Search } from 'lucide-react';
 import { useGetOrdersQuery, useUpdateOrderStatusMutation } from '@/store/api/orderApi';
 import {
   Button, Select, Card, Table, Badge,
-  Pagination, Modal,
+  Pagination, Modal, Input, ConfirmDialog,
 } from '@/components/ui';
 import type { Order } from '@/lib/types';
 import { useLocale } from '@/hooks/useLocale';
@@ -21,10 +21,13 @@ export default function OrdersPage() {
   const { params, setParams } = useQueryParams();
   const page = Number(params.page) || 1;
   const statusFilter = params.status || '';
+  const searchQ = params.search ?? '';
   const [viewOrder, setViewOrder] = useState<Order | null>(null);
+  const [pendingStatus, setPendingStatus] = useState<{ orderId: string; status: string } | null>(null);
 
   const { data: res, isLoading } = useGetOrdersQuery({
     page, limit: 10, status: statusFilter || undefined,
+    search: searchQ || undefined,
   });
   const [updateStatus, { isLoading: updatingStatus }] = useUpdateOrderStatusMutation();
 
@@ -54,24 +57,49 @@ export default function OrdersPage() {
     return '-';
   };
 
-  const handleStatusChange = async (orderId: string, status: string) => {
-    try {
-      const updated = await updateStatus({ id: orderId, status }).unwrap();
-      setViewOrder((prev) => prev ? { ...prev, ...updated } : prev);
-    } catch { /* error handled by RTK Query */ }
+  const requestStatusChange = (orderId: string, status: string) => {
+    if (!status || status === viewOrder?.status) return;
+    setPendingStatus({ orderId, status });
   };
+
+  const confirmStatusChange = async () => {
+    if (!pendingStatus) return;
+    try {
+      const updated = await updateStatus({
+        id: pendingStatus.orderId,
+        status: pendingStatus.status,
+      }).unwrap();
+      setViewOrder((prev) => (prev ? { ...prev, ...updated } : prev));
+      setPendingStatus(null);
+    } catch {
+      setPendingStatus(null);
+    }
+  };
+
+  const buildMapsUrl = (a: Order['shippingAddress']) =>
+    `https://yandex.com/maps/?text=${encodeURIComponent(`${a.region}, ${a.district}, ${a.address}`)}`;
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-slate-900">{t('orders.title')}</h1>
-        <div className="w-48">
-          <Select
-            placeholder={t('orders.allStatuses')}
-            options={statusOptions}
-            value={statusFilter}
-            onChange={(e) => { setParams({ status: e.target.value || undefined, page: undefined }); }}
-          />
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <div className="sm:w-72">
+            <Input
+              icon={<Search className="h-4 w-4" />}
+              placeholder={t('orders.searchPlaceholder')}
+              value={searchQ}
+              onChange={(e) => setParams({ search: e.target.value || undefined, page: undefined })}
+            />
+          </div>
+          <div className="sm:w-48">
+            <Select
+              placeholder={t('orders.allStatuses')}
+              options={statusOptions}
+              value={statusFilter}
+              onChange={(e) => { setParams({ status: e.target.value || undefined, page: undefined }); }}
+            />
+          </div>
         </div>
       </div>
 
@@ -82,12 +110,26 @@ export default function OrdersPage() {
             { key: 'orderNumber', header: t('orders.orderNumber'), render: (o) => (
               <span className="font-mono text-sm font-medium">{o.orderNumber}</span>
             )},
-            { key: 'customer', header: t('orders.customer'), render: (o) => (
-              <div>
-                <p className="font-medium">{getCustomerName(o)}</p>
-                <p className="text-xs text-slate-500">{getCustomerPhone(o)}</p>
-              </div>
-            )},
+            { key: 'customer', header: t('orders.customer'), render: (o) => {
+              const phone = getCustomerPhone(o);
+              return (
+                <div>
+                  <p className="font-medium">{getCustomerName(o)}</p>
+                  {phone && phone !== '-' ? (
+                    <a
+                      href={`tel:${phone.replace(/\s/g, '')}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-xs text-blue-600 hover:underline inline-flex items-center gap-1"
+                    >
+                      <Phone className="h-3 w-3" />
+                      {phone}
+                    </a>
+                  ) : (
+                    <p className="text-xs text-slate-500">-</p>
+                  )}
+                </div>
+              );
+            }},
             { key: 'totalAmount', header: t('orders.totalAmount'), render: (o) => (
               <span className="font-medium">{formatPrice(o.totalAmount)}</span>
             )},
@@ -117,7 +159,20 @@ export default function OrdersPage() {
               <div>
                 <p className="text-xs text-slate-500">{t('orders.customer')}</p>
                 <p className="font-medium">{getCustomerName(viewOrder)}</p>
-                <p className="text-sm text-slate-600">{getCustomerPhone(viewOrder)}</p>
+                {(() => {
+                  const phone = getCustomerPhone(viewOrder);
+                  return phone && phone !== '-' ? (
+                    <a
+                      href={`tel:${phone.replace(/\s/g, '')}`}
+                      className="mt-1 inline-flex items-center gap-1.5 text-sm text-blue-600 hover:underline"
+                    >
+                      <Phone className="h-3.5 w-3.5" />
+                      {phone}
+                    </a>
+                  ) : (
+                    <p className="text-sm text-slate-600">-</p>
+                  );
+                })()}
               </div>
               <div>
                 <p className="text-xs text-slate-500">{t('orders.shippingAddress')}</p>
@@ -126,6 +181,15 @@ export default function OrdersPage() {
                   {viewOrder.shippingAddress.region}, {viewOrder.shippingAddress.district}
                 </p>
                 <p className="text-sm text-slate-600">{viewOrder.shippingAddress.address}</p>
+                <a
+                  href={buildMapsUrl(viewOrder.shippingAddress)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-1 inline-flex items-center gap-1.5 text-sm text-blue-600 hover:underline"
+                >
+                  <MapPin className="h-3.5 w-3.5" />
+                  {t('orders.openInMaps')}
+                </a>
               </div>
             </div>
 
@@ -171,7 +235,7 @@ export default function OrdersPage() {
                 label={t('orders.orderStatus')}
                 options={statusOptions}
                 value={viewOrder.status}
-                onChange={(e) => handleStatusChange(viewOrder.id, e.target.value)}
+                onChange={(e) => requestStatusChange(viewOrder.id, e.target.value)}
                 disabled={updatingStatus || viewOrder.status === 'CANCELLED' || viewOrder.status === 'DELIVERED'}
               />
             </div>
@@ -185,6 +249,21 @@ export default function OrdersPage() {
           </div>
         )}
       </Modal>
+
+      <ConfirmDialog
+        open={!!pendingStatus}
+        onClose={() => setPendingStatus(null)}
+        onConfirm={confirmStatusChange}
+        loading={updatingStatus}
+        variant="primary"
+        title={t('orders.confirmStatusTitle')}
+        message={
+          pendingStatus
+            ? t('orders.confirmStatusMessage', { status: t(`orders.statuses.${pendingStatus.status}`) })
+            : ''
+        }
+        confirmText={t('common.confirm')}
+      />
     </div>
   );
 }

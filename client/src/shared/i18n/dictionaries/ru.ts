@@ -70,6 +70,8 @@ const ru: Dictionary = {
     outletDiameter: 'Диаметр выхода',
     manufacturerFilter: 'По бренду',
     allManufacturers: 'Все бренды',
+    clearFilters: 'Сбросить фильтры',
+    activeFilters: 'Активны',
   },
   categories: {
     title: 'Категории',
@@ -140,6 +142,8 @@ const ru: Dictionary = {
     passwordHint: 'Мин. 8 символов, 1 заглавная, 1 цифра',
     fieldRequired: 'обязательно',
     fieldIncomplete: 'не заполнено полностью',
+    showPassword: 'Показать пароль',
+    hidePassword: 'Скрыть пароль',
   },
   checkout: {
     title: 'Оформление заказа',
@@ -157,6 +161,10 @@ const ru: Dictionary = {
     orderSuccessDesc: 'Ваш заказ принят. Мы свяжемся с вами в ближайшее время.',
     backToHome: 'На главную',
     myOrders: 'Мои заказы',
+    selectRegion: 'Выберите регион',
+    selectDistrict: 'Выберите район',
+    orderNumber: 'Номер заказа',
+    viewOrder: 'Открыть заказ',
   },
   blog: {
     title: 'Блог',
@@ -193,6 +201,15 @@ const ru: Dictionary = {
     bannerTitle: 'Ищете что-то конкретное?',
     bannerDesc: 'Напишите — мы найдём это для вас.',
     bannerCta: 'Запросить товар',
+  },
+  profile: {
+    title: 'Профиль',
+    accountInfo: 'Информация об аккаунте',
+    accountType: 'Тип аккаунта',
+    quickActions: 'Быстрые действия',
+    roleAdmin: 'Администратор',
+    roleCallManager: 'Менеджер',
+    roleClient: 'Клиент',
   },
   settings: {
     title: 'Настройки',

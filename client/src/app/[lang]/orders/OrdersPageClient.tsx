@@ -69,10 +69,13 @@ export function OrdersPageClient({ locale, dict }: Props) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="rounded-2xl bg-white border border-slate-200 overflow-hidden"
+              className="rounded-2xl bg-white border border-slate-200 overflow-hidden hover:border-primary/40 transition-colors"
             >
-              {/* Header */}
-              <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-50 px-6 py-4 border-b border-slate-100">
+              {/* Header — clickable */}
+              <Link
+                href={`/${locale}/orders/${order.orderNumber}`}
+                className="flex flex-wrap items-center justify-between gap-4 bg-slate-50 px-6 py-4 border-b border-slate-100 hover:bg-slate-100 transition-colors"
+              >
                 <div className="flex items-center gap-4">
                   <Package className="h-5 w-5 text-slate-400" />
                   <div>
@@ -84,7 +87,7 @@ export function OrdersPageClient({ locale, dict }: Props) {
                   <Badge variant={statusVariant[order.status] ?? 'default'}>{dict.orders.statuses[order.status as keyof typeof dict.orders.statuses] || order.status}</Badge>
                   <span className="font-semibold text-slate-900">{formatPrice(order.totalAmount)} UZS</span>
                 </div>
-              </div>
+              </Link>
 
               {/* Items */}
               <div className="p-6">

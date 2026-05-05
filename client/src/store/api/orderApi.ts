@@ -14,12 +14,16 @@ interface OrderItemResponse {
   total: number;
 }
 
-interface Order {
+export interface Order {
   id: string;
   orderNumber: string;
   items: OrderItemResponse[];
+  subtotal?: number;
+  shippingCost?: number;
   totalAmount: number;
   status: string;
+  shippingAddress?: ShippingAddress;
+  note?: string;
   createdAt: string;
 }
 
@@ -51,16 +55,25 @@ interface ApiResponse<T> {
 
 export const orderApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    createOrder: builder.mutation<unknown, CreateOrderRequest>({
+    createOrder: builder.mutation<Order, CreateOrderRequest>({
       query: (body) => ({ url: '/orders', method: 'POST', body }),
-      transformResponse: (res: ApiResponse<unknown>) => res.data,
+      transformResponse: (res: ApiResponse<Order>) => res.data,
       invalidatesTags: ['Order'],
     }),
     getMyOrders: builder.query<{ data: Order[]; meta: unknown }, void>({
       query: () => '/orders/my',
       providesTags: ['Order'],
     }),
+    getOrderByNumber: builder.query<Order, string>({
+      query: (orderNumber) => `/orders/by-number/${orderNumber}`,
+      transformResponse: (res: ApiResponse<Order>) => res.data,
+      providesTags: (_r, _e, n) => [{ type: 'Order', id: n }],
+    }),
   }),
 });
 
-export const { useCreateOrderMutation, useGetMyOrdersQuery } = orderApi;
+export const {
+  useCreateOrderMutation,
+  useGetMyOrdersQuery,
+  useGetOrderByNumberQuery,
+} = orderApi;

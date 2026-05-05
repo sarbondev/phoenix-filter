@@ -24,6 +24,7 @@ export default function LoginPage() {
   const [phoneDigits, setPhoneDigits] = useState('+998');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [topError, setTopError] = useState<string | null>(null);
   const [login, { isLoading }] = useLoginMutation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
+    setTopError(null);
 
     const result = loginSchema.safeParse({ phoneNumber: phoneDigits, password });
     if (!result.success) {
@@ -45,14 +47,14 @@ export default function LoginPage() {
     try {
       const res = await login(result.data).unwrap();
       if (res.user.role === 'CLIENT') {
-        setErrors({ phoneNumber: t('auth.accessDenied') });
+        setTopError(t('auth.accessDenied'));
         return;
       }
       dispatch(setCredentials({ token: res.accessToken, user: res.user }));
       navigate('/');
     } catch (err: unknown) {
       const apiErr = err as { data?: { message?: string } };
-      setErrors({ phoneNumber: apiErr.data?.message || t('auth.loginFailed') });
+      setTopError(apiErr.data?.message || t('auth.loginFailed'));
     }
   };
 
@@ -70,6 +72,11 @@ export default function LoginPage() {
 
         <Card>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {topError && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {topError}
+              </div>
+            )}
             <PhoneInput
               label={t('auth.phoneNumber')}
               icon={<Phone className="h-4 w-4" />}

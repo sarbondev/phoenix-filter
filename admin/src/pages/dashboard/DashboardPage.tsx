@@ -9,6 +9,8 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import { useGetDashboardStatsQuery } from '@/store/api/dashboardApi';
 import { useGetOrdersQuery } from '@/store/api/orderApi';
 import { StatCard, Card, CardHeader, CardTitle, Spinner, Badge, Table } from '@/components/ui';
@@ -39,7 +41,7 @@ export default function DashboardPage() {
         <AlertCircle className="h-12 w-12 mb-4 text-red-400" />
         <p className="text-lg font-medium">{t('common.error')}</p>
         <button onClick={refetch} className="mt-4 text-sm text-blue-600 hover:underline">
-          {t('common.loading')}
+          {t('common.retry')}
         </button>
       </div>
     );
@@ -109,8 +111,15 @@ export default function DashboardPage() {
 
       {/* Recent Pending Orders */}
       <Card padding={false}>
-        <CardHeader className="px-6 pt-6">
+        <CardHeader className="px-6 pt-6 flex items-center justify-between">
           <CardTitle>{t('dashboard.recentPendingOrders')}</CardTitle>
+          <Link
+            to="/orders?status=PENDING"
+            className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
+          >
+            {t('common.viewAll')}
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
         </CardHeader>
         <Table<Order>
           columns={[

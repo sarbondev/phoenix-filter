@@ -5,6 +5,7 @@ interface OrdersQuery {
   page?: number;
   limit?: number;
   status?: string;
+  search?: string;
 }
 
 export const orderApi = baseApi.injectEndpoints({

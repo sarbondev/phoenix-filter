@@ -39,7 +39,6 @@ export default function ProductsPage() {
   const {
     data: res,
     isLoading,
-    isError,
   } = useGetProductsQuery({
     page,
     limit: 10,

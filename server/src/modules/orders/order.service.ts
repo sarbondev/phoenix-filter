@@ -106,14 +106,35 @@ export class OrderService {
     return toOrderResponse(order);
   }
 
+  async findByOrderNumber(orderNumber: string, userId: string): Promise<OrderResponse> {
+    const order = await this.orderRepository.findByOrderNumber(orderNumber);
+    if (!order) throw new NotFoundError("Order");
+    const orderUserId =
+      typeof order.user === "object" && "_id" in order.user
+        ? String((order.user as any)._id)
+        : String(order.user);
+    if (orderUserId !== userId) throw new NotFoundError("Order");
+    return toOrderResponse(order);
+  }
+
   async findAll(
     page: number,
     limit: number,
     status?: string,
+    search?: string,
   ): Promise<PaginatedResponse<OrderResponse>> {
     const skip = (page - 1) * limit;
     const filter: Record<string, unknown> = {};
     if (status) filter.status = status;
+    if (search) {
+      // Escape regex metacharacters from user input.
+      const safe = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      filter.$or = [
+        { orderNumber: { $regex: safe, $options: "i" } },
+        { "shippingAddress.fullName": { $regex: safe, $options: "i" } },
+        { "shippingAddress.phoneNumber": { $regex: safe, $options: "i" } },
+      ];
+    }
     const { data, total } = await this.orderRepository.findAll(
       filter,
       skip,
