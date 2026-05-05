@@ -1,30 +1,33 @@
 import clsx from 'clsx';
 
-type BadgeVariant = 'default' | 'success' | 'warning' | 'danger' | 'info';
+type Variant = 'default' | 'success' | 'warning' | 'danger' | 'info';
 
 interface BadgeProps {
   children: React.ReactNode;
-  variant?: BadgeVariant;
+  variant?: Variant;
+  dot?: boolean;
   className?: string;
 }
 
-const variantStyles: Record<BadgeVariant, string> = {
-  default: 'bg-slate-100 text-slate-700',
-  success: 'bg-green-100 text-green-700',
-  warning: 'bg-amber-100 text-amber-700',
-  danger: 'bg-red-100 text-red-700',
-  info: 'bg-blue-100 text-blue-700',
+const palette: Record<Variant, { soft: string; dot: string }> = {
+  default: { soft: 'bg-slate-100 text-slate-700', dot: 'bg-slate-400' },
+  success: { soft: 'bg-success-soft text-success', dot: 'bg-success' },
+  warning: { soft: 'bg-warning-soft text-warning', dot: 'bg-warning' },
+  danger: { soft: 'bg-danger-soft text-danger', dot: 'bg-danger' },
+  info: { soft: 'bg-info-soft text-info', dot: 'bg-info' },
 };
 
-export function Badge({ children, variant = 'default', className }: BadgeProps) {
+export function Badge({ children, variant = 'default', dot, className }: BadgeProps) {
+  const tones = palette[variant];
   return (
     <span
       className={clsx(
-        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
-        variantStyles[variant],
+        'inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-semibold',
+        tones.soft,
         className,
       )}
     >
+      {dot && <span className={clsx('h-2 w-2 rounded-full', tones.dot)} />}
       {children}
     </span>
   );

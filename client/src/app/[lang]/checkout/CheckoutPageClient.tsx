@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import type { Locale } from '@/shared/types';
 import type { Dictionary } from '@/shared/i18n/dictionaries/en';
-import { Button, Input, PhoneInput } from '@/shared/ui';
+import { Button, Input, PhoneInput, AuthRequired } from '@/shared/ui';
 import { useAppSelector, useAppDispatch } from '@/shared/hooks';
 import { useCreateOrderMutation } from '@/store/api/orderApi';
 import { clearCart } from '@/store/cartSlice';
@@ -69,14 +69,11 @@ export function CheckoutPageClient({ locale, dict }: Props) {
 
   if (!auth.token) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center px-4">
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center">
-          <p className="text-lg text-slate-600 mb-6">{dict.auth.loginRequired}</p>
-          <Link href={`/${locale}/auth?redirect=/${locale}/checkout`}>
-            <Button>{dict.auth.login}</Button>
-          </Link>
-        </motion.div>
-      </div>
+      <AuthRequired
+        loginHref={`/${locale}/auth?redirect=/${locale}/checkout`}
+        message={dict.auth.loginRequired}
+        loginLabel={dict.auth.login}
+      />
     );
   }
 

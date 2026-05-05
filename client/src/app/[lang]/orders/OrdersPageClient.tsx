@@ -8,7 +8,7 @@ import type { Locale } from '@/shared/types';
 import type { Dictionary } from '@/shared/i18n/dictionaries/en';
 import { useAppSelector } from '@/shared/hooks';
 import { useGetMyOrdersQuery } from '@/store/api/orderApi';
-import { Button, Badge, Skeleton } from '@/shared/ui';
+import { Button, Badge, EmptyState, OrderRowSkeleton, AuthRequired } from '@/shared/ui';
 import { formatPrice, t, getImageUrl } from '@/shared/lib/utils';
 
 const statusVariant: Record<string, 'default' | 'success' | 'warning' | 'danger' | 'info'> = {
@@ -24,14 +24,11 @@ export function OrdersPageClient({ locale, dict }: Props) {
 
   if (!auth.token) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center px-4">
-        <div className="text-center">
-          <p className="text-lg text-slate-600 mb-6">{dict.auth.loginRequired}</p>
-          <Link href={`/${locale}/auth?redirect=/${locale}/orders`}>
-            <Button>{dict.auth.login}</Button>
-          </Link>
-        </div>
-      </div>
+      <AuthRequired
+        loginHref={`/${locale}/auth?redirect=/${locale}/orders`}
+        message={dict.auth.loginRequired}
+        loginLabel={dict.auth.login}
+      />
     );
   }
 
@@ -49,18 +46,18 @@ export function OrdersPageClient({ locale, dict }: Props) {
 
       {isLoading ? (
         <div className="space-y-4">
-          {[1, 2, 3].map((i) => <Skeleton key={i} className="h-40 rounded-2xl" />)}
+          {[1, 2, 3].map((i) => <OrderRowSkeleton key={i} />)}
         </div>
       ) : orders.length === 0 ? (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20">
-          <div className="mx-auto mb-6 inline-flex rounded-2xl bg-slate-100 p-6">
-            <ShoppingBag className="h-16 w-16 text-slate-400" />
-          </div>
-          <p className="text-lg text-slate-500 mb-6">{dict.cart.empty}</p>
-          <Link href={`/${locale}/products`}>
-            <Button>{dict.cart.continueShopping}</Button>
-          </Link>
-        </motion.div>
+        <EmptyState
+          icon={<ShoppingBag className="h-7 w-7" />}
+          title={dict.cart.empty}
+          action={
+            <Link href={`/${locale}/products`}>
+              <Button>{dict.cart.continueShopping}</Button>
+            </Link>
+          }
+        />
       ) : (
         <div className="space-y-4">
           {orders.map((order, i) => (

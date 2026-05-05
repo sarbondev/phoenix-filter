@@ -1,13 +1,13 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
 import type { Locale } from '@/shared/types';
 import type { Dictionary } from '@/shared/i18n/dictionaries/en';
 import { t, formatPrice, getImageUrl } from '@/shared/lib/utils';
-import { Button } from '@/shared/ui';
+import { Button, EmptyState } from '@/shared/ui';
 import { useAppDispatch, useAppSelector } from '@/shared/hooks';
 import { removeFromCart, updateQuantity } from '@/store/cartSlice';
 
@@ -23,16 +23,18 @@ export function CartPageClient({ locale, dict }: Props) {
 
   if (items.length === 0) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center px-4">
-        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center">
-          <div className="mx-auto mb-6 rounded-2xl bg-slate-100 p-6 inline-block">
-            <ShoppingBag className="h-16 w-16 text-slate-400" />
-          </div>
-          <h2 className="text-2xl font-bold text-slate-900">{dict.cart.empty}</h2>
-          <Link href={`/${locale}/products`} className="mt-6 inline-block">
-            <Button icon={<ArrowRight className="h-4 w-4" />}>{dict.cart.continueShopping}</Button>
-          </Link>
-        </motion.div>
+      <div className="flex min-h-[60vh] items-center justify-center px-4">
+        <EmptyState
+          icon={<ShoppingBag className="h-7 w-7" />}
+          title={dict.cart.empty}
+          action={
+            <Link href={`/${locale}/products`}>
+              <Button rightIcon={<ArrowRight className="h-4 w-4" />}>
+                {dict.cart.continueShopping}
+              </Button>
+            </Link>
+          }
+        />
       </div>
     );
   }

@@ -1,35 +1,78 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand — Prestige Filter */
+  /* ─────────────────────────────────────────────────────────────────
+     Brand — Prestige Filter
+     Each --color-* becomes a Tailwind utility (bg-brand, text-brand …).
+     ──────────────────────────────────────────────────────────────── */
   --color-brand: #1f4dff;
   --color-brand-hover: #1a3fdc;
+  --color-brand-active: #1532b8;
   --color-brand-soft: #eef2ff;
   --color-brand-strong: #0a1f7a;
 
-  /* Accent (logo "FILTER" red, badges) */
   --color-accent: #ef2531;
   --color-accent-hover: #d11e29;
+  --color-accent-soft: #fef2f3;
 
-  /* Highlight (CTA yellow from hero card) */
   --color-highlight: #ffb800;
   --color-highlight-hover: #e6a600;
 
-  /* Dark surfaces (footer / WhyUs / info cards) */
   --color-ink: #0f1729;
   --color-ink-2: #1a2238;
   --color-ink-3: #232b45;
 
-  /* Neutrals */
   --color-surface: #f6f7fb;
   --color-surface-2: #eef0f6;
   --color-border: #e4e7ef;
+  --color-border-strong: #cbd0dc;
   --color-muted: #6b7280;
 
-  /* Legacy aliases (kept so existing widgets keep building) */
+  /* Semantic — utility classes: bg-success, text-warning-soft … */
+  --color-success: #10b981;
+  --color-success-soft: #ecfdf5;
+  --color-warning: #f59e0b;
+  --color-warning-soft: #fffbeb;
+  --color-danger: #ef4444;
+  --color-danger-soft: #fef2f2;
+  --color-info: #0ea5e9;
+  --color-info-soft: #f0f9ff;
+
+  /* Legacy aliases — kept so older widgets keep building */
   --color-primary: var(--color-brand);
   --color-primary-hover: var(--color-brand-hover);
   --color-primary-light: var(--color-brand-soft);
+
+  /* Radius scale — utility: rounded-xs, rounded-2xl … */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 24px;
+
+  /* Shadows — utility: shadow-xs, shadow-brand … */
+  --shadow-xs: 0 1px 2px rgba(15, 23, 41, 0.04);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 41, 0.05), 0 1px 2px rgba(15, 23, 41, 0.03);
+  --shadow-md: 0 4px 12px rgba(15, 23, 41, 0.06), 0 2px 4px rgba(15, 23, 41, 0.04);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 41, 0.10), 0 4px 8px rgba(15, 23, 41, 0.05);
+  --shadow-xl: 0 24px 56px rgba(15, 23, 41, 0.18);
+  --shadow-brand: 0 8px 24px rgba(31, 77, 255, 0.18);
+
+  /* Motion — utility: transition-fast, ease-out-soft … */
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 120ms;
+  --duration-base: 180ms;
+  --duration-slow: 320ms;
+
+  /* Skeleton shimmer — utility: animate-shimmer */
+  --animate-shimmer: shimmer 1.6s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 :root {
@@ -41,6 +84,7 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
@@ -49,13 +93,7 @@ body {
   letter-spacing: -0.011em;
 }
 
-/* Headings */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.025em;
 }
 
@@ -88,48 +126,33 @@ h6 {
 
 /* Diagonal split background — used in hero card + CTA banner */
 .bg-diagonal-blue-ink {
-  background: linear-gradient(
-    105deg,
-    var(--color-brand) 0%,
-    var(--color-brand) 58%,
-    var(--color-ink) 58%,
-    var(--color-ink) 100%
-  );
+  background: linear-gradient(105deg, var(--color-brand) 0%, var(--color-brand) 58%, var(--color-ink) 58%, var(--color-ink) 100%);
 }
 .bg-diagonal-ink-blue {
-  background: linear-gradient(
-    105deg,
-    var(--color-ink) 0%,
-    var(--color-ink) 42%,
-    var(--color-brand) 42%,
-    var(--color-brand) 100%
-  );
+  background: linear-gradient(105deg, var(--color-ink) 0%, var(--color-ink) 42%, var(--color-brand) 42%, var(--color-brand) 100%);
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-/* Selection */
 ::selection {
   background-color: var(--color-brand);
   color: white;
 }
 
-/* Focus visible */
 :focus-visible {
   outline: 2px solid var(--color-brand);
   outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

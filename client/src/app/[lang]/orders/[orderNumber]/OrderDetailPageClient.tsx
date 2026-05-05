@@ -8,7 +8,7 @@ import type { Locale } from '@/shared/types';
 import type { Dictionary } from '@/shared/i18n/dictionaries/en';
 import { useAppSelector } from '@/shared/hooks';
 import { useGetOrderByNumberQuery } from '@/store/api/orderApi';
-import { Badge, Button, Skeleton } from '@/shared/ui';
+import { Badge, Button, Skeleton, AuthRequired, ErrorState } from '@/shared/ui';
 import { formatPrice, t, getImageUrl } from '@/shared/lib/utils';
 
 const statusVariant: Record<string, 'default' | 'success' | 'warning' | 'danger' | 'info'> = {
@@ -30,14 +30,11 @@ export function OrderDetailPageClient({ locale, dict, orderNumber }: Props) {
 
   if (!auth.token) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center px-4">
-        <div className="text-center">
-          <p className="text-lg text-slate-600 mb-6">{dict.auth.loginRequired}</p>
-          <Link href={`/${locale}/auth?redirect=/${locale}/orders/${orderNumber}`}>
-            <Button>{dict.auth.login}</Button>
-          </Link>
-        </div>
-      </div>
+      <AuthRequired
+        loginHref={`/${locale}/auth?redirect=/${locale}/orders/${orderNumber}`}
+        message={dict.auth.loginRequired}
+        loginLabel={dict.auth.login}
+      />
     );
   }
 
@@ -52,11 +49,13 @@ export function OrderDetailPageClient({ locale, dict, orderNumber }: Props) {
 
   if (isError || !order) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
-        <p className="text-lg text-slate-600 mb-6">{dict.common.error}</p>
-        <Link href={`/${locale}/orders`}>
-          <Button variant="outline">{dict.checkout.myOrders}</Button>
-        </Link>
+      <div className="flex min-h-[60vh] items-center justify-center px-4">
+        <ErrorState
+          title={dict.common.error}
+          description={undefined}
+          retryLabel={dict.checkout.myOrders}
+          onRetry={() => { window.location.href = `/${locale}/orders`; }}
+        />
       </div>
     );
   }
