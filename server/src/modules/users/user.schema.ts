@@ -33,6 +33,7 @@ export const UserModel = model<IUser>("User", userMongoSchema);
 
 // ─── Zod Validation Schemas ───────────────────────────────────────────────────
 
+// Public registration — role is NEVER accepted from the client.
 export const createUserSchema = z.object({
   phoneNumber: z
     .string()
@@ -43,14 +44,20 @@ export const createUserSchema = z.object({
     .regex(/[A-Z]/, "Must contain an uppercase letter")
     .regex(/[0-9]/, "Must contain a number"),
   name: z.string().min(2).max(100),
-  role: z.enum(["ADMIN", "CALL_MANAGER", "CLIENT"]).default("CLIENT"),
-});
+}).strict();
 
 export type CreateUserDto = z.infer<typeof createUserSchema>;
 
+// Admin-only user creation — accepts role; mounted under POST /api/users
+// behind authenticate + authorize('ADMIN').
+export const adminCreateUserSchema = createUserSchema.extend({
+  role: z.enum(["ADMIN", "CALL_MANAGER", "CLIENT"]).default("CLIENT"),
+}).strict();
+export type AdminCreateUserDto = z.infer<typeof adminCreateUserSchema>;
+
 export const updateUserSchema = createUserSchema
   .partial()
-  .omit({ password: true, role: true });
+  .omit({ password: true });
 export type UpdateUserDto = z.infer<typeof updateUserSchema>;
 
 export const updateProfileSchema = z.object({
@@ -59,7 +66,10 @@ export const updateProfileSchema = z.object({
     .string()
     .regex(/^\+\d{12}$/, "Phone number must be like +998901234567")
     .optional(),
-});
+  // Required when phoneNumber changes; ignored otherwise. Prevents account
+  // takeover via stolen session by re-verifying possession of the password.
+  currentPassword: z.string().min(1).optional(),
+}).strict();
 export type UpdateProfileDto = z.infer<typeof updateProfileSchema>;
 
 export const changePasswordSchema = z.object({

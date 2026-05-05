@@ -57,11 +57,31 @@ export const createApp = (): Application => {
   );
 
   // ── Parsing ────────────────────────────────────────────────────────────────
-  app.use(express.json({ limit: "10mb" }));
-  app.use(express.urlencoded({ extended: true }));
+  // Tight body limits — file uploads go through Multer (5MB) on a separate
+  // route. JSON payloads here should never approach 100KB.
+  app.use(express.json({ limit: "100kb" }));
+  app.use(express.urlencoded({ extended: true, limit: "100kb" }));
 
   // ── Static files ─────────────────────────────────────────────────────────
-  app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+  // Served with hardened headers: no MIME sniffing, isolating CSP, and any
+  // legacy SVG/HTML is forced to download instead of rendering inline.
+  app.use(
+    "/uploads",
+    express.static(path.join(process.cwd(), "uploads"), {
+      setHeaders: (res, filePath) => {
+        res.setHeader("X-Content-Type-Options", "nosniff");
+        res.setHeader("Cross-Origin-Resource-Policy", "same-site");
+        res.setHeader(
+          "Content-Security-Policy",
+          "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'; sandbox",
+        );
+        const lower = filePath.toLowerCase();
+        if (lower.endsWith(".svg") || lower.endsWith(".html") || lower.endsWith(".htm")) {
+          res.setHeader("Content-Disposition", "attachment");
+        }
+      },
+    }),
+  );
 
   // ── Locale ───────────────────────────────────────────────────────────────
   app.use(localeMiddleware);
@@ -70,13 +90,9 @@ export const createApp = (): Application => {
   app.use(requestLogger);
 
   // ── Health check ───────────────────────────────────────────────────────────
+  // Minimal — load balancers only need a 2xx. No env/version disclosure.
   app.get("/health", (_req: Request, res: Response) => {
-    res.json({
-      status: "ok",
-      timestamp: new Date().toISOString(),
-      env: env.NODE_ENV,
-      version: process.env["npm_package_version"] ?? "1.0.0",
-    });
+    res.json({ status: "ok" });
   });
 
   // ── Routes ─────────────────────────────────────────────────────────────────
@@ -89,7 +105,11 @@ export const createApp = (): Application => {
   app.use(`${api}/cart`, cartRoutes);
   app.use(`${api}/reviews`, reviewRoutes);
   app.use(`${api}/dashboard`, dashboardRoutes);
-  app.use(`${api}/seed`, seedRoutes);
+  // Seed routes are destructive (DB migrations, expensive Gemini calls,
+  // first-admin creation). Only mounted in non-production environments.
+  if (env.NODE_ENV !== "production") {
+    app.use(`${api}/seed`, seedRoutes);
+  }
   app.use(`${api}/upload`, uploadRoutes);
   app.use(`${api}/blogs`, blogRoutes);
   app.use(`${api}/partners`, partnerRoutes);

@@ -85,13 +85,24 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   }
   if (product) crumbs.push({ name: t(product.name, locale) || product.sku, href: `/${locale}/products/${slug}` });
 
+  // JSON.stringify does not escape `<`, so a value containing `</script>`
+  // would close the surrounding tag and enable stored XSS. Escape `<`, `>`,
+  // `&`, and U+2028/U+2029 (line separators that break JS string literals).
+  const safeJsonLd = (data: unknown) =>
+    JSON.stringify(data)
+      .replace(/</g, "\\u003c")
+      .replace(/>/g, "\\u003e")
+      .replace(/&/g, "\\u0026")
+      .replace(/\u2028/g, "\\u2028")
+      .replace(/\u2029/g, "\\u2029");
+
   return (
     <>
       {product && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(productJsonLd(product, locale)),
+            __html: safeJsonLd(productJsonLd(product, locale)),
           }}
         />
       )}
@@ -99,7 +110,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(breadcrumbJsonLd(crumbs)),
+            __html: safeJsonLd(breadcrumbJsonLd(crumbs)),
           }}
         />
       )}

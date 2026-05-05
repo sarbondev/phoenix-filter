@@ -8,7 +8,7 @@ import {
   authorize,
 } from "../../shared/middleware/auth.middleware";
 import { asyncHandler } from "../../shared/middleware/error-handler.middleware";
-import { createUserSchema, updateUserSchema } from "./user.schema";
+import { adminCreateUserSchema, updateUserSchema } from "./user.schema";
 
 const userRepository = new UserRepository();
 const userService = new UserService(userRepository);
@@ -22,7 +22,7 @@ router.get("/", asyncHandler(userController.getAll));
 router.get("/:id", asyncHandler(userController.getOne));
 router.post(
   "/",
-  validate({ body: createUserSchema }),
+  validate({ body: adminCreateUserSchema }),
   asyncHandler(userController.create),
 );
 router.patch(

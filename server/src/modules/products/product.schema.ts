@@ -147,17 +147,22 @@ export type CreateProductDto = z.infer<typeof createProductSchema>;
 export const updateProductSchema = createProductSchema.partial();
 export type UpdateProductDto = z.infer<typeof updateProductSchema>;
 
+// Strict — rejects unknown keys and operator-style nesting (e.g.
+// ?category[$ne]=x), which Express's qs parser would otherwise turn into
+// objects that could be passed to Mongoose. Strings only at this layer; the
+// service coerces page/limit/prices and verifies ObjectIds.
 export const productQuerySchema = z.object({
-  page: z.string().optional(),
-  limit: z.string().optional(),
-  category: z.string().optional(),
-  search: z.string().optional(),
-  minPrice: z.string().optional(),
-  maxPrice: z.string().optional(),
-  isFeatured: z.string().optional(),
-  vehicleBrand: z.string().optional(),
-  manufacturer: z.string().optional(),
+  page: z.string().regex(/^\d+$/).optional(),
+  limit: z.string().regex(/^\d+$/).optional(),
+  category: z.string().regex(/^[a-f0-9]{24}$/).optional(),
+  categorySlug: z.string().max(120).optional(),
+  search: z.string().max(200).optional(),
+  minPrice: z.string().regex(/^\d+(\.\d+)?$/).optional(),
+  maxPrice: z.string().regex(/^\d+(\.\d+)?$/).optional(),
+  isFeatured: z.enum(["true", "false"]).optional(),
+  vehicleBrand: z.string().max(100).optional(),
+  manufacturer: z.string().max(100).optional(),
   sortBy: z.enum(["price", "createdAt", "views", "name"]).optional(),
   sortOrder: z.enum(["asc", "desc"]).optional(),
-});
+}).strict();
 export type ProductQueryDto = z.infer<typeof productQuerySchema>;

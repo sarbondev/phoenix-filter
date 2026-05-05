@@ -27,7 +27,14 @@ export class AuthService {
       throw new ConflictError("User with this phone number already exists");
 
     const password = await bcrypt.hash(dto.password, 12);
-    const user = await this.userRepository.create({ ...dto, password });
+    // Public registration always creates a CLIENT — role cannot be elevated
+    // through this endpoint. The DTO has no `role` field by schema design.
+    const user = await this.userRepository.create({
+      phoneNumber: dto.phoneNumber,
+      name: dto.name,
+      password,
+      role: "CLIENT",
+    });
 
     logger.info(
       { userId: String(user._id), phoneNumber: user.phoneNumber },
@@ -67,13 +74,27 @@ export class AuthService {
   }
 
   async updateProfile(userId: string, dto: UpdateProfileDto): Promise<UserResponse> {
-    if (dto.phoneNumber) {
+    const current = await this.userRepository.findByIdWithPassword(userId);
+    if (!current) throw new NotFoundError("User");
+
+    // Phone-number changes require password re-verification to prevent
+    // account takeover via a stolen session.
+    if (dto.phoneNumber && dto.phoneNumber !== current.phoneNumber) {
+      if (!dto.currentPassword) {
+        throw new UnauthorizedError("Current password is required to change phone number");
+      }
+      const valid = await bcrypt.compare(dto.currentPassword, current.password);
+      if (!valid) throw new UnauthorizedError("Current password is incorrect");
+
       const existing = await this.userRepository.findByPhoneNumber(dto.phoneNumber);
       if (existing && String(existing._id) !== userId) {
         throw new ConflictError("This phone number is already in use");
       }
     }
-    const updated = await this.userRepository.update(userId, dto);
+
+    // Strip currentPassword from the persisted update payload.
+    const { currentPassword: _cp, ...patch } = dto;
+    const updated = await this.userRepository.update(userId, patch);
     if (!updated) throw new NotFoundError("User");
     return toUserResponse(updated);
   }

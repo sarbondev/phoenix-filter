@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -45,6 +45,8 @@ export function Navbar({ locale, dict }: NavbarProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [langExpanded, setLangExpanded] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -64,7 +66,19 @@ export function Navbar({ locale, dict }: NavbarProps) {
   useEffect(() => {
     setDrawerOpen(false);
     setMobileSearchOpen(false);
+    setUserMenuOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (!userMenuOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [userMenuOpen]);
 
   // Lock body scroll while drawer open
   useEffect(() => {
@@ -224,15 +238,86 @@ export function Navbar({ locale, dict }: NavbarProps) {
               )}
             </Link>
             {auth.user ? (
-              <Link
-                href={`/${locale}/profile`}
-                className="flex h-11 items-center gap-2 rounded-xl bg-[var(--color-brand)] hover:bg-[var(--color-brand-hover)] px-4 text-[13px] font-semibold text-white transition-colors"
-              >
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20 text-[12px] font-bold">
-                  {auth.user.name.charAt(0).toUpperCase()}
-                </span>
-                <span className="max-w-[110px] truncate">{auth.user.name}</span>
-              </Link>
+              <div ref={userMenuRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setUserMenuOpen((v) => !v)}
+                  className="flex h-11 items-center gap-2 rounded-xl bg-[var(--color-brand)] hover:bg-[var(--color-brand-hover)] px-4 text-[13px] font-semibold text-white transition-colors"
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20 text-[12px] font-bold">
+                    {auth.user.name.charAt(0).toUpperCase()}
+                  </span>
+                  <span className="max-w-[110px] truncate">{auth.user.name}</span>
+                  <ChevronDown
+                    className={`h-3.5 w-3.5 transition-transform ${
+                      userMenuOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+
+                <AnimatePresence>
+                  {userMenuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 top-full mt-2 w-64 rounded-xl bg-white border border-[var(--color-border)] shadow-xl overflow-hidden z-50"
+                    >
+                      <Link
+                        href={`/${locale}/profile`}
+                        onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 border-b border-[var(--color-border)] hover:bg-slate-50 transition-colors"
+                      >
+                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-brand)] text-[14px] font-bold text-white flex-shrink-0">
+                          {auth.user.name.charAt(0).toUpperCase()}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[13.5px] font-semibold text-slate-900 truncate">
+                            {auth.user.name}
+                          </p>
+                          <p className="text-[11.5px] text-slate-500 truncate">
+                            {auth.user.phoneNumber}
+                          </p>
+                        </div>
+                      </Link>
+                      <div className="py-1.5">
+                        <UserMenuLink
+                          href={`/${locale}/orders`}
+                          icon={<Package className="h-4 w-4" />}
+                          label={dict.checkout.myOrders}
+                          onClick={() => setUserMenuOpen(false)}
+                        />
+                        <UserMenuLink
+                          href={`/${locale}/wishlist`}
+                          icon={<Bookmark className="h-4 w-4" />}
+                          label={dict.wishlist.title}
+                          onClick={() => setUserMenuOpen(false)}
+                        />
+                        <UserMenuLink
+                          href={`/${locale}/settings`}
+                          icon={<Settings className="h-4 w-4" />}
+                          label={dict.settings.title}
+                          onClick={() => setUserMenuOpen(false)}
+                        />
+                      </div>
+                      <div className="border-t border-[var(--color-border)] py-1.5">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleLogout();
+                            setUserMenuOpen(false);
+                          }}
+                          className="flex w-full items-center gap-3 px-4 py-2.5 text-[13.5px] text-[var(--color-accent)] hover:bg-red-50 transition-colors"
+                        >
+                          <LogOut className="h-4 w-4" />
+                          {dict.auth.logout}
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             ) : (
               <Link
                 href={`/${locale}/auth`}
@@ -585,6 +670,29 @@ export function Navbar({ locale, dict }: NavbarProps) {
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+function UserMenuLink({
+  href,
+  icon,
+  label,
+  onClick,
+}: {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+  onClick?: () => void;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className="flex items-center gap-3 px-4 py-2.5 text-[13.5px] text-slate-700 hover:bg-slate-50 hover:text-[var(--color-brand)] transition-colors"
+    >
+      <span className="text-slate-400">{icon}</span>
+      {label}
+    </Link>
   );
 }
 

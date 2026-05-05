@@ -20,7 +20,22 @@ export const logger = pino({
   base: { env: env.NODE_ENV, service: 'ecommerce-backend' },
   timestamp: pino.stdTimeFunctions.isoTime,
   redact: {
-    paths: ['req.headers.authorization', 'password', 'token'],
+    paths: [
+      'req.headers.authorization',
+      'req.headers.cookie',
+      'headers.authorization',
+      'headers.cookie',
+      'password',
+      '*.password',
+      'currentPassword',
+      'newPassword',
+      'token',
+      '*.token',
+      'accessToken',
+      'refreshToken',
+      'phoneNumber',
+      '*.phoneNumber',
+    ],
     censor: '[REDACTED]',
   },
 });

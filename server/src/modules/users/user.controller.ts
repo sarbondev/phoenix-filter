@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { UserService } from "./user.service";
-import { CreateUserDto, UpdateUserDto } from "./user.schema";
+import { AdminCreateUserDto, UpdateUserDto } from "./user.schema";
 import { ResponseHelper } from "../../shared/utils/api-response";
 
 export class UserController {
@@ -17,7 +17,7 @@ export class UserController {
   };
 
   create = async (req: Request, res: Response): Promise<void> => {
-    const user = await this.userService.create(req.body as CreateUserDto);
+    const user = await this.userService.create(req.body as AdminCreateUserDto);
     ResponseHelper.created(res, user, "User created");
   };
 

@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { UserRepository } from "./user.repository";
 import { UserResponse, toUserResponse } from "./user.entity";
-import { CreateUserDto, UpdateUserDto } from "./user.schema";
+import { AdminCreateUserDto, UpdateUserDto } from "./user.schema";
 import {
   NotFoundError,
   ConflictError,
@@ -11,7 +11,7 @@ import { emitToStaff } from "../../shared/services/socket.service";
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async create(dto: CreateUserDto): Promise<UserResponse> {
+  async create(dto: AdminCreateUserDto): Promise<UserResponse> {
     const exists = await this.userRepository.findByPhoneNumber(dto.phoneNumber);
     if (exists)
       throw new ConflictError("User with this phone number already exists");

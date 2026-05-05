@@ -71,53 +71,77 @@ export function HomeSections({ locale, dict }: Props) {
 
   return (
     <div>
+      {/* 1. First impression */}
       {wrap(sections.hero, ed.secHero, <Hero locale={locale} dict={dict} />)}
-      {wrap(
-        sections.about,
-        ed.secAbout,
-        <AboutSection locale={locale} />,
-      )}
+
+      {/* 2. Instant social proof — trusted-by logos */}
       {wrap(
         sections.brands,
         ed.secBrands,
         <BrandsSection locale={locale} />,
       )}
-      {wrap(
-        sections.industries,
-        ed.secIndustries,
-        <IndustriesSection locale={locale} />,
-      )}
-      {wrap(sections.whyUs, ed.secWhyUs, <WhyUs locale={locale} />)}
-      {wrap(
-        sections.products,
-        ed.secProducts,
-        <ProductCatalogSlider locale={locale} dict={dict} />,
-      )}
-      {wrap(
-        sections.ctaBanners,
-        ed.secCtaBanners,
-        <CTASection locale={locale} />,
-      )}
+
+      {/* 3. Killer feature — cross-reference / custom request (the reason
+          customers come to a filter shop instead of a generic marketplace) */}
       {wrap(
         sections.productRequest,
         ed.secProductRequest,
         <ProductRequestSection locale={locale} dict={dict} />,
       )}
+
+      {/* 4. Catalog — let visitors shop early */}
+      {wrap(
+        sections.products,
+        ed.secProducts,
+        <ProductCatalogSlider locale={locale} dict={dict} />,
+      )}
+
+      {/* 5. Segmentation — "this is for my industry" */}
+      {wrap(
+        sections.industries,
+        ed.secIndustries,
+        <IndustriesSection locale={locale} />,
+      )}
+
+      {/* 6. Differentiators */}
+      {wrap(sections.whyUs, ed.secWhyUs, <WhyUs locale={locale} />)}
+
+      {/* 7. Mid-page conversion push */}
+      {wrap(
+        sections.ctaBanners,
+        ed.secCtaBanners,
+        <CTASection locale={locale} />,
+      )}
+
+      {/* 8. How ordering works — reduces friction */}
       {wrap(
         sections.process,
         ed.secProcess,
         <ProcessSection locale={locale} />,
       )}
+
+      {/* 9. Quality / compliance proof */}
       {wrap(
         sections.certificates,
         ed.secCertificates,
         <CertificatesSection locale={locale} />,
       )}
+
+      {/* 10. Feature highlights / bento tiles */}
       {wrap(
         sections.integration,
         ed.secIntegration,
         <IntegrationSection locale={locale} />,
       )}
+
+      {/* 11. Company story — only for visitors who scrolled this far */}
+      {wrap(
+        sections.about,
+        ed.secAbout,
+        <AboutSection locale={locale} />,
+      )}
+
+      {/* 12. Close — contact + FAQ before the footer */}
       {wrap(
         sections.contactFaq,
         ed.secContactFaq,
