@@ -3,6 +3,7 @@ import {
   LayoutDashboard,
   Package,
   FolderTree,
+  Compass,
   ShoppingCart,
   Users,
   Star,
@@ -18,8 +19,9 @@ import { useGetOrderStatsQuery } from "@/store/api/orderApi";
 
 const navigation = [
   { key: "dashboard", href: "/", icon: LayoutDashboard },
-  { key: "products", href: "/products", icon: Package },
+  { key: "directions", href: "/directions", icon: Compass },
   { key: "categories", href: "/categories", icon: FolderTree },
+  { key: "products", href: "/products", icon: Package },
   { key: "orders", href: "/orders", icon: ShoppingCart },
   { key: "users", href: "/users", icon: Users },
   { key: "reviews", href: "/reviews", icon: Star },

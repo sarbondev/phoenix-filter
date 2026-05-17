@@ -23,6 +23,7 @@ const router = Router();
 
 // Public routes
 router.get('/', validate({ query: productQuerySchema }), asyncHandler(productController.getAll));
+router.get('/manufacturers', asyncHandler(productController.listManufacturers));
 router.get(
   '/slug/:slug',
   validate({ params: slugParamSchema }),

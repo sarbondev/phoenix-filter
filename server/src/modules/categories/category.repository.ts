@@ -19,8 +19,9 @@ export class CategoryRepository {
     return CategoryModel.find(filter).sort({ sortOrder: 1, createdAt: -1 }).lean<ICategory[]>();
   }
 
-  async findByParent(parentId: string | null): Promise<ICategory[]> {
-    const filter = parentId ? { parent: parentId } : { parent: null };
+  async findByDirection(directionId: string, activeOnly = false): Promise<ICategory[]> {
+    const filter: Record<string, unknown> = { direction: directionId };
+    if (activeOnly) filter.isActive = true;
     return CategoryModel.find(filter).sort({ sortOrder: 1 }).lean<ICategory[]>();
   }
 
@@ -32,31 +33,12 @@ export class CategoryRepository {
     await CategoryModel.findByIdAndDelete(id);
   }
 
-  async countByParent(parentId: string): Promise<number> {
-    return CategoryModel.countDocuments({ parent: parentId });
+  async countByDirection(directionId: string): Promise<number> {
+    return CategoryModel.countDocuments({ direction: directionId });
   }
 
-  /** Return [id, ...descendantIds] for the given category. Used when a parent
-   * category is passed as a product filter and we need to include every leaf
-   * underneath it. */
-  async collectDescendants(rootId: string): Promise<string[]> {
-    const all = await CategoryModel.find({}, { _id: 1, parent: 1 }).lean<{ _id: any; parent: any }[]>();
-    const childrenByParent = new Map<string, string[]>();
-    for (const c of all) {
-      const pid = c.parent ? String(c.parent) : "__root__";
-      if (!childrenByParent.has(pid)) childrenByParent.set(pid, []);
-      childrenByParent.get(pid)!.push(String(c._id));
-    }
-    const result: string[] = [rootId];
-    const queue = [rootId];
-    while (queue.length) {
-      const next = queue.shift()!;
-      const kids = childrenByParent.get(next) || [];
-      for (const k of kids) {
-        result.push(k);
-        queue.push(k);
-      }
-    }
-    return result;
+  async findIdsByDirection(directionId: string): Promise<string[]> {
+    const rows = await CategoryModel.find({ direction: directionId }, { _id: 1 }).lean<{ _id: any }[]>();
+    return rows.map((r) => String(r._id));
   }
 }

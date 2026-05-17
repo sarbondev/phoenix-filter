@@ -45,4 +45,9 @@ export class ProductController {
     await this.productService.remove(req.params['id']! as string);
     ResponseHelper.noContent(res);
   };
+
+  listManufacturers = async (_req: Request, res: Response): Promise<void> => {
+    const data = await this.productService.listManufacturers();
+    ResponseHelper.success(res, data);
+  };
 }

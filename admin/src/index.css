@@ -2,10 +2,10 @@
 
 @theme {
   /* Brand — admin uses a slightly different blue than the storefront. */
-  --color-brand: #2563eb;
-  --color-brand-hover: #1d4ed8;
-  --color-brand-active: #1e40af;
-  --color-brand-soft: #dbeafe;
+  --color-brand: #00205B;
+  --color-brand-hover: #001a4a;
+  --color-brand-active: #001339;
+  --color-brand-soft: #e7ecf4;
 
   /* Semantic */
   --color-success: #16a34a;

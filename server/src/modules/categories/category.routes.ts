@@ -15,7 +15,6 @@ const router = Router();
 
 // Public routes
 router.get('/', asyncHandler(categoryController.getAll));
-router.get('/tree', asyncHandler(categoryController.getTree));
 router.get('/slug/:slug', asyncHandler(categoryController.getBySlug));
 router.get('/:id', asyncHandler(categoryController.getOne));
 

@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, Trash2 } from 'lucide-react';
 import { z } from 'zod';
 import { useCreateProductMutation, useUpdateProductMutation } from '@/store/api/productApi';
 import { useGetCategoriesQuery } from '@/store/api/categoryApi';
+import { useGetDirectionsQuery } from '@/store/api/directionApi';
 import { Button, Input, Textarea, Select, ImageUpload } from '@/components/ui';
 import type { Product, CrossReference, ProductDimensions } from '@/lib/types';
 import { useLocale, tf } from '@/hooks/useLocale';
@@ -49,14 +50,16 @@ export default function ProductForm({ product, onSuccess }: Props) {
   const { t } = useTranslation();
   const locale = useLocale();
 
+  const initialCategoryId = typeof product?.category === 'string'
+    ? product.category
+    : product?.category?.id ?? product?.category?._id ?? '';
+
   const [form, setForm] = useState({
     name: tf(product?.name, locale),
     description: tf(product?.description, locale),
     price: product?.price ?? 0,
     discountPercent: product?.discountPercent ?? 0,
-    category: typeof product?.category === 'string'
-      ? product.category
-      : product?.category?.id ?? product?.category?._id ?? '',
+    category: initialCategoryId,
     stock: product?.stock ?? 0,
     tags: tf(product?.tags, locale),
     isActive: product?.isActive ?? true,
@@ -80,8 +83,24 @@ export default function ProductForm({ product, onSuccess }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const { data: categories } = useGetCategoriesQuery();
+  const { data: directions } = useGetDirectionsQuery();
   const [create, { isLoading: creating }] = useCreateProductMutation();
   const [update, { isLoading: updating }] = useUpdateProductMutation();
+
+  const [directionFilter, setDirectionFilter] = useState('');
+
+  // When editing, derive direction from the product's category once categories load.
+  useEffect(() => {
+    if (!initialCategoryId || !categories) return;
+    const cat = categories.find((c) => c.id === initialCategoryId);
+    if (cat && !directionFilter) setDirectionFilter(cat.direction);
+  }, [initialCategoryId, categories, directionFilter]);
+
+  const filteredCategories = useMemo(() => {
+    const list = categories ?? [];
+    if (!directionFilter) return list;
+    return list.filter((c) => c.direction === directionFilter);
+  }, [categories, directionFilter]);
 
   const isLoading = creating || updating;
 
@@ -187,8 +206,31 @@ export default function ProductForm({ product, onSuccess }: Props) {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
-        <Select label={t('common.category')} options={(categories ?? []).map((c) => ({ value: c.id, label: tf(c.name, locale) }))} value={form.category} onChange={(e) => set('category', e.target.value)} error={errors.category} placeholder="Select category" />
+      <div className="grid grid-cols-4 gap-4">
+        <Select
+          label={t('directions.title')}
+          options={(directions ?? []).map((d) => ({ value: d.id, label: tf(d.name, locale) }))}
+          value={directionFilter}
+          onChange={(e) => {
+            setDirectionFilter(e.target.value);
+            // Reset category when direction changes (the current category may
+            // not belong to the newly-selected direction).
+            const stillValid = categories?.find(
+              (c) => c.id === form.category && c.direction === e.target.value,
+            );
+            if (!stillValid) set('category', '');
+          }}
+          placeholder={t('categories.selectDirection')}
+        />
+        <Select
+          label={t('common.category')}
+          options={filteredCategories.map((c) => ({ value: c.id, label: tf(c.name, locale) }))}
+          value={form.category}
+          onChange={(e) => set('category', e.target.value)}
+          error={errors.category}
+          placeholder={directionFilter ? t('categories.selectCategory') : t('categories.selectDirectionFirst')}
+          disabled={!directionFilter}
+        />
         <Input label={t('common.stock')} type="number" value={form.stock} onChange={(e) => set('stock', Number(e.target.value))} error={errors.stock} />
         <Input label={t('products.tags')} value={form.tags} onChange={(e) => set('tags', e.target.value)} placeholder="filter, water, industrial" />
       </div>

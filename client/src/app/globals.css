@@ -5,11 +5,11 @@
      Brand — Prestige Filter
      Each --color-* becomes a Tailwind utility (bg-brand, text-brand …).
      ──────────────────────────────────────────────────────────────── */
-  --color-brand: #1f4dff;
-  --color-brand-hover: #1a3fdc;
-  --color-brand-active: #1532b8;
-  --color-brand-soft: #eef2ff;
-  --color-brand-strong: #0a1f7a;
+  --color-brand: #00205B;
+  --color-brand-hover: #001a4a;
+  --color-brand-active: #001339;
+  --color-brand-soft: #e7ecf4;
+  --color-brand-strong: #00112e;
 
   --color-accent: #ef2531;
   --color-accent-hover: #d11e29;
@@ -57,7 +57,7 @@
   --shadow-md: 0 4px 12px rgba(15, 23, 41, 0.06), 0 2px 4px rgba(15, 23, 41, 0.04);
   --shadow-lg: 0 12px 32px rgba(15, 23, 41, 0.10), 0 4px 8px rgba(15, 23, 41, 0.05);
   --shadow-xl: 0 24px 56px rgba(15, 23, 41, 0.18);
-  --shadow-brand: 0 8px 24px rgba(31, 77, 255, 0.18);
+  --shadow-brand: 0 8px 24px rgba(0, 32, 91, 0.22);
 
   /* Motion — utility: transition-fast, ease-out-soft … */
   --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);

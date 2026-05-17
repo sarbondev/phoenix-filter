@@ -17,11 +17,6 @@ export class ProductService {
   private readonly categoryRepository = new CategoryRepository();
   constructor(private readonly productRepository: ProductRepository) {}
 
-  private async expandCategoryFilter(category: string | undefined): Promise<string[] | undefined> {
-    if (!category) return undefined;
-    return this.categoryRepository.collectDescendants(category);
-  }
-
   private slugify(text: string): string {
     return text
       .toLowerCase()
@@ -54,6 +49,15 @@ export class ProductService {
       return `${prefix}-${num}-${ts}`;
     }
     return sku;
+  }
+
+  private async applyDirectionFilter(
+    filter: ProductFilter,
+    directionId: string | undefined,
+  ): Promise<void> {
+    if (!directionId) return;
+    const ids = await this.categoryRepository.findIdsByDirection(directionId);
+    filter.categoryIds = ids.length > 0 ? ids : ["__none__"];
   }
 
   async create(dto: CreateProductDto): Promise<ProductResponse> {
@@ -121,7 +125,8 @@ export class ProductService {
       isActive: true,
     };
 
-    if (query.category) filter.categoryIds = await this.expandCategoryFilter(query.category);
+    if (query.category) filter.category = query.category;
+    await this.applyDirectionFilter(filter, query.direction);
     if (query.isFeatured === "true") filter.isFeatured = true;
     if (query.minPrice) filter.minPrice = parseFloat(query.minPrice);
     if (query.maxPrice) filter.maxPrice = parseFloat(query.maxPrice);
@@ -152,7 +157,8 @@ export class ProductService {
     const skip = (page - 1) * limit;
     const filter: ProductFilter = {};
 
-    if (query.category) filter.categoryIds = await this.expandCategoryFilter(query.category);
+    if (query.category) filter.category = query.category;
+    await this.applyDirectionFilter(filter, query.direction);
     if (query.isFeatured === "true") filter.isFeatured = true;
     if (query.minPrice) filter.minPrice = parseFloat(query.minPrice);
     if (query.maxPrice) filter.maxPrice = parseFloat(query.maxPrice);
@@ -258,6 +264,10 @@ export class ProductService {
     const response = toProductResponse(updated);
     emitToAll("product:updated", response);
     return response;
+  }
+
+  async listManufacturers(): Promise<string[]> {
+    return this.productRepository.listManufacturers();
   }
 
   async remove(id: string): Promise<void> {

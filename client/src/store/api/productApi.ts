@@ -34,7 +34,17 @@ export const productApi = baseApi.injectEndpoints({
       transformResponse: (res: ApiResponse<Product>) => res.data,
       providesTags: (result) => result ? [{ type: 'Product', id: result.id }] : [],
     }),
+    getManufacturers: builder.query<string[], void>({
+      query: () => '/products/manufacturers',
+      transformResponse: (res: ApiResponse<string[]>) => res.data,
+      providesTags: ['Product'],
+    }),
   }),
 });
 
-export const { useGetProductsQuery, useGetProductQuery, useGetProductBySlugQuery } = productApi;
+export const {
+  useGetProductsQuery,
+  useGetProductQuery,
+  useGetProductBySlugQuery,
+  useGetManufacturersQuery,
+} = productApi;

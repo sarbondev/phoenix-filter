@@ -105,4 +105,21 @@ export class ProductRepository {
   async findByCategory(categoryId: string): Promise<IProduct[]> {
     return ProductModel.find({ category: categoryId, isActive: true }).lean<IProduct[]>();
   }
+
+  async listManufacturers(limit = 24): Promise<string[]> {
+    const rows = await ProductModel.aggregate<{ _id: string; count: number }>([
+      { $match: { isActive: true, 'crossReferences.0': { $exists: true } } },
+      { $unwind: '$crossReferences' },
+      {
+        $group: {
+          _id: { $toUpper: '$crossReferences.manufacturer' },
+          count: { $sum: 1 },
+        },
+      },
+      { $match: { _id: { $ne: null, $nin: ['', ' '] } } },
+      { $sort: { count: -1, _id: 1 } },
+      { $limit: limit },
+    ]);
+    return rows.map((r) => r._id).filter(Boolean);
+  }
 }

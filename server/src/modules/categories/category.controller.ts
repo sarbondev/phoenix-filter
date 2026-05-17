@@ -8,13 +8,9 @@ export class CategoryController {
 
   getAll = async (req: Request, res: Response): Promise<void> => {
     const activeOnly = req.query['active'] === 'true';
-    const categories = await this.categoryService.findAll(activeOnly);
+    const direction = typeof req.query['direction'] === 'string' ? req.query['direction'] : undefined;
+    const categories = await this.categoryService.findAll(activeOnly, direction);
     ResponseHelper.success(res, categories, 'Categories retrieved');
-  };
-
-  getTree = async (_req: Request, res: Response): Promise<void> => {
-    const tree = await this.categoryService.findTree();
-    ResponseHelper.success(res, tree, 'Category tree retrieved');
   };
 
   getOne = async (req: Request, res: Response): Promise<void> => {

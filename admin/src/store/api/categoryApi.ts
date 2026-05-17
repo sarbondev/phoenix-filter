@@ -3,21 +3,18 @@ import type { ApiResponse, Category, CreateCategoryRequest } from '@/lib/types';
 
 export const categoryApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getCategories: builder.query<Category[], { active?: boolean } | void>({
+    getCategories: builder.query<Category[], { active?: boolean; direction?: string } | void>({
       query: (params) => ({
         url: '/categories',
-        params: params ? { active: params.active } : undefined,
+        params: params
+          ? { active: params.active, direction: params.direction }
+          : undefined,
       }),
       transformResponse: (res: ApiResponse<Category[]>) => res.data ?? [],
       providesTags: (result) =>
         result
           ? [...result.map(({ id }) => ({ type: 'Category' as const, id })), 'Category']
           : ['Category'],
-    }),
-    getCategoryTree: builder.query<Category[], void>({
-      query: () => '/categories/tree',
-      transformResponse: (res: ApiResponse<Category[]>) => res.data ?? [],
-      providesTags: ['Category'],
     }),
     getCategory: builder.query<Category, string>({
       query: (id) => `/categories/${id}`,
@@ -43,7 +40,6 @@ export const categoryApi = baseApi.injectEndpoints({
 
 export const {
   useGetCategoriesQuery,
-  useGetCategoryTreeQuery,
   useGetCategoryQuery,
   useCreateCategoryMutation,
   useUpdateCategoryMutation,

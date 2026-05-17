@@ -6,6 +6,7 @@ import LoginPage from '@/pages/auth/LoginPage';
 import DashboardPage from '@/pages/dashboard/DashboardPage';
 import ProductsPage from '@/pages/products/ProductsPage';
 import CategoriesPage from '@/pages/categories/CategoriesPage';
+import DirectionsPage from '@/pages/directions/DirectionsPage';
 import OrdersPage from '@/pages/orders/OrdersPage';
 import UsersPage from '@/pages/users/UsersPage';
 import ReviewsPage from '@/pages/reviews/ReviewsPage';
@@ -32,6 +33,7 @@ export default function App() {
         <Route path="/product-requests" element={<ProductRequestsPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/products" element={<AdminOnly><ProductsPage /></AdminOnly>} />
+        <Route path="/directions" element={<AdminOnly><DirectionsPage /></AdminOnly>} />
         <Route path="/categories" element={<AdminOnly><CategoriesPage /></AdminOnly>} />
         <Route path="/users" element={<AdminOnly><UsersPage /></AdminOnly>} />
         <Route path="/presentations" element={<AdminOnly><PresentationsPage /></AdminOnly>} />

@@ -56,6 +56,19 @@ export function useSocket() {
       dispatch(baseApi.util.invalidateTags(['Category', 'Dashboard']));
     });
 
+    // Direction events
+    socket.on('direction:created', () => {
+      dispatch(baseApi.util.invalidateTags(['Direction', 'Dashboard']));
+    });
+
+    socket.on('direction:updated', () => {
+      dispatch(baseApi.util.invalidateTags(['Direction']));
+    });
+
+    socket.on('direction:deleted', () => {
+      dispatch(baseApi.util.invalidateTags(['Direction', 'Dashboard']));
+    });
+
     // Review events
     socket.on('review:new', () => {
       dispatch(incrementNotifications());

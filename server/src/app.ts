@@ -11,11 +11,11 @@ import authRoutes from "./modules/auth/auth.routes";
 import productRoutes from "./modules/products/product.routes";
 import userRoutes from "./modules/users/user.routes";
 import categoryRoutes from "./modules/categories/category.routes";
+import directionRoutes from "./modules/directions/direction.routes";
 import orderRoutes from "./modules/orders/order.routes";
 import cartRoutes from "./modules/cart/cart.routes";
 import reviewRoutes from "./modules/reviews/review.routes";
 import dashboardRoutes from "./modules/dashboard/dashboard.routes";
-import seedRoutes from "./modules/auth/seed.routes";
 import uploadRoutes from "./modules/upload/upload.routes";
 import blogRoutes from "./modules/blogs/blog.routes";
 import partnerRoutes from "./modules/partners/partner.routes";
@@ -99,17 +99,13 @@ export const createApp = (): Application => {
   const api = env.API_PREFIX;
   app.use(`${api}/auth`, authRoutes);
   app.use(`${api}/users`, userRoutes);
+  app.use(`${api}/directions`, directionRoutes);
   app.use(`${api}/categories`, categoryRoutes);
   app.use(`${api}/products`, productRoutes);
   app.use(`${api}/orders`, orderRoutes);
   app.use(`${api}/cart`, cartRoutes);
   app.use(`${api}/reviews`, reviewRoutes);
   app.use(`${api}/dashboard`, dashboardRoutes);
-  // Seed routes are destructive (DB migrations, expensive Gemini calls,
-  // first-admin creation). Only mounted in non-production environments.
-  if (env.NODE_ENV !== "production") {
-    app.use(`${api}/seed`, seedRoutes);
-  }
   app.use(`${api}/upload`, uploadRoutes);
   app.use(`${api}/blogs`, blogRoutes);
   app.use(`${api}/partners`, partnerRoutes);

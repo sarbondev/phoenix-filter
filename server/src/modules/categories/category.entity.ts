@@ -7,7 +7,7 @@ export interface ICategory extends Document {
   description: TranslatedField;
   slug: string;
   image?: string;
-  parent?: Types.ObjectId;
+  direction: Types.ObjectId;
   isActive: boolean;
   sortOrder: number;
   createdAt: Date;
@@ -20,10 +20,9 @@ export interface CategoryResponse {
   description: TranslatedField;
   slug: string;
   image?: string;
-  parent?: string;
+  direction: string;
   isActive: boolean;
   sortOrder: number;
-  children?: CategoryResponse[];
   createdAt: Date;
 }
 
@@ -33,7 +32,7 @@ export const toCategoryResponse = (cat: ICategory): CategoryResponse => ({
   description: cat.description,
   slug: cat.slug,
   image: cat.image,
-  parent: cat.parent ? String(cat.parent) : undefined,
+  direction: String(cat.direction),
   isActive: cat.isActive,
   sortOrder: cat.sortOrder,
   createdAt: cat.createdAt,

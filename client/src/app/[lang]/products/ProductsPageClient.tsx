@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, SlidersHorizontal, ChevronDown, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import type { Locale, Category } from '@/shared/types';
 import type { Dictionary } from '@/shared/i18n/dictionaries/en';
-import { useGetProductsQuery } from '@/store/api/productApi';
+import { useGetProductsQuery, useGetManufacturersQuery } from '@/store/api/productApi';
 import { useGetCategoriesQuery } from '@/store/api/categoryApi';
 import { ProductCard } from '@/entities/product/ProductCard';
 import { ProductCardSkeleton, Input } from '@/shared/ui';
@@ -338,13 +338,6 @@ function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }
 /*  Category Sidebar                                                  */
 /* ═══════════════════════════════════════════════════════════════════ */
 
-// Most-frequent cross-reference manufacturers in the Phoenix catalogue
-// (top 12 by occurrence — these cover the vast majority of customer searches).
-const TOP_MANUFACTURERS = [
-  'MANN', 'MAHLE', 'HENGST', 'FRAM', 'WIX', 'BALDWIN',
-  'PUROLATOR', 'KNECHT', 'DONALDSON', 'FLEETGUARD', 'LUBER-FINER', 'SAKURA',
-];
-
 function ManufacturerFilter({
   selected,
   dict,
@@ -354,6 +347,9 @@ function ManufacturerFilter({
   dict: Dictionary;
   onSelect: (m: string) => void;
 }) {
+  const { data: manufacturers } = useGetManufacturersQuery();
+  if (!manufacturers || manufacturers.length === 0) return null;
+
   return (
     <div>
       <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-3">
@@ -368,7 +364,7 @@ function ManufacturerFilter({
         {dict.products.allManufacturers}
       </button>
       <div className="grid grid-cols-2 gap-1">
-        {TOP_MANUFACTURERS.map((m) => {
+        {manufacturers.map((m) => {
           const active = selected.toUpperCase() === m;
           return (
             <button

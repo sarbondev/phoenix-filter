@@ -154,6 +154,7 @@ export type UpdateProductDto = z.infer<typeof updateProductSchema>;
 export const productQuerySchema = z.object({
   page: z.string().regex(/^\d+$/).optional(),
   limit: z.string().regex(/^\d+$/).optional(),
+  direction: z.string().regex(/^[a-f0-9]{24}$/).optional(),
   category: z.string().regex(/^[a-f0-9]{24}$/).optional(),
   categorySlug: z.string().max(120).optional(),
   search: z.string().max(200).optional(),

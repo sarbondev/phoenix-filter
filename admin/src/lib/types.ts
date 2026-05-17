@@ -52,6 +52,28 @@ export interface AuthResponse {
   expiresIn: string;
 }
 
+// Direction (top-level grouping for categories)
+export interface Direction {
+  id: string;
+  name: TranslatedField;
+  description: TranslatedField;
+  slug: string;
+  icon?: string;
+  image?: string;
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+}
+
+export interface CreateDirectionRequest {
+  name: string;
+  slug?: string;
+  icon?: string;
+  image?: string;
+  isActive?: boolean;
+  sortOrder?: number;
+}
+
 // Category
 export interface Category {
   id: string;
@@ -59,10 +81,9 @@ export interface Category {
   description: TranslatedField;
   slug: string;
   image?: string;
-  parent?: string;
+  direction: string;
   isActive: boolean;
   sortOrder: number;
-  children?: Category[];
   createdAt: string;
 }
 
@@ -70,7 +91,7 @@ export interface CreateCategoryRequest {
   name: string;
   slug?: string;
   image?: string;
-  parent?: string;
+  direction: string;
   isActive?: boolean;
   sortOrder?: number;
 }

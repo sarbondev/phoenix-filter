@@ -13,7 +13,7 @@ const categoryMongoSchema = new Schema<ICategory>(
     description: { type: translatedFieldSchema, required: true },
     slug: { type: String, required: true, unique: true, lowercase: true, trim: true },
     image: { type: String },
-    parent: { type: Schema.Types.ObjectId, ref: 'Category', default: null },
+    direction: { type: Schema.Types.ObjectId, ref: 'Direction', required: true },
     isActive: { type: Boolean, default: true },
     sortOrder: { type: Number, default: 0 },
   },
@@ -21,7 +21,7 @@ const categoryMongoSchema = new Schema<ICategory>(
 );
 
 categoryMongoSchema.index({ slug: 1 });
-categoryMongoSchema.index({ parent: 1 });
+categoryMongoSchema.index({ direction: 1, sortOrder: 1 });
 categoryMongoSchema.index({ isActive: 1, sortOrder: 1 });
 
 export const CategoryModel = model<ICategory>('Category', categoryMongoSchema);
@@ -31,7 +31,7 @@ export const createCategorySchema = z.object({
   name: z.string().min(1).max(200),
   slug: z.string().max(200).optional(),
   image: z.string().min(1).optional(),
-  parent: z.string().optional(),
+  direction: z.string().regex(/^[a-f0-9]{24}$/, 'Invalid direction id'),
   isActive: z.boolean().default(true),
   sortOrder: z.number().int().default(0),
 });

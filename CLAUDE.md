@@ -16,7 +16,7 @@ Run inside the relevant package directory.
 
 | Package | Dev | Build | Lint | Other |
 |---|---|---|---|---|
-| `server` | `npm run dev` | `npm run build` | `npm run lint` | `npm run typecheck`, `npm run seed`, `npm run seed:phoenix`, `npm run parse:phoenix`, `npm start` (prod) |
+| `server` | `npm run dev` | `npm run build` | `npm run lint` | `npm run typecheck`, `npm run seed` (creates one admin), `npm start` (prod) |
 | `admin` | `npm run dev` | `npm run build` (runs `tsc -b` then Vite) | `npm run lint` | `npm run preview` |
 | `client` | `npm run dev` | `npm run build` | `npm run lint` | `npm start` |
 
@@ -91,7 +91,7 @@ This is a B2B/B2C filter shop built around the **Phoenix Catalogue 2024** (~3,30
 
 ### Category hierarchy
 
-Two top-level roots, set up in `server/src/scripts/restructure-categories.ts`:
+Two top-level roots already exist in the database:
 
 - **Avto** (`slug: avto`) — all 18 catalogue subcategories nest under it (Air Filter EUR/JP/KR/USA, Cabin Air, Channel Air, ECO Oil & Fuel, Heavy Duty ×4, In-Tank Fuel, Inline Fuel, LPG, Spin-On Oil ×3, Transmission)
 - **Maishiy** (`slug: maishiy`) — empty placeholder for future household filters
@@ -110,21 +110,6 @@ Beyond standard e-commerce fields, `Product` carries six filter-domain fields (d
 - `vehicleBrand?: string` — uppercase brand from PDF section header (HYUNDAI, OPEL, etc.)
 
 `ProductRepository.findAll` `search` filter ORs across `name.{uz,ru,en}`, `description.*`, `sku`, `oem`, `application`, and `crossReferences.partNumber` — so a customer's free-text query hits any of these.
-
-### Phoenix import pipeline
-
-- Source PDFs live in `~/Downloads/PHOENIX CATALOGUE 2024/` (not in repo)
-- `server/scripts/parse-phoenix-catalogue.py` (Python, requires `pdftotext` from `brew install poppler`) parses all 18 PDFs:
-  - Format A (LPG, Channel, Spin-On Oil ×3, In-Tank, Inline Fuel) — split-by-2-spaces row parsing
-  - Format B (Air filters, Cabin Air, Heavy Duty ×4, ECO, Transmission) — TSV bounding-box parsing via `pdftotext -tsv` (column anchors derived from header word x-positions)
-- Output: `server/seeds/phoenix-products.json` (~875 KB, 3,353 SKUs, 23,000 cross-references) — committed so seeding is deterministic without re-parsing
-- `server/src/seed-phoenix.ts` reads the JSON, ensures the 18 categories exist (idempotent by slug), and bulk-inserts products skipping any SKU already in the DB
-- One-off helper scripts in `server/src/scripts/` for re-parenting categories under Avto and toggling activation/stock
-
-When you add a new filter category to the catalogue, you must:
-1. Add a mapping in `category_for()` in the parser script
-2. Add a parser config block in `parse_pdf()` for that PDF's format
-3. Re-run `npm run parse:phoenix` then `npm run seed:phoenix`
 
 ### Where the filter UX lives
 
