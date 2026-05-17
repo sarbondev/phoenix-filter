@@ -77,9 +77,15 @@ const en = {
     viewAll: 'View All',
     exploreCategories: 'Explore Categories',
     productsCount: 'products',
+    noCategories: 'No categories in this direction yet',
     comingSoonTitle: 'Coming soon',
     comingSoonText: 'The household-filters section is in the works — water and air filters for home use will be live shortly.',
     browseAvto: 'Browse Auto section',
+  },
+  directions: {
+    title: 'Directions',
+    subtitle: 'Browse filter categories by industry',
+    empty: 'No directions yet',
   },
   cart: {
     title: 'Shopping Cart',

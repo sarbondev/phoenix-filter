@@ -29,16 +29,27 @@ export interface PaginatedApiResponse<T = unknown> {
   meta: PaginationMeta;
 }
 
+export interface Direction {
+  id: string;
+  name: TranslatedField;
+  description: TranslatedField;
+  slug: string;
+  icon?: string;
+  image?: string;
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+}
+
 export interface Category {
   id: string;
   name: TranslatedField;
   description: TranslatedField;
   slug: string;
   image?: string;
-  parent?: string;
+  direction: string;
   isActive: boolean;
   sortOrder: number;
-  children?: Category[];
   createdAt: string;
 }
 

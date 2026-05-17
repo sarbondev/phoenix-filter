@@ -9,16 +9,19 @@ interface ApiList<T> {
   meta?: { total?: number; totalPages?: number };
 }
 
-interface ApiSingle<T> {
-  data?: T;
-}
-
 interface ProductSitemapEntry {
   slug: string;
   updatedAt?: string;
 }
 
 interface CategorySitemapEntry {
+  slug: string;
+  direction?: string;
+  updatedAt?: string;
+}
+
+interface DirectionSitemapEntry {
+  id: string;
   slug: string;
   updatedAt?: string;
 }
@@ -62,6 +65,19 @@ async function fetchAllCategories(): Promise<CategorySitemapEntry[]> {
   }
 }
 
+async function fetchAllDirections(): Promise<DirectionSitemapEntry[]> {
+  try {
+    const res = await fetch(`${API_URL}/directions?active=true`, {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) return [];
+    const json = (await res.json()) as ApiList<DirectionSitemapEntry>;
+    return json.data ?? [];
+  } catch {
+    return [];
+  }
+}
+
 function alternates(path: string): Record<string, string> {
   const out: Record<string, string> = {};
   for (const l of LOCALES) out[l] = `${SITE_URL}/${l}${path}`;
@@ -69,10 +85,13 @@ function alternates(path: string): Record<string, string> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [products, categories] = await Promise.all([
+  const [products, categories, directions] = await Promise.all([
     fetchAllProducts(),
     fetchAllCategories(),
+    fetchAllDirections(),
   ]);
+
+  const directionById = new Map(directions.map((d) => [d.id, d]));
 
   const now = new Date();
   const entries: MetadataRoute.Sitemap = [];
@@ -80,7 +99,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static pages — one entry per locale (default Russian as canonical)
   const staticPaths: { path: string; priority: number; changeFreq: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = [
     { path: "", priority: 1.0, changeFreq: "daily" },
-    { path: "/categories", priority: 0.9, changeFreq: "weekly" },
+    { path: "/yonalish", priority: 0.9, changeFreq: "weekly" },
     { path: "/products", priority: 0.9, changeFreq: "daily" },
     { path: "/blog", priority: 0.5, changeFreq: "weekly" },
     { path: "/contact", priority: 0.5, changeFreq: "monthly" },
@@ -96,8 +115,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
+  for (const d of directions) {
+    const path = `/yonalish/${d.slug}`;
+    entries.push({
+      url: `${SITE_URL}/ru${path}`,
+      lastModified: d.updatedAt ? new Date(d.updatedAt) : now,
+      changeFrequency: "weekly",
+      priority: 0.8,
+      alternates: { languages: alternates(path) },
+    });
+  }
+
   for (const cat of categories) {
-    const path = `/categories/${cat.slug}`;
+    const dir = cat.direction ? directionById.get(cat.direction) : undefined;
+    if (!dir) continue;
+    const path = `/yonalish/${dir.slug}/${cat.slug}`;
     entries.push({
       url: `${SITE_URL}/ru${path}`,
       lastModified: cat.updatedAt ? new Date(cat.updatedAt) : now,

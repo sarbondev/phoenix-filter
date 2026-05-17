@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, SlidersHorizontal, ChevronDown, ChevronLeft, ChevronRight, X } from 'lucide-react';
-import type { Locale, Category } from '@/shared/types';
+import type { Locale, Category, Direction } from '@/shared/types';
 import type { Dictionary } from '@/shared/i18n/dictionaries/en';
 import { useGetProductsQuery, useGetManufacturersQuery } from '@/store/api/productApi';
 import { useGetCategoriesQuery } from '@/store/api/categoryApi';
+import { useGetDirectionsQuery } from '@/store/api/directionApi';
 import { ProductCard } from '@/entities/product/ProductCard';
 import { ProductCardSkeleton, Input } from '@/shared/ui';
 import { t } from '@/shared/lib/utils';
@@ -42,6 +43,7 @@ export function ProductsPageClient({ locale, dict }: Props) {
   const sortOrder = params.sortOrder ?? 'desc';
 
   const { data: categories } = useGetCategoriesQuery();
+  const { data: directions } = useGetDirectionsQuery();
   // Allow URL to pass either ?category=<id> or ?categorySlug=<slug>; resolve slug → id.
   const category = categoryParam || (categorySlug
     ? categories?.find((c) => c.slug === categorySlug)?.id ?? ''
@@ -116,6 +118,7 @@ export function ProductsPageClient({ locale, dict }: Props) {
         <aside className="hidden lg:block w-64 shrink-0 space-y-6">
           <CategorySidebar
             categories={categories ?? []}
+            directions={directions ?? []}
             selected={category}
             locale={locale}
             dict={dict}
@@ -296,6 +299,7 @@ export function ProductsPageClient({ locale, dict }: Props) {
               <div className="p-4 space-y-6">
                 <CategorySidebar
                   categories={categories ?? []}
+                  directions={directions ?? []}
                   selected={category}
                   locale={locale}
                   dict={dict}
@@ -387,26 +391,30 @@ function ManufacturerFilter({
 
 function CategorySidebar({
   categories,
+  directions,
   selected,
   locale,
   dict,
   onSelect,
 }: {
   categories: Category[];
+  directions: Direction[];
   selected: string;
   locale: Locale;
   dict: Dictionary;
   onSelect: (id: string) => void;
 }) {
-  // Build parent → children map
-  const roots = categories.filter((c) => !c.parent && c.isActive);
-  const childrenMap = new Map<string, Category[]>();
+  const sortedDirections = directions
+    .filter((d) => d.isActive)
+    .slice()
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+
+  const categoriesByDirection = new Map<string, Category[]>();
   for (const cat of categories) {
-    if (cat.parent && cat.isActive) {
-      const list = childrenMap.get(cat.parent) ?? [];
-      list.push(cat);
-      childrenMap.set(cat.parent, list);
-    }
+    if (!cat.isActive) continue;
+    const list = categoriesByDirection.get(cat.direction) ?? [];
+    list.push(cat);
+    categoriesByDirection.set(cat.direction, list);
   }
 
   return (
@@ -425,12 +433,13 @@ function CategorySidebar({
         {dict.categories.all}
       </button>
 
-      {/* Category tree */}
-      {roots.map((cat) => (
-        <CategoryItem
-          key={cat.id}
-          category={cat}
-          subItems={childrenMap.get(cat.id)}
+      {sortedDirections.map((d) => (
+        <DirectionGroup
+          key={d.id}
+          direction={d}
+          categories={(categoriesByDirection.get(d.id) ?? []).sort(
+            (a, b) => a.sortOrder - b.sortOrder,
+          )}
           selected={selected}
           locale={locale}
           onSelect={onSelect}
@@ -440,55 +449,45 @@ function CategorySidebar({
   );
 }
 
-function CategoryItem({
-  category,
-  subItems,
+function DirectionGroup({
+  direction,
+  categories,
   selected,
   locale,
   onSelect,
 }: {
-  category: Category;
-  subItems?: Category[];
+  direction: Direction;
+  categories: Category[];
   selected: string;
   locale: Locale;
   onSelect: (id: string) => void;
 }) {
-  const [open, setOpen] = useState(selected === category.id || !!subItems?.some((c) => c.id === selected));
-  const hasChildren = subItems && subItems.length > 0;
-  const isActive = selected === category.id;
+  const containsSelected = categories.some((c) => c.id === selected);
+  const [open, setOpen] = useState(containsSelected);
 
   return (
-    <div>
-      <div className="flex items-center">
-        <button
-          onClick={() => onSelect(category.id)}
-          className={`flex-1 text-left rounded-lg px-3 py-2 text-sm transition-colors ${
-            isActive ? 'bg-[var(--color-brand-soft)] text-[var(--color-brand)] font-medium' : 'text-slate-600 hover:bg-slate-50'
-          }`}
-        >
-          {t(category.name, locale)}
-        </button>
-        {hasChildren && (
-          <button
-            onClick={() => setOpen(!open)}
-            className="p-1.5 rounded-md hover:bg-slate-100 transition-colors"
-          >
-            <ChevronDown className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
-          </button>
-        )}
-      </div>
+    <div className="mt-1">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-[13px] font-semibold uppercase tracking-wider text-slate-500 hover:bg-slate-50 transition-colors"
+      >
+        <span className="truncate">{t(direction.name, locale)}</span>
+        <ChevronDown className={`h-3.5 w-3.5 text-slate-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+      </button>
 
-      {hasChildren && open && (
-        <div className="ml-3 pl-3 border-l border-slate-100">
-          {subItems!.map((child) => (
+      {open && categories.length > 0 && (
+        <div className="ml-2 pl-2 border-l border-slate-100">
+          {categories.map((cat) => (
             <button
-              key={child.id}
-              onClick={() => onSelect(child.id)}
+              key={cat.id}
+              onClick={() => onSelect(cat.id)}
               className={`w-full text-left rounded-lg px-3 py-1.5 text-[13px] transition-colors ${
-                selected === child.id ? 'bg-[var(--color-brand-soft)] text-[var(--color-brand)] font-medium' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
+                selected === cat.id
+                  ? 'bg-[var(--color-brand-soft)] text-[var(--color-brand)] font-medium'
+                  : 'text-slate-600 hover:bg-slate-50'
               }`}
             >
-              {t(child.name, locale)}
+              {t(cat.name, locale)}
             </button>
           ))}
         </div>

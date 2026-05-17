@@ -79,9 +79,15 @@ const uz: Dictionary = {
     viewAll: "Barchasini ko'rish",
     exploreCategories: "Kategoriyalarni ko'rish",
     productsCount: 'mahsulot',
+    noCategories: "Bu yo'nalishda hali kategoriyalar yo'q",
     comingSoonTitle: 'Tez kunda',
     comingSoonText: "Maishiy filterlar bo'limi tayyorlanmoqda — uy uchun suv va havo filtrlari yaqin orada saytda paydo bo'ladi.",
     browseAvto: "Avto bo'limini ko'rish",
+  },
+  directions: {
+    title: "Yo'nalishlar",
+    subtitle: "Filter kategoriyalarini soha bo'yicha ko'ring",
+    empty: "Yo'nalishlar hali yo'q",
   },
   cart: {
     title: 'Savat',

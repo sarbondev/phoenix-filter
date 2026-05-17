@@ -79,9 +79,15 @@ const ru: Dictionary = {
     viewAll: 'Смотреть все',
     exploreCategories: 'Обзор категорий',
     productsCount: 'товаров',
+    noCategories: 'В этом направлении пока нет категорий',
     comingSoonTitle: 'Скоро',
     comingSoonText: 'Раздел бытовых фильтров готовится — фильтры для воды и воздуха для дома появятся на сайте в ближайшее время.',
     browseAvto: 'Перейти в авто-раздел',
+  },
+  directions: {
+    title: 'Направления',
+    subtitle: 'Категории фильтров по направлениям',
+    empty: 'Направлений пока нет',
   },
   cart: {
     title: 'Корзина',

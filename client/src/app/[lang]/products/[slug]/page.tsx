@@ -71,16 +71,14 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const leafCat = categorySlug ? await fetchCategoryBySlug(categorySlug, locale) : null;
 
   const crumbs = [
-    { name: dict.categories.title, href: `/${locale}/categories` },
+    { name: dict.directions.title, href: `/${locale}/yonalish` },
   ];
-  if (leafCat?.parent) {
-    // Parent slug isn't on the leaf payload — best-effort: fetch by id is overkill;
-    // omit the middle parent crumb if not available without an extra round-trip.
-  }
   if (leafCat) {
+    // We don't have the direction slug on the leaf payload — link directly
+    // to the products page filtered by this category instead.
     crumbs.push({
       name: t(leafCat.name, locale),
-      href: `/${locale}/categories/${leafCat.slug}`,
+      href: `/${locale}/products?categorySlug=${leafCat.slug}`,
     });
   }
   if (product) crumbs.push({ name: t(product.name, locale) || product.sku, href: `/${locale}/products/${slug}` });

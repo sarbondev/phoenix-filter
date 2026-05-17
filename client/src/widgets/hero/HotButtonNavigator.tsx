@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import type { Locale } from "@/shared/types";
 import type { Dictionary } from "@/shared/i18n/dictionaries/en";
-import { useGetCategoriesQuery } from "@/store/api/categoryApi";
+import { useGetDirectionsQuery } from "@/store/api/directionApi";
 import { t, getImageUrl } from "@/shared/lib/utils";
 
 interface HotButtonNavigatorProps {
@@ -21,17 +21,17 @@ interface HotButtonNavigatorProps {
   dict: Dictionary;
 }
 
-const MAX_CATEGORIES = 4;
+const MAX_DIRECTIONS = 4;
 
 export function HotButtonNavigator({ locale, dict }: HotButtonNavigatorProps) {
-  const { data: categories } = useGetCategoriesQuery();
+  const { data: directions } = useGetDirectionsQuery();
 
-  /* Roots (no parent) sorted by sortOrder, top N */
-  const topCategories =
-    categories
-      ?.filter((c) => !c.parent && c.isActive)
+  const topDirections =
+    directions
+      ?.filter((d) => d.isActive)
+      .slice()
       .sort((a, b) => a.sortOrder - b.sortOrder)
-      .slice(0, MAX_CATEGORIES) ?? [];
+      .slice(0, MAX_DIRECTIONS) ?? [];
 
   return (
     <motion.div
@@ -45,13 +45,13 @@ export function HotButtonNavigator({ locale, dict }: HotButtonNavigatorProps) {
       </p>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 max-w-3xl">
-        {/* Category buttons */}
-        {topCategories.map((cat) => (
+        {/* Direction buttons */}
+        {topDirections.map((d) => (
           <HotButton
-            key={cat.id}
-            href={`/${locale}/categories/${cat.slug}`}
-            label={t(cat.name, locale)}
-            image={cat.image}
+            key={d.id}
+            href={`/${locale}/yonalish/${d.slug}`}
+            label={t(d.name, locale)}
+            image={d.image}
             fallback={<FolderTree className="h-4 w-4" />}
           />
         ))}
@@ -64,9 +64,9 @@ export function HotButtonNavigator({ locale, dict }: HotButtonNavigatorProps) {
           accent
         />
 
-        {/* Categories index */}
+        {/* Directions index */}
         <HotButton
-          href={`/${locale}/categories`}
+          href={`/${locale}/yonalish`}
           label={dict.nav.catalog}
           fallback={<Layers className="h-4 w-4" />}
         />

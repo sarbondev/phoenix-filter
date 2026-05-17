@@ -3,13 +3,11 @@ import type { ApiResponse, Category } from '@/shared/types';
 
 export const categoryApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getCategories: builder.query<Category[], void>({
-      query: () => '/categories?active=true',
-      transformResponse: (res: ApiResponse<Category[]>) => res.data ?? [],
-      providesTags: ['Category'],
-    }),
-    getCategoryTree: builder.query<Category[], void>({
-      query: () => '/categories/tree',
+    getCategories: builder.query<Category[], { direction?: string } | void>({
+      query: (params) => ({
+        url: '/categories',
+        params: { active: true, ...(params?.direction ? { direction: params.direction } : {}) },
+      }),
       transformResponse: (res: ApiResponse<Category[]>) => res.data ?? [],
       providesTags: ['Category'],
     }),
@@ -20,4 +18,4 @@ export const categoryApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useGetCategoriesQuery, useGetCategoryTreeQuery, useGetCategoryBySlugQuery } = categoryApi;
+export const { useGetCategoriesQuery, useGetCategoryBySlugQuery } = categoryApi;

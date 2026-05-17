@@ -14,6 +14,7 @@ import type { Locale, CrossReference } from "@/shared/types";
 import type { Dictionary } from "@/shared/i18n/dictionaries/en";
 import { useGetProductBySlugQuery } from "@/store/api/productApi";
 import { useGetCategoriesQuery } from "@/store/api/categoryApi";
+import { useGetDirectionsQuery } from "@/store/api/directionApi";
 import { useGetProductReviewsQuery } from "@/store/api/reviewApi";
 import {
   t,
@@ -37,6 +38,7 @@ interface Props {
 export function ProductDetailClient({ locale, dict, slug }: Props) {
   const { data: product, isLoading } = useGetProductBySlugQuery(slug);
   const { data: allCategories } = useGetCategoriesQuery();
+  const { data: directions } = useGetDirectionsQuery();
   const { data: reviewData } = useGetProductReviewsQuery(product?.id ?? "", {
     skip: !product,
   });
@@ -78,9 +80,9 @@ export function ProductDetailClient({ locale, dict, slug }: Props) {
   const avgRating = reviewData?.average ?? 5;
   const reviewCount = reviewData?.count ?? 0;
 
-  // Build breadcrumb chain: Home › Categories › [Avto/Maishiy] › [Leaf category] › Product
+  // Build breadcrumb chain: Home › Directions › [Direction] › [Category] › Product
   const crumbs: BreadcrumbItem[] = [
-    { label: dict.categories.title, href: `/${locale}/categories` },
+    { label: dict.directions.title, href: `/${locale}/yonalish` },
   ];
   const productCategory =
     typeof product.category === "object" ? product.category : null;
@@ -88,20 +90,20 @@ export function ProductDetailClient({ locale, dict, slug }: Props) {
     const leaf = allCategories.find(
       (c) => c.id === productCategory.id || c.slug === productCategory.slug,
     );
-    if (leaf?.parent) {
-      const parent = allCategories.find((c) => c.id === leaf.parent);
-      if (parent) {
-        crumbs.push({
-          label: t(parent.name, locale),
-          href: `/${locale}/categories/${parent.slug}`,
-        });
-      }
+    const direction = leaf && directions ? directions.find((d) => d.id === leaf.direction) : null;
+    if (direction) {
+      crumbs.push({
+        label: t(direction.name, locale),
+        href: `/${locale}/yonalish/${direction.slug}`,
+      });
     }
-    if (leaf) {
+    if (leaf && direction) {
       crumbs.push({
         label: t(leaf.name, locale),
-        href: `/${locale}/categories/${leaf.slug}`,
+        href: `/${locale}/yonalish/${direction.slug}/${leaf.slug}`,
       });
+    } else if (leaf) {
+      crumbs.push({ label: t(leaf.name, locale) });
     }
   }
   crumbs.push({ label: t(product.name, locale) });

@@ -79,9 +79,15 @@ const kz: Dictionary = {
     viewAll: 'Барлығын көру',
     exploreCategories: 'Санаттарды қарау',
     productsCount: 'өнім',
+    noCategories: 'Бұл бағытта әлі санаттар жоқ',
     comingSoonTitle: 'Жақында',
     comingSoonText: 'Тұрмыстық сүзгілер бөлімі әзірленуде — үйге арналған су және ауа сүзгілері жақын арада сайтта пайда болады.',
     browseAvto: 'Авто бөліміне өту',
+  },
+  directions: {
+    title: 'Бағыттар',
+    subtitle: 'Сүзгі санаттарын салалар бойынша қараңыз',
+    empty: 'Бағыттар әлі жоқ',
   },
   cart: {
     title: 'Себет',

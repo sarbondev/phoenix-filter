@@ -66,7 +66,7 @@ const FALLBACK: HeroContent = {
       en: "Browse catalog",
       kz: "Каталогты ашу",
     },
-    ctaHref: "/categories",
+    ctaHref: "/yonalish",
     image: "",
   },
   smallCard1: {

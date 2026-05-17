@@ -3,7 +3,7 @@
  * Browser requests go through RTK Query (`baseApi`); SSR can't use that, so
  * this module mirrors the same base URL using `fetch`.
  */
-import type { Locale, Product, Category, ApiResponse } from "@/shared/types";
+import type { Locale, Product, Category, Direction, ApiResponse } from "@/shared/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
@@ -27,3 +27,6 @@ export const fetchProductBySlug = (slug: string, locale: Locale) =>
 
 export const fetchCategoryBySlug = (slug: string, locale: Locale) =>
   safeJson<Category>(`/categories/slug/${encodeURIComponent(slug)}?lang=${locale}`, locale);
+
+export const fetchDirectionBySlug = (slug: string, locale: Locale) =>
+  safeJson<Direction>(`/directions/slug/${encodeURIComponent(slug)}?lang=${locale}`, locale);
