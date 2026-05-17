@@ -121,6 +121,8 @@ const en = {
     error: 'Something went wrong',
     retry: 'Retry',
     viewDetails: 'View Details',
+    previous: 'Previous',
+    next: 'Next',
     currency: 'UZS',
     language: 'Language',
     addedToWishlist: 'Added to wishlist',

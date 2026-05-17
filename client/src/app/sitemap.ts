@@ -99,7 +99,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static pages — one entry per locale (default Russian as canonical)
   const staticPaths: { path: string; priority: number; changeFreq: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = [
     { path: "", priority: 1.0, changeFreq: "daily" },
-    { path: "/yonalish", priority: 0.9, changeFreq: "weekly" },
+    { path: "/directions", priority: 0.9, changeFreq: "weekly" },
     { path: "/products", priority: 0.9, changeFreq: "daily" },
     { path: "/blog", priority: 0.5, changeFreq: "weekly" },
     { path: "/contact", priority: 0.5, changeFreq: "monthly" },
@@ -116,7 +116,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   for (const d of directions) {
-    const path = `/yonalish/${d.slug}`;
+    const path = `/directions/${d.slug}`;
     entries.push({
       url: `${SITE_URL}/ru${path}`,
       lastModified: d.updatedAt ? new Date(d.updatedAt) : now,
@@ -129,7 +129,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const cat of categories) {
     const dir = cat.direction ? directionById.get(cat.direction) : undefined;
     if (!dir) continue;
-    const path = `/yonalish/${dir.slug}/${cat.slug}`;
+    const path = `/directions/${dir.slug}/${cat.slug}`;
     entries.push({
       url: `${SITE_URL}/ru${path}`,
       lastModified: cat.updatedAt ? new Date(cat.updatedAt) : now,

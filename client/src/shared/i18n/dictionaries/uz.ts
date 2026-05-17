@@ -123,6 +123,8 @@ const uz: Dictionary = {
     error: 'Xatolik yuz berdi',
     retry: 'Qayta urinish',
     viewDetails: 'Batafsil',
+    previous: 'Oldingi',
+    next: 'Keyingi',
     currency: 'UZS',
     language: 'Til',
     addedToWishlist: "Sevimlilar ro'yxatiga qo'shildi",

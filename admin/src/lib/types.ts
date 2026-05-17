@@ -304,34 +304,6 @@ export interface SiteSettings {
   copyright: TranslatedField;
 }
 
-// Hero Content
-export type HeroSmallCardVariant = 'blue' | 'ink';
-
-export interface HeroSmallCard {
-  title: TranslatedField;
-  subtitle: TranslatedField;
-  description: TranslatedField;
-  ctaLabel: TranslatedField;
-  ctaHref: string;
-  image: string;
-  variant: HeroSmallCardVariant;
-}
-
-export interface HeroMainCard {
-  title: TranslatedField;
-  subtitle: TranslatedField;
-  features: TranslatedField[];
-  ctaLabel: TranslatedField;
-  ctaHref: string;
-  image: string;
-}
-
-export interface HeroContent {
-  mainCard: HeroMainCard;
-  smallCard1: HeroSmallCard;
-  smallCard2: HeroSmallCard;
-}
-
 // FAQ
 export interface Faq {
   id: string;

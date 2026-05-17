@@ -49,7 +49,7 @@ export function HotButtonNavigator({ locale, dict }: HotButtonNavigatorProps) {
         {topDirections.map((d) => (
           <HotButton
             key={d.id}
-            href={`/${locale}/yonalish/${d.slug}`}
+            href={`/${locale}/directions/${d.slug}`}
             label={t(d.name, locale)}
             image={d.image}
             fallback={<FolderTree className="h-4 w-4" />}
@@ -66,7 +66,7 @@ export function HotButtonNavigator({ locale, dict }: HotButtonNavigatorProps) {
 
         {/* Directions index */}
         <HotButton
-          href={`/${locale}/yonalish`}
+          href={`/${locale}/directions`}
           label={dict.nav.catalog}
           fallback={<Layers className="h-4 w-4" />}
         />

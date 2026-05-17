@@ -22,7 +22,7 @@ export function DirectionPageClient({ locale, dict, slug }: Props) {
   );
 
   const crumbs: BreadcrumbItem[] = [
-    { label: dict.directions.title, href: `/${locale}/yonalish` },
+    { label: dict.directions.title, href: `/${locale}/directions` },
   ];
   if (direction) crumbs.push({ label: t(direction.name, locale) });
 
@@ -57,7 +57,7 @@ export function DirectionPageClient({ locale, dict, slug }: Props) {
                 transition={{ delay: i * 0.03 }}
               >
                 <Link
-                  href={`/${locale}/yonalish/${slug}/${cat.slug}`}
+                  href={`/${locale}/directions/${slug}/${cat.slug}`}
                   className="group relative block overflow-hidden rounded-2xl h-48 bg-slate-100"
                 >
                   {cat.image ? (

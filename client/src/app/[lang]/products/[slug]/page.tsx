@@ -71,7 +71,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const leafCat = categorySlug ? await fetchCategoryBySlug(categorySlug, locale) : null;
 
   const crumbs = [
-    { name: dict.directions.title, href: `/${locale}/yonalish` },
+    { name: dict.directions.title, href: `/${locale}/directions` },
   ];
   if (leafCat) {
     // We don't have the direction slug on the leaf payload — link directly

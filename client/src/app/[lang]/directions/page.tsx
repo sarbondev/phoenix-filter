@@ -17,8 +17,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     description,
     openGraph: { title, description, type: 'website' },
     alternates: {
-      canonical: `/${locale}/yonalish`,
-      languages: Object.fromEntries(LOCALES.map((l) => [l, `/${l}/yonalish`])),
+      canonical: `/${locale}/directions`,
+      languages: Object.fromEntries(LOCALES.map((l) => [l, `/${l}/directions`])),
     },
   };
 }

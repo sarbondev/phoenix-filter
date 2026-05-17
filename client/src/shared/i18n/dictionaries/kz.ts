@@ -123,6 +123,8 @@ const kz: Dictionary = {
     error: 'Қате пайда болды',
     retry: 'Қайталау',
     viewDetails: 'Толығырақ',
+    previous: 'Алдыңғы',
+    next: 'Келесі',
     currency: 'UZS',
     language: 'Тіл',
     addedToWishlist: 'Таңдаулыларға қосылды',

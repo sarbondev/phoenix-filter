@@ -28,11 +28,11 @@ export function MobileBottomNav({ locale, dict }: Props) {
       match: (p: string) => p === `/${locale}` || p === `/${locale}/`,
     },
     {
-      href: `/${locale}/yonalish`,
+      href: `/${locale}/directions`,
       icon: LayoutGrid,
       label: dict.nav.catalog,
       match: (p: string) =>
-        p.startsWith(`/${locale}/yonalish`) ||
+        p.startsWith(`/${locale}/directions`) ||
         p.startsWith(`/${locale}/products`),
     },
     {

@@ -33,7 +33,7 @@ export function DirectionsListClient({ locale, dict }: Props) {
                 transition={{ delay: i * 0.04 }}
               >
                 <Link
-                  href={`/${locale}/yonalish/${d.slug}`}
+                  href={`/${locale}/directions/${d.slug}`}
                   className="group relative block overflow-hidden rounded-2xl h-60 bg-slate-100"
                 >
                   {d.image ? (

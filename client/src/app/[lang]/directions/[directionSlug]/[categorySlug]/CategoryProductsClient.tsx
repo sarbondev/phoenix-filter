@@ -37,10 +37,10 @@ export function CategoryProductsClient({ locale, dict, directionSlug, categorySl
   const meta = data?.meta;
 
   const crumbs: BreadcrumbItem[] = [
-    { label: dict.directions.title, href: `/${locale}/yonalish` },
+    { label: dict.directions.title, href: `/${locale}/directions` },
   ];
   if (directionName) {
-    crumbs.push({ label: directionName, href: `/${locale}/yonalish/${directionSlug}` });
+    crumbs.push({ label: directionName, href: `/${locale}/directions/${directionSlug}` });
   }
   if (category) crumbs.push({ label: t(category.name, locale) });
 

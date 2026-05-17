@@ -22,7 +22,6 @@ import partnerRoutes from "./modules/partners/partner.routes";
 import industryRoutes from "./modules/industries/industry.routes";
 import productRequestRoutes from "./modules/product-requests/product-request.routes";
 import siteSettingsRoutes from "./modules/site-settings/site-settings.routes";
-import heroContentRoutes from "./modules/hero-content/hero-content.routes";
 import homeContentRoutes from "./modules/home-content/home-content.routes";
 import certificateRoutes from "./modules/certificates/certificate.routes";
 import faqRoutes from "./modules/faq/faq.routes";
@@ -112,7 +111,6 @@ export const createApp = (): Application => {
   app.use(`${api}/industries`, industryRoutes);
   app.use(`${api}/product-requests`, productRequestRoutes);
   app.use(`${api}/site-settings`, siteSettingsRoutes);
-  app.use(`${api}/hero-content`, heroContentRoutes);
   app.use(`${api}/home-content`, homeContentRoutes);
   app.use(`${api}/certificates`, certificateRoutes);
   app.use(`${api}/faq`, faqRoutes);

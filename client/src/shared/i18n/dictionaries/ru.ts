@@ -123,6 +123,8 @@ const ru: Dictionary = {
     error: 'Что-то пошло не так',
     retry: 'Повторить',
     viewDetails: 'Подробнее',
+    previous: 'Назад',
+    next: 'Далее',
     currency: 'UZS',
     language: 'Язык',
     addedToWishlist: 'Добавлено в избранное',

@@ -94,7 +94,7 @@ export function Navbar({ locale, dict }: NavbarProps) {
 
   const navLinks = [
     { href: `/${locale}`, label: dict.nav.home },
-    { href: `/${locale}/yonalish`, label: dict.nav.categories },
+    { href: `/${locale}/directions`, label: dict.nav.categories },
     { href: `/${locale}/products`, label: dict.nav.products },
     { href: `/${locale}/blog`, label: dict.blog.title },
     { href: `/${locale}/contact`, label: dict.nav.contact },
@@ -477,7 +477,7 @@ export function Navbar({ locale, dict }: NavbarProps) {
                 {/* Catalog primary CTA */}
                 <div className="p-4 border-b border-[var(--color-border)]">
                   <Link
-                    href={`/${locale}/yonalish`}
+                    href={`/${locale}/directions`}
                     onClick={() => setDrawerOpen(false)}
                     className="flex items-center gap-3 rounded-xl bg-[var(--color-brand)] hover:bg-[var(--color-brand-hover)] px-4 py-3.5 text-[14px] font-semibold text-white transition-colors"
                   >

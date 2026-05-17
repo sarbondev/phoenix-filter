@@ -82,7 +82,7 @@ export function ProductDetailClient({ locale, dict, slug }: Props) {
 
   // Build breadcrumb chain: Home › Directions › [Direction] › [Category] › Product
   const crumbs: BreadcrumbItem[] = [
-    { label: dict.directions.title, href: `/${locale}/yonalish` },
+    { label: dict.directions.title, href: `/${locale}/directions` },
   ];
   const productCategory =
     typeof product.category === "object" ? product.category : null;
@@ -94,13 +94,13 @@ export function ProductDetailClient({ locale, dict, slug }: Props) {
     if (direction) {
       crumbs.push({
         label: t(direction.name, locale),
-        href: `/${locale}/yonalish/${direction.slug}`,
+        href: `/${locale}/directions/${direction.slug}`,
       });
     }
     if (leaf && direction) {
       crumbs.push({
         label: t(leaf.name, locale),
-        href: `/${locale}/yonalish/${direction.slug}/${leaf.slug}`,
+        href: `/${locale}/directions/${direction.slug}/${leaf.slug}`,
       });
     } else if (leaf) {
       crumbs.push({ label: t(leaf.name, locale) });

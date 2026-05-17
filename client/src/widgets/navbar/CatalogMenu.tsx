@@ -159,7 +159,7 @@ function DirectionColumn({
     <div>
       <div className="flex items-center justify-between mb-4">
         <Link
-          href={`/${locale}/yonalish/${direction.slug}`}
+          href={`/${locale}/directions/${direction.slug}`}
           onClick={onSelect}
           className="group flex items-center gap-2 text-base font-bold text-slate-900 hover:text-[var(--color-brand)] transition-colors"
         >
@@ -188,7 +188,7 @@ function DirectionColumn({
           {categories.map((cat) => (
             <Link
               key={cat.id}
-              href={`/${locale}/yonalish/${direction.slug}/${cat.slug}`}
+              href={`/${locale}/directions/${direction.slug}/${cat.slug}`}
               onClick={onSelect}
               className="group flex items-center gap-2 px-3 py-2 rounded-lg text-[13.5px] text-slate-600 hover:bg-[var(--color-brand-soft)] hover:text-[var(--color-brand)] transition-colors"
             >
@@ -205,7 +205,7 @@ function DirectionColumn({
 
       <div className="mt-5 pt-4 border-t border-slate-100">
         <Link
-          href={`/${locale}/yonalish/${direction.slug}`}
+          href={`/${locale}/directions/${direction.slug}`}
           onClick={onSelect}
           className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-brand)] hover:text-[var(--color-brand-hover)]"
         >
