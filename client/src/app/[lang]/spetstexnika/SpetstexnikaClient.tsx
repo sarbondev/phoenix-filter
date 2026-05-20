@@ -287,9 +287,9 @@ function ApplicationsBlock({ locale }: { locale: Locale }) {
               </h3>
               <ul className="mt-3 space-y-1.5 text-[13px] text-slate-600">
                 {card.items.map((it) => (
-                  <li key={it} className="flex items-center gap-2">
+                  <li key={it.en} className="flex items-center gap-2">
                     <span className="h-1 w-1 rounded-full bg-[var(--color-brand)]" />
-                    {it}
+                    {tr(it, locale)}
                   </li>
                 ))}
               </ul>
