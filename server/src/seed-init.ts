@@ -12,6 +12,72 @@ import { logger } from "./shared/utils/logger";
 
 const tf = (uz: string, ru: string, en: string, kz: string) => ({ uz, ru, en, kz });
 
+/**
+ * Deterministic, always-clean placeholder photos via Picsum.
+ * Keyword services (LoremFlickr) intermittently returned off-topic or broken
+ * "error" placeholders, which look unprofessional. Picsum guarantees a clean,
+ * stable photo per `lock` seed and never breaks. Swap to real product photos
+ * via the admin panel when available. `keywords` kept for intent/readability.
+ */
+const lf = (_keywords: string, lock: number) =>
+  `https://picsum.photos/seed/pf${lock}/1200/800`;
+
+const DIRECTION_IMG: Record<string, string> = {
+  spetstexnika: lf("construction,machine", 11),
+  industrial: lf("factory,industrial", 12),
+};
+
+const CATEGORY_IMG: Record<string, string> = {
+  // spetstexnika
+  "air-filters": lf("engine,car", 21),
+  "oil-filters": lf("engine,motor", 22),
+  "fuel-filters": lf("diesel,engine", 23),
+  "hydraulic-filters": lf("machine,excavator", 24),
+  "cabin-filters": lf("truck,vehicle", 25),
+  "adblue-filters": lf("truck,diesel", 26),
+  "coolant-filters": lf("engine,radiator", 27),
+  "ventilation-filters": lf("ventilation,industrial", 28),
+  "filter-kits": lf("tools,workshop", 29),
+  // industrial
+  "bag-filters": lf("factory,industrial", 31),
+  "cartridge-filters": lf("industrial,machine", 32),
+  scrubbers: lf("factory,chimney", 33),
+  "electrostatic-filters": lf("factory,power", 34),
+  cyclones: lf("industrial,pipe", 35),
+  "aspiration-systems": lf("ventilation,industrial", 36),
+  "process-filters": lf("industrial,equipment", 37),
+};
+
+const EQUIPMENT_IMG: Record<string, string> = {
+  excavators: lf("excavator,construction", 41),
+  loaders: lf("loader,construction", 42),
+  bulldozers: lf("construction,machine", 43),
+  "dump-trucks": lf("truck,mining", 44),
+  graders: lf("road,construction", 45),
+  rollers: lf("road,construction", 46),
+  cranes: lf("crane,construction", 47),
+  "concrete-mixers": lf("concrete,truck", 48),
+  "road-equipment": lf("road,construction", 49),
+  agricultural: lf("tractor,field", 50),
+  municipal: lf("truck,city", 51),
+  generators: lf("generator,engine", 52),
+};
+
+/** Per-product cover image, keyed by product slug. */
+const PRODUCT_IMG: Record<string, string> = {
+  "donaldson-p551808": lf("engine,motor", 61),
+  "fleetguard-lf691a": lf("engine,car", 62),
+  "donaldson-p181054": lf("engine,car", 63),
+  "fleetguard-ff5320": lf("diesel,engine", 64),
+  "hydac-0160-r": lf("machine,hydraulic", 65),
+  "venturi-scrubber-ps-3000": lf("factory,chimney", 66),
+  "packed-scrubber-ps-5000": lf("factory,industrial", 67),
+  "bag-filter-frki-120": lf("factory,industrial", 68),
+  "cyclone-cn-15-650": lf("industrial,pipe", 69),
+  "cartridge-filter-pcf-8k": lf("industrial,machine", 70),
+  "electrostatic-filter-esp-10k": lf("factory,power", 71),
+};
+
 dotenv.config();
 
 const ADMIN_PHONE = process.env.SEED_ADMIN_PHONE ?? "+998901234567";
@@ -605,7 +671,9 @@ async function run() {
     });
 
     // 2) Directions
-    const directions = await DirectionModel.insertMany(DIRECTIONS);
+    const directions = await DirectionModel.insertMany(
+      DIRECTIONS.map((d) => ({ ...d, image: DIRECTION_IMG[d.slug] })),
+    );
     const directionBySlug = new Map(
       directions.map((d) => [d.slug, String(d._id)]),
     );
@@ -617,6 +685,7 @@ async function run() {
       SPETSTEXNIKA_CATEGORIES.map((c) => ({
         ...c,
         direction: spetstexnikaId,
+        image: CATEGORY_IMG[c.slug],
         isActive: true,
       })),
     );
@@ -628,6 +697,7 @@ async function run() {
       INDUSTRIAL_CATEGORIES.map((c) => ({
         ...c,
         direction: industrialId,
+        image: CATEGORY_IMG[c.slug],
         isActive: true,
       })),
     );
@@ -638,7 +708,11 @@ async function run() {
 
     // 4) Equipment types (12)
     await EquipmentTypeModel.insertMany(
-      EQUIPMENT_TYPES.map((et) => ({ ...et, isActive: true })),
+      EQUIPMENT_TYPES.map((et) => ({
+        ...et,
+        image: EQUIPMENT_IMG[et.slug],
+        isActive: true,
+      })),
     );
 
     // 5) Sample products
@@ -647,10 +721,11 @@ async function run() {
       if (!categoryId) throw new Error(`category '${p.categorySlug}' not found`);
       const { categorySlug, ...rest } = p;
       void categorySlug;
+      const cover = PRODUCT_IMG[rest.slug];
       return {
         ...rest,
         category: categoryId,
-        images: [],
+        images: cover ? [cover] : [],
         specifications: [],
         stock: rest.stockStatus === "in_stock" ? 10 : 0,
         isActive: true,
