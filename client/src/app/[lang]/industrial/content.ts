@@ -417,7 +417,7 @@ export function getCategoryContent(slug: string): CategoryContent {
 
 /* ── Shared tab labels & bottom feature row ────────────────────────────────── */
 export const TAB_LABELS = {
-  overview: ls("Обзор", "Обзор", "Overview", "Шолу"),
+  overview: ls("Umumiy ko'rinish", "Обзор", "Overview", "Шолу"),
   principle: ls("Ishlash prinsipi", "Принцип работы", "How it works", "Жұмыс принципі"),
   types: ls("Turlari", "Типы", "Types", "Түрлері"),
   materials: ls("Materiallar va ijro", "Материалы и исполнение", "Materials & build", "Материалдар"),
@@ -435,4 +435,11 @@ export const SECTION_LABELS = {
   consult: ls("Konsultatsiya olish", "Получить консультацию", "Get a consultation", "Кеңес алу"),
   catalogHome: ls("Bosh", "Главная", "Home", "Басты"),
   catalogProducts: ls("Filtratsion uskunalar", "Фильтрационное оборудование", "Filtration equipment", "Сүзу жабдығы"),
+  sectionInProgress: ls("bo'lim tayyorlanmoqda", "раздел в подготовке", "section in progress", "бөлім дайындалуда"),
+  ctaNotSure: ls(
+    "Vazifangizga nima mosligiga ishonchingiz komilmi?",
+    "Не уверены, что подходит для ваших задач?",
+    "Not sure what fits your needs?",
+    "Тапсырмаңызға не сәйкес келетініне сенімді емессіз бе?",
+  ),
 };

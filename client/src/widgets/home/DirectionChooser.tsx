@@ -56,7 +56,7 @@ const CAT_ICON: Record<string, LucideIcon> = {
 const directionRoute = (locale: Locale, slug: string) =>
   slug === "spetstexnika"
     ? `/${locale}/spetstexnika`
-    : `/${locale}/products?direction=${slug}`;
+    : `/${locale}/products`;
 
 interface Props {
   locale: Locale;

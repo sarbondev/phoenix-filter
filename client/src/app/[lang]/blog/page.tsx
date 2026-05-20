@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { getDictionary } from '@/shared/i18n';
 import type { Locale } from '@/shared/types';
 import type { Metadata } from 'next';
@@ -13,5 +14,9 @@ export default async function BlogPage({ params }: { params: Promise<{ lang: str
   const { lang } = await params;
   const locale = lang as Locale;
   const dict = await getDictionary(locale);
-  return <BlogPageClient locale={locale} dict={dict} />;
+  return (
+    <Suspense fallback={null}>
+      <BlogPageClient locale={locale} dict={dict} />
+    </Suspense>
+  );
 }

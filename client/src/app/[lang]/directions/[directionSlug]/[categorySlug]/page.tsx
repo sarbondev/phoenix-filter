@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { getDictionary } from '@/shared/i18n';
 import type { Locale } from '@/shared/types';
 import type { Metadata } from 'next';
@@ -38,12 +39,14 @@ export default async function CategoryPage({ params }: { params: Promise<{ lang:
   ]);
 
   return (
-    <CategoryProductsClient
-      locale={locale}
-      dict={dict}
-      directionSlug={directionSlug}
-      categorySlug={categorySlug}
-      directionName={direction ? t(direction.name, locale) : ''}
-    />
+    <Suspense fallback={null}>
+      <CategoryProductsClient
+        locale={locale}
+        dict={dict}
+        directionSlug={directionSlug}
+        categorySlug={categorySlug}
+        directionName={direction ? t(direction.name, locale) : ''}
+      />
+    </Suspense>
   );
 }

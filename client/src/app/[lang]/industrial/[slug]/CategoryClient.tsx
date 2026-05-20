@@ -147,7 +147,7 @@ export function CategoryClient({ locale, slug }: { locale: Locale; slug: string 
             {(tab === "options" || tab === "specs" || tab === "docs") && (
               <Panel>
                 <p className="text-[14px] text-slate-500 py-8 text-center">
-                  {tr(TAB_LABELS[tab], locale)} — {locale === "ru" ? "раздел в подготовке" : locale === "uz" ? "bo'lim tayyorlanmoqda" : "section in progress"}
+                  {tr(TAB_LABELS[tab], locale)} — {tr(SECTION_LABELS.sectionInProgress, locale)}
                 </p>
               </Panel>
             )}
@@ -157,11 +157,7 @@ export function CategoryClient({ locale, slug }: { locale: Locale; slug: string 
               <div className="flex items-center gap-3">
                 <Headphones className="h-6 w-6 text-[var(--color-brand)]" />
                 <p className="text-[14px] font-semibold text-[var(--color-brand-strong)]">
-                  {locale === "ru"
-                    ? "Не уверены, что подходит для ваших задач?"
-                    : locale === "uz"
-                      ? "Vazifangizga nima mosligiga ishonchingiz komilmi?"
-                      : "Not sure what fits your needs?"}
+                  {tr(SECTION_LABELS.ctaNotSure, locale)}
                 </p>
               </div>
               <button
