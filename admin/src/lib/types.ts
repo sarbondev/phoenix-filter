@@ -107,6 +107,13 @@ export interface CrossReference {
   manufacturer: string;
 }
 
+export interface ProductApplication {
+  machineBrand: string;
+  model?: string;
+  engine?: string;
+  year?: string;
+}
+
 export interface ProductDimensions {
   height?: number;
   outerDiameter?: number;
@@ -114,7 +121,12 @@ export interface ProductDimensions {
   threadSize?: string;
   inletDiameter?: number;
   outletDiameter?: number;
+  gasketOuterDiameter?: number;
+  gasketInnerDiameter?: number;
+  weight?: number;
 }
+
+export type StockStatus = 'in_stock' | 'under_order';
 
 export interface Product {
   id: string;
@@ -123,12 +135,15 @@ export interface Product {
   slug: string;
   sku: string;
   oem?: string;
+  oemNumbers?: string[];
   crossReferences?: CrossReference[];
   material?: string;
   application?: string;
+  applications?: ProductApplication[];
   dimensions?: ProductDimensions;
   vehicleBrand?: string;
   price: number;
+  priceOnRequest?: boolean;
   discountPercent?: number;
   discountPrice?: number;
   category: string | { id?: string; _id?: string; name?: TranslatedField; slug?: string };
@@ -136,6 +151,8 @@ export interface Product {
   specifications: ProductSpecification[];
   tags: TranslatedField;
   stock: number;
+  stockStatus?: StockStatus;
+  datasheetUrl?: string;
   isActive: boolean;
   isFeatured: boolean;
   views: number;
@@ -148,20 +165,48 @@ export interface CreateProductRequest {
   slug?: string;
   sku?: string;
   oem?: string;
+  oemNumbers?: string[];
   crossReferences?: CrossReference[];
   material?: string;
   application?: string;
+  applications?: ProductApplication[];
   dimensions?: ProductDimensions;
   vehicleBrand?: string;
   price: number;
+  priceOnRequest?: boolean;
   discountPercent?: number;
   category: string;
   images?: string[];
   specifications?: Array<{ key: string; value: string }>;
   tags?: string;
   stock?: number;
+  stockStatus?: StockStatus;
+  datasheetUrl?: string;
   isActive?: boolean;
   isFeatured?: boolean;
+}
+
+// Equipment type (spetstexnika)
+export interface EquipmentType {
+  id: string;
+  name: TranslatedField;
+  slug: string;
+  image?: string;
+  icon?: string;
+  machineBrands: string[];
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+}
+
+export interface CreateEquipmentTypeRequest {
+  name: string;
+  slug?: string;
+  image?: string;
+  icon?: string;
+  machineBrands?: string[];
+  isActive?: boolean;
+  sortOrder?: number;
 }
 
 // Order

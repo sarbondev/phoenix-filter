@@ -92,10 +92,12 @@ export class ProductService {
       slug,
       sku,
       price: dto.price,
+      priceOnRequest: dto.priceOnRequest ?? false,
       discountPercent: dto.discountPercent,
       category: dto.category as any,
       images: dto.images,
       stock: dto.stock,
+      stockStatus: dto.stockStatus ?? "in_stock",
       isActive: dto.isActive,
       isFeatured: dto.isFeatured,
       name: translations.name,
@@ -103,11 +105,14 @@ export class ProductService {
       ...(dto.tags && translations.tags?.uz ? { tags: translations.tags } : {}),
       specifications: translatedSpecs,
       ...(dto.oem !== undefined ? { oem: dto.oem } : {}),
+      ...(dto.oemNumbers ? { oemNumbers: dto.oemNumbers } : {}),
       ...(dto.material !== undefined ? { material: dto.material } : {}),
       ...(dto.application !== undefined ? { application: dto.application } : {}),
+      ...(dto.applications ? { applications: dto.applications } : {}),
       ...(dto.vehicleBrand !== undefined ? { vehicleBrand: dto.vehicleBrand } : {}),
       ...(dto.dimensions ? { dimensions: dto.dimensions } : {}),
       ...(dto.crossReferences ? { crossReferences: dto.crossReferences } : {}),
+      ...(dto.datasheetUrl !== undefined ? { datasheetUrl: dto.datasheetUrl } : {}),
     } as any);
 
     const response = toProductResponse(product);
@@ -133,6 +138,7 @@ export class ProductService {
     if (query.search) filter.search = query.search;
     if (query.vehicleBrand) filter.vehicleBrand = query.vehicleBrand;
     if (query.manufacturer) filter.manufacturer = query.manufacturer;
+    if (query.machineBrand) filter.machineBrand = query.machineBrand;
 
     const { data, total } = await this.productRepository.findAll(
       filter,
@@ -165,6 +171,7 @@ export class ProductService {
     if (query.search) filter.search = query.search;
     if (query.vehicleBrand) filter.vehicleBrand = query.vehicleBrand;
     if (query.manufacturer) filter.manufacturer = query.manufacturer;
+    if (query.machineBrand) filter.machineBrand = query.machineBrand;
 
     const { data, total } = await this.productRepository.findAll(
       filter,
@@ -225,11 +232,16 @@ export class ProductService {
     if (dto.isActive !== undefined) updateData.isActive = dto.isActive;
     if (dto.isFeatured !== undefined) updateData.isFeatured = dto.isFeatured;
     if (dto.oem !== undefined) updateData.oem = dto.oem;
+    if (dto.oemNumbers !== undefined) updateData.oemNumbers = dto.oemNumbers;
     if (dto.material !== undefined) updateData.material = dto.material;
     if (dto.application !== undefined) updateData.application = dto.application;
+    if (dto.applications !== undefined) updateData.applications = dto.applications;
     if (dto.vehicleBrand !== undefined) updateData.vehicleBrand = dto.vehicleBrand;
     if (dto.dimensions !== undefined) updateData.dimensions = dto.dimensions;
     if (dto.crossReferences !== undefined) updateData.crossReferences = dto.crossReferences;
+    if (dto.priceOnRequest !== undefined) updateData.priceOnRequest = dto.priceOnRequest;
+    if (dto.stockStatus !== undefined) updateData.stockStatus = dto.stockStatus;
+    if (dto.datasheetUrl !== undefined) updateData.datasheetUrl = dto.datasheetUrl;
 
     // Translatable fields
     const fieldsToTranslate: Record<string, string> = {};

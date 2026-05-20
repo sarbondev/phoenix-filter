@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Calendar, Eye, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, Eye, FileText, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import type { Locale } from '@/shared/types';
 import type { Dictionary } from '@/shared/i18n/dictionaries/en';
 import { useGetBlogsQuery } from '@/store/api/blogApi';
@@ -35,11 +35,29 @@ export function BlogPageClient({ locale, dict }: Props) {
         render: (close) => <BlogsBlockEditor close={close} />,
       })}
     >
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-10">
-        <h1 className="text-3xl font-bold text-slate-900">{dict.blog.title}</h1>
-      </motion.div>
+    <div className="bg-[var(--color-surface)] min-h-screen">
+      {/* breadcrumb */}
+      <div className="bg-white border-b border-[var(--color-border)]">
+        <div className="mx-auto max-w-[1320px] px-4 sm:px-6 lg:px-8 py-3.5">
+          <nav className="flex items-center gap-1.5 text-[12px] text-slate-500">
+            <Link href={`/${locale}`} className="hover:text-slate-800">
+              {locale === "ru" ? "Главная" : locale === "uz" ? "Bosh" : locale === "kz" ? "Басты" : "Home"}
+            </Link>
+            <ChevronRight className="h-3.5 w-3.5" />
+            <span className="text-slate-900 font-semibold">{dict.blog.title}</span>
+          </nav>
+        </div>
+      </div>
 
+      {/* hero */}
+      <section className="relative overflow-hidden bg-[var(--color-ink)] text-white">
+        <div className="absolute inset-0 bg-diagonal-blue-ink opacity-70" />
+        <div className="relative mx-auto max-w-[1320px] px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+          <h1 className="text-3xl lg:text-[42px] font-extrabold tracking-tight uppercase">{dict.blog.title}</h1>
+        </div>
+      </section>
+
+      <div className="mx-auto max-w-[1320px] px-4 sm:px-6 lg:px-8 py-10 lg:py-12">
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-80 rounded-2xl" />)}
@@ -97,8 +115,9 @@ export function BlogPageClient({ locale, dict }: Props) {
                     <p className="mt-2 text-sm text-slate-500 line-clamp-2">
                       {t(blog.excerpt, locale)}
                     </p>
-                    <p className="mt-3 text-sm font-medium text-primary">
-                      {dict.blog.readMore} &rarr;
+                    <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-brand)]">
+                      {dict.blog.readMore}
+                      <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                     </p>
                   </div>
                 </Link>
@@ -115,6 +134,7 @@ export function BlogPageClient({ locale, dict }: Props) {
           )}
         </>
       )}
+      </div>
     </div>
     </Editable>
   );

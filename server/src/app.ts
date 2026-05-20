@@ -26,6 +26,8 @@ import homeContentRoutes from "./modules/home-content/home-content.routes";
 import certificateRoutes from "./modules/certificates/certificate.routes";
 import faqRoutes from "./modules/faq/faq.routes";
 import presentationRoutes from "./modules/presentations/presentation.routes";
+import equipmentTypeRoutes from "./modules/equipment-types/equipment-type.routes";
+import filterSearchRoutes from "./modules/filter-search/filter-search.routes";
 
 export const createApp = (): Application => {
   const app = express();
@@ -115,6 +117,8 @@ export const createApp = (): Application => {
   app.use(`${api}/certificates`, certificateRoutes);
   app.use(`${api}/faq`, faqRoutes);
   app.use(`${api}/presentations`, presentationRoutes);
+  app.use(`${api}/equipment-types`, equipmentTypeRoutes);
+  app.use(`${api}/filter-search`, filterSearchRoutes);
   // ── 404 ────────────────────────────────────────────────────────────────────
   app.use((_req: Request, res: Response) => {
     res.status(404).json({ success: false, message: "Route not found" });

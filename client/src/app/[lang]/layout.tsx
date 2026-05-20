@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { getDictionary, isValidLocale } from "@/shared/i18n";
 import type { Locale } from "@/shared/types";
 import StoreProvider from "@/providers/StoreProvider";
-import { Header } from "@/widgets/header/Header";
-import { Navbar } from "@/widgets/navbar/Navbar";
+import { SiteHeader } from "@/widgets/header/SiteHeader";
+import { SendBriefModal } from "@/widgets/send-brief/SendBriefModal";
 import { Footer } from "@/widgets/footer/Footer";
 import { MobileBottomNav } from "@/widgets/navbar/MobileBottomNav";
 import { ToastContainer } from "@/features/toast/Toast";
@@ -59,13 +60,15 @@ export default async function LangLayout({
       <body className="antialiased">
         <StoreProvider>
           <EditModeProvider>
-            <ProgressBar />
+            <Suspense fallback={null}>
+              <ProgressBar />
+            </Suspense>
             <div className="sticky top-0 z-50">
-              <Header locale={locale} dict={dict} />
-              <Navbar locale={locale} dict={dict} />
+              <SiteHeader locale={locale} />
             </div>
             <main className="min-h-screen pb-20 lg:pb-0">{children}</main>
             <Footer locale={locale} dict={dict} />
+            <SendBriefModal locale={locale} />
             <MobileBottomNav locale={locale} dict={dict} />
             <ToastContainer />
             <EditModeToggle />

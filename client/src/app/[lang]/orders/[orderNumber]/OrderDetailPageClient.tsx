@@ -187,7 +187,7 @@ export function OrderDetailPageClient({ locale, dict, orderNumber }: Props) {
             </span>
           </p>
           {addr.note && (
-            <p className="mt-3 text-sm text-slate-500 italic">"{addr.note}"</p>
+            <p className="mt-3 text-sm text-slate-500 italic">&laquo;{addr.note}&raquo;</p>
           )}
         </div>
       )}

@@ -1,6 +1,7 @@
 import { FilterQuery } from 'mongoose';
 import { ProductModel } from './product.schema';
 import { IProduct } from './product.entity';
+import { buildOemRegex } from '../../shared/utils/normalize-oem';
 
 export interface ProductFilter {
   category?: string;
@@ -12,6 +13,7 @@ export interface ProductFilter {
   search?: string;
   vehicleBrand?: string;
   manufacturer?: string;
+  machineBrand?: string;
 }
 
 export class ProductRepository {
@@ -54,19 +56,26 @@ export class ProductRepository {
       if (filter.maxPrice !== undefined) query.price.$lte = filter.maxPrice;
     }
     if (filter.vehicleBrand) query.vehicleBrand = filter.vehicleBrand.toUpperCase();
+    if (filter.machineBrand) query['applications.machineBrand'] = filter.machineBrand.toUpperCase();
     if (filter.manufacturer) query['crossReferences.manufacturer'] = { $regex: filter.manufacturer, $options: 'i' };
     if (filter.search) {
+      // OEM-aware loose match: "1R-1808" / "CAT 1R1808" / "1r1808" all hit the
+      // same stored value. Plain regex covers the rest of the searchable fields.
+      const looseOem = buildOemRegex(filter.search);
+      const plain = { $regex: filter.search, $options: 'i' };
       query.$or = [
-        { 'name.uz': { $regex: filter.search, $options: 'i' } },
-        { 'name.ru': { $regex: filter.search, $options: 'i' } },
-        { 'name.en': { $regex: filter.search, $options: 'i' } },
-        { 'description.uz': { $regex: filter.search, $options: 'i' } },
-        { 'description.ru': { $regex: filter.search, $options: 'i' } },
-        { 'description.en': { $regex: filter.search, $options: 'i' } },
-        { sku: { $regex: filter.search, $options: 'i' } },
-        { oem: { $regex: filter.search, $options: 'i' } },
-        { application: { $regex: filter.search, $options: 'i' } },
-        { 'crossReferences.partNumber': { $regex: filter.search, $options: 'i' } },
+        { 'name.uz': plain },
+        { 'name.ru': plain },
+        { 'name.en': plain },
+        { 'description.uz': plain },
+        { 'description.ru': plain },
+        { 'description.en': plain },
+        { sku: plain },
+        { oem: looseOem },
+        { oemNumbers: looseOem },
+        { application: plain },
+        { 'applications.model': plain },
+        { 'crossReferences.partNumber': looseOem },
       ];
     }
 
@@ -104,6 +113,50 @@ export class ProductRepository {
 
   async findByCategory(categoryId: string): Promise<IProduct[]> {
     return ProductModel.find({ category: categoryId, isActive: true }).lean<IProduct[]>();
+  }
+
+  async findBySize(
+    args: {
+      height?: number;
+      outerDiameter?: number;
+      innerDiameter?: number;
+      threadSize?: string;
+      tolerance: number;
+    },
+    skip: number,
+    limit: number,
+  ): Promise<{ data: IProduct[]; total: number }> {
+    const q: FilterQuery<IProduct> = { isActive: true };
+    const tol = args.tolerance;
+
+    if (args.height !== undefined) {
+      q['dimensions.height'] = { $gte: args.height - tol, $lte: args.height + tol };
+    }
+    if (args.outerDiameter !== undefined) {
+      q['dimensions.outerDiameter'] = {
+        $gte: args.outerDiameter - tol,
+        $lte: args.outerDiameter + tol,
+      };
+    }
+    if (args.innerDiameter !== undefined) {
+      q['dimensions.innerDiameter'] = {
+        $gte: args.innerDiameter - tol,
+        $lte: args.innerDiameter + tol,
+      };
+    }
+    if (args.threadSize) {
+      q['dimensions.threadSize'] = { $regex: args.threadSize, $options: 'i' };
+    }
+
+    const [data, total] = await Promise.all([
+      ProductModel.find(q)
+        .populate('category', 'name slug')
+        .skip(skip)
+        .limit(limit)
+        .lean<IProduct[]>(),
+      ProductModel.countDocuments(q),
+    ]);
+    return { data, total };
   }
 
   async listManufacturers(limit = 24): Promise<string[]> {

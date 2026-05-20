@@ -9,6 +9,21 @@ import { useGetSiteSettingsQuery } from "@/store/api/siteSettingsApi";
 import { t } from "@/shared/lib/utils";
 import { Editable, useEditorDict } from "@/features/inline-editor";
 import { SiteSettingsBlockEditor } from "@/features/inline-editor/blocks/SiteSettingsBlockEditor";
+import { PhoenixLogo } from "@/widgets/header/PhoenixLogo";
+
+const FOOTER_NAV = {
+  products: { uz: "Mahsulotlar", ru: "Продукция", en: "Products", kz: "Өнім" },
+  company: { uz: "Kompaniya", ru: "Компания", en: "Company", kz: "Компания" },
+  industrial: { uz: "Sanoat filtratsiyasi", ru: "Промышленная фильтрация", en: "Industrial filtration", kz: "Өнеркәсіптік сүзу" },
+  spetstexnika: { uz: "Spetstexnika filtrlari", ru: "Фильтры для спецтехники", en: "Special equipment", kz: "Арнайы техника" },
+  scrubbers: { uz: "Skrubberlar", ru: "Скрубберы", en: "Scrubbers", kz: "Скрубберлер" },
+  about: { uz: "Kompaniya haqida", ru: "О компании", en: "About", kz: "Компания туралы" },
+  engineering: { uz: "Injiniring", ru: "Инжиниринг", en: "Engineering", kz: "Инжиниринг" },
+  projects: { uz: "Loyihalar", ru: "Проекты", en: "Projects", kz: "Жобалар" },
+  services: { uz: "Servis", ru: "Сервис", en: "Service", kz: "Сервис" },
+  blog: { uz: "Blog", ru: "Блог", en: "Blog", kz: "Блог" },
+  contact: { uz: "Kontaktlar", ru: "Контакты", en: "Контакты", kz: "Байланыс" },
+} as const;
 
 interface FooterProps {
   locale: Locale;
@@ -83,8 +98,6 @@ export function Footer({ locale, dict }: FooterProps) {
     t(settings?.consultationSubtitle, locale) || c.consultationSubFallback;
   const offices = settings?.offices ?? [];
   const socials = settings?.socials ?? {};
-  const brandName = settings?.brandName || "PRESTIGE";
-  const brandAccent = settings?.brandAccent || "FILTR";
   const rights = t(settings?.copyright, locale) || c.rightsFallback;
 
   return (
@@ -173,25 +186,22 @@ export function Footer({ locale, dict }: FooterProps) {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 py-8">
             <div>
               <h4 className="text-[13px] font-bold text-white uppercase tracking-wider mb-4">
-                {c.shop}
+                {t(FOOTER_NAV.products, locale)}
               </h4>
               <ul className="space-y-2.5 text-[13px] text-slate-400">
                 <li>
-                  <Link
-                    href={`/${locale}/products`}
-                    className="hover:text-white transition-colors"
-                  >
-                    {c.delivery}
+                  <Link href={`/${locale}/products`} className="hover:text-white transition-colors">
+                    {t(FOOTER_NAV.industrial, locale)}
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="hover:text-white transition-colors">
-                    {c.payment}
+                  <Link href={`/${locale}/spetstexnika`} className="hover:text-white transition-colors">
+                    {t(FOOTER_NAV.spetstexnika, locale)}
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="hover:text-white transition-colors">
-                    {c.returns}
+                  <Link href={`/${locale}/industrial/scrubbers`} className="hover:text-white transition-colors">
+                    {t(FOOTER_NAV.scrubbers, locale)}
                   </Link>
                 </li>
               </ul>
@@ -199,23 +209,19 @@ export function Footer({ locale, dict }: FooterProps) {
 
             <div>
               <h4 className="text-[13px] font-bold text-white uppercase tracking-wider mb-4">
-                {c.serviceCenter}
+                {t(FOOTER_NAV.company, locale)}
               </h4>
               <ul className="space-y-2.5 text-[13px] text-slate-400">
-                <li>
-                  <Link href="#" className="hover:text-white transition-colors">
-                    {c.repair}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-white transition-colors">
-                    {c.operator}
-                  </Link>
-                </li>
+                <li><Link href={`/${locale}/about`} className="hover:text-white transition-colors">{t(FOOTER_NAV.about, locale)}</Link></li>
+                <li><Link href={`/${locale}/engineering`} className="hover:text-white transition-colors">{t(FOOTER_NAV.engineering, locale)}</Link></li>
+                <li><Link href={`/${locale}/projects`} className="hover:text-white transition-colors">{t(FOOTER_NAV.projects, locale)}</Link></li>
+                <li><Link href={`/${locale}/services`} className="hover:text-white transition-colors">{t(FOOTER_NAV.services, locale)}</Link></li>
+                <li><Link href={`/${locale}/blog`} className="hover:text-white transition-colors">{t(FOOTER_NAV.blog, locale)}</Link></li>
+                <li><Link href={`/${locale}/contact`} className="hover:text-white transition-colors">{t(FOOTER_NAV.contact, locale)}</Link></li>
               </ul>
             </div>
 
-            {/* Offices — render all configured offices, fall back to placeholder */}
+            {/* Offices */}
             {offices.length > 0
               ? offices.slice(0, 2).map((office, i) => (
                   <div key={i}>
@@ -236,10 +242,7 @@ export function Footer({ locale, dict }: FooterProps) {
             <div>
               © {new Date().getFullYear()} {rights}
             </div>
-            <div className="flex items-center gap-1 font-bold tracking-widest">
-              <span className="text-[var(--color-brand)]">{brandName}</span>
-              <span className="text-[var(--color-accent)]">{brandAccent}</span>
-            </div>
+            <PhoenixLogo light className="scale-90 origin-right" />
           </div>
         </div>
       </footer>

@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server';
 const locales = ['uz', 'ru', 'en', 'kz'];
 const defaultLocale = 'ru';
 
-function getLocale(_request: NextRequest): string {
+function getLocale(): string {
   return defaultLocale;
 }
 
@@ -24,7 +24,7 @@ export function middleware(request: NextRequest) {
   if (hasLocale) return;
 
   // Redirect to locale-prefixed path
-  const locale = getLocale(request);
+  const locale = getLocale();
   request.nextUrl.pathname = `/${locale}${pathname}`;
   return NextResponse.redirect(request.nextUrl);
 }

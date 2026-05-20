@@ -70,7 +70,19 @@ export interface ProductDimensions {
   threadSize?: string;
   inletDiameter?: number;
   outletDiameter?: number;
+  gasketOuterDiameter?: number;
+  gasketInnerDiameter?: number;
+  weight?: number;
 }
+
+export interface ProductApplication {
+  machineBrand: string;
+  model?: string;
+  engine?: string;
+  year?: string;
+}
+
+export type StockStatus = "in_stock" | "under_order";
 
 export interface Product {
   id: string;
@@ -79,12 +91,15 @@ export interface Product {
   slug: string;
   sku: string;
   oem?: string;
+  oemNumbers?: string[];
   crossReferences?: CrossReference[];
   material?: string;
   application?: string;
+  applications?: ProductApplication[];
   dimensions?: ProductDimensions;
   vehicleBrand?: string;
   price: number;
+  priceOnRequest?: boolean;
   discountPercent?: number;
   discountPrice?: number;
   category:
@@ -94,9 +109,23 @@ export interface Product {
   specifications: ProductSpecification[];
   tags: TranslatedField;
   stock: number;
+  stockStatus?: StockStatus;
+  datasheetUrl?: string;
   isActive: boolean;
   isFeatured: boolean;
   views: number;
+  createdAt: string;
+}
+
+export interface EquipmentType {
+  id: string;
+  name: TranslatedField;
+  slug: string;
+  image?: string;
+  icon?: string;
+  machineBrands: string[];
+  isActive: boolean;
+  sortOrder: number;
   createdAt: string;
 }
 

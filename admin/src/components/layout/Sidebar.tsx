@@ -11,6 +11,7 @@ import {
   Settings,
   PackageSearch,
   Presentation,
+  Truck,
 } from "lucide-react";
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
@@ -21,6 +22,7 @@ const navigation = [
   { key: "dashboard", href: "/", icon: LayoutDashboard },
   { key: "directions", href: "/directions", icon: Compass },
   { key: "categories", href: "/categories", icon: FolderTree },
+  { key: "equipmentTypes", href: "/equipment-types", icon: Truck },
   { key: "products", href: "/products", icon: Package },
   { key: "orders", href: "/orders", icon: ShoppingCart },
   { key: "users", href: "/users", icon: Users },

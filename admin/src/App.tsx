@@ -7,6 +7,7 @@ import DashboardPage from '@/pages/dashboard/DashboardPage';
 import ProductsPage from '@/pages/products/ProductsPage';
 import CategoriesPage from '@/pages/categories/CategoriesPage';
 import DirectionsPage from '@/pages/directions/DirectionsPage';
+import EquipmentTypesPage from '@/pages/equipment-types/EquipmentTypesPage';
 import OrdersPage from '@/pages/orders/OrdersPage';
 import UsersPage from '@/pages/users/UsersPage';
 import ReviewsPage from '@/pages/reviews/ReviewsPage';
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="/products" element={<AdminOnly><ProductsPage /></AdminOnly>} />
         <Route path="/directions" element={<AdminOnly><DirectionsPage /></AdminOnly>} />
         <Route path="/categories" element={<AdminOnly><CategoriesPage /></AdminOnly>} />
+        <Route path="/equipment-types" element={<AdminOnly><EquipmentTypesPage /></AdminOnly>} />
         <Route path="/users" element={<AdminOnly><UsersPage /></AdminOnly>} />
         <Route path="/presentations" element={<AdminOnly><PresentationsPage /></AdminOnly>} />
       </Route>

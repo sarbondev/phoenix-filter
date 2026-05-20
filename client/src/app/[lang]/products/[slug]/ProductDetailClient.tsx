@@ -4,11 +4,11 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";
 import {
-  ShoppingCart,
-  Bookmark,
+  Package,
   Star,
-  Minus,
-  Plus,
+  Send,
+  MessageCircle,
+  FileDown,
 } from "lucide-react";
 import type { Locale, CrossReference } from "@/shared/types";
 import type { Dictionary } from "@/shared/i18n/dictionaries/en";
@@ -16,6 +16,7 @@ import { useGetProductBySlugQuery } from "@/store/api/productApi";
 import { useGetCategoriesQuery } from "@/store/api/categoryApi";
 import { useGetDirectionsQuery } from "@/store/api/directionApi";
 import { useGetProductReviewsQuery } from "@/store/api/reviewApi";
+import { useGetSiteSettingsQuery } from "@/store/api/siteSettingsApi";
 import {
   t,
   formatPrice,
@@ -24,10 +25,8 @@ import {
 } from "@/shared/lib/utils";
 import { Skeleton, Breadcrumbs } from "@/shared/ui";
 import type { BreadcrumbItem } from "@/shared/ui";
-import { useAppDispatch, useAppSelector } from "@/shared/hooks";
-import { addToCart, updateQuantity } from "@/store/cartSlice";
-import { toggleWishlist } from "@/store/wishlistSlice";
-import { addToast } from "@/store/toastSlice";
+
+const BLUE = "#1d4ed8";
 
 interface Props {
   locale: Locale;
@@ -39,16 +38,12 @@ export function ProductDetailClient({ locale, dict, slug }: Props) {
   const { data: product, isLoading } = useGetProductBySlugQuery(slug);
   const { data: allCategories } = useGetCategoriesQuery();
   const { data: directions } = useGetDirectionsQuery();
+  const { data: settings } = useGetSiteSettingsQuery();
   const { data: reviewData } = useGetProductReviewsQuery(product?.id ?? "", {
     skip: !product,
   });
   const [selectedImage, setSelectedImage] = useState(0);
-  const dispatch = useAppDispatch();
-  const wishlistIds = useAppSelector((s) => s.wishlist.ids);
-  const cartItem = useAppSelector((s) =>
-    s.cart.items.find((i) => i.product.id === product?.id),
-  );
-  const isWished = product ? wishlistIds.includes(product.id) : false;
+  const waNumber = (settings?.phone || "+998712000000").replace(/[^\d]/g, "");
 
   if (isLoading) {
     return (
@@ -77,6 +72,9 @@ export function ProductDetailClient({ locale, dict, slug }: Props) {
 
   const discount = getDiscountPercent(product.price, product.discountPrice);
   const effectivePrice = product.discountPrice ?? product.price;
+  const inStock = product.stockStatus
+    ? product.stockStatus === "in_stock"
+    : product.stock > 0;
   const avgRating = reviewData?.average ?? 5;
   const reviewCount = reviewData?.count ?? 0;
 
@@ -130,37 +128,14 @@ export function ProductDetailClient({ locale, dict, slug }: Props) {
                 />
               ) : (
                 <div className="flex h-full items-center justify-center text-slate-300">
-                  <ShoppingCart className="h-16 w-16" />
+                  <Package className="h-16 w-16" />
                 </div>
               )}
-              {discount > 0 && (
+              {discount > 0 && !product.priceOnRequest && (
                 <span className="absolute top-4 left-4 inline-flex items-center rounded-md bg-[var(--color-accent)] px-3 py-1 text-sm font-bold text-white">
                   -{discount}%
                 </span>
               )}
-              <button
-                onClick={() => {
-                  dispatch(toggleWishlist(product.id));
-                  dispatch(
-                    addToast({
-                      message: isWished
-                        ? dict.common.removedFromWishlist
-                        : dict.common.addedToWishlist,
-                      type: "info",
-                    }),
-                  );
-                }}
-                aria-label={dict.wishlist.title}
-                className="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md hover:scale-105 transition-transform"
-              >
-                <Bookmark
-                  className={`h-5 w-5 ${
-                    isWished
-                      ? "fill-[var(--color-brand)] text-[var(--color-brand)]"
-                      : "text-slate-400"
-                  }`}
-                />
-              </button>
             </div>
             {product.images.length > 1 && (
               <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
@@ -317,87 +292,61 @@ export function ProductDetailClient({ locale, dict, slug }: Props) {
               </div>
             )}
 
-            {/* Price + actions */}
+            {/* Price + lead-gen actions */}
             <div className="mt-auto pt-8">
-              <div className="flex items-baseline gap-3 mb-4">
-                <span className="text-3xl font-extrabold text-slate-900">
-                  {formatPrice(effectivePrice)}
-                  <span className="ml-1 text-base font-medium text-slate-400">
-                    {dict.common.currency}
+              <div className="flex items-center gap-3 mb-4 flex-wrap">
+                {product.priceOnRequest ? (
+                  <span className="inline-flex rounded-lg bg-[var(--color-brand-soft)] text-[var(--color-brand)] px-4 py-2 text-[15px] font-bold">
+                    {LEAD.onRequest[locale]}
                   </span>
-                </span>
-                {discount > 0 && (
-                  <span className="text-lg text-slate-400 line-through">
-                    {formatPrice(product.price)}
-                  </span>
+                ) : (
+                  <>
+                    <span className="text-3xl font-extrabold text-slate-900">
+                      {formatPrice(effectivePrice)}
+                      <span className="ml-1 text-base font-medium text-slate-400">
+                        {dict.common.currency}
+                      </span>
+                    </span>
+                    {discount > 0 && (
+                      <span className="text-lg text-slate-400 line-through">
+                        {formatPrice(product.price)}
+                      </span>
+                    )}
+                  </>
                 )}
+                <StockBadge status={inStock ? "in_stock" : "under_order"} locale={locale} />
               </div>
 
               <div className="flex flex-wrap items-center gap-3">
-                {cartItem ? (
-                  <div className="flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-white px-2 py-1">
-                    <button
-                      onClick={() =>
-                        dispatch(
-                          updateQuantity({
-                            id: product.id,
-                            quantity: cartItem.quantity - 1,
-                          }),
-                        )
-                      }
-                      className="p-2 text-slate-500 hover:text-[var(--color-brand)]"
-                    >
-                      <Minus className="h-4 w-4" />
-                    </button>
-                    <span className="w-10 text-center font-semibold text-slate-900">
-                      {cartItem.quantity}
-                    </span>
-                    <button
-                      onClick={() =>
-                        dispatch(
-                          updateQuantity({
-                            id: product.id,
-                            quantity: cartItem.quantity + 1,
-                          }),
-                        )
-                      }
-                      className="p-2 text-slate-500 hover:text-[var(--color-brand)]"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    disabled={product.stock === 0}
-                    onClick={() => {
-                      dispatch(addToCart(product));
-                      dispatch(
-                        addToast({
-                          message: dict.common.addedToCart,
-                          type: "success",
-                        }),
-                      );
-                    }}
-                    className="inline-flex items-center gap-2 rounded-xl bg-[var(--color-brand)] hover:bg-[var(--color-brand-hover)] disabled:bg-slate-200 disabled:text-slate-400 px-6 py-3 text-[14px] font-semibold text-white transition-colors"
-                  >
-                    <ShoppingCart className="h-4 w-4" />
-                    {product.stock === 0
-                      ? dict.products.outOfStock
-                      : dict.products.addToCart}
-                  </button>
-                )}
-
-                <span
-                  className={`inline-flex items-center rounded-md px-2.5 py-1 text-[12px] font-semibold ${
-                    product.stock > 0
-                      ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
-                      : "bg-red-50 text-red-600 border border-red-200"
-                  }`}
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new CustomEvent("phoenix:open-tz"))}
+                  className="inline-flex items-center gap-2 rounded-xl px-6 py-3 text-[14px] font-semibold text-white transition-colors"
+                  style={{ backgroundColor: BLUE }}
                 >
-                  {product.stock > 0
-                    ? `${dict.products.inStock} (${product.stock})`
-                    : dict.products.outOfStock}
-                </span>
+                  <Send className="h-4 w-4" />
+                  {LEAD.requestPrice[locale]}
+                </button>
+                <a
+                  href={`https://wa.me/${waNumber}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#25D366] hover:bg-[#22c35e] px-5 py-3 text-[14px] font-semibold text-white transition-colors"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  WhatsApp
+                </a>
+                {product.datasheetUrl && (
+                  <a
+                    href={product.datasheetUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-xl border border-[var(--color-border)] hover:border-[var(--color-brand)]/40 px-5 py-3 text-[14px] font-semibold text-slate-700 transition-colors"
+                  >
+                    <FileDown className="h-4 w-4" />
+                    Datasheet
+                  </a>
+                )}
               </div>
             </div>
           </motion.div>
@@ -501,5 +450,28 @@ function CrossReferences({
         ))}
       </div>
     </div>
+  );
+}
+
+type LS = Record<Locale, string>;
+const LEAD: Record<string, LS> = {
+  onRequest: { uz: "So'rov bo'yicha", ru: "По запросу", en: "On request", kz: "Сұраныс бойынша" },
+  requestPrice: { uz: "Narxni so'rash", ru: "Запросить цену", en: "Request price", kz: "Бағаны сұрау" },
+  inStock: { uz: "Mavjud", ru: "В наличии", en: "In stock", kz: "Бар" },
+  underOrder: { uz: "Buyurtma asosida", ru: "Под заказ", en: "Under order", kz: "Тапсырыс бойынша" },
+};
+
+function StockBadge({ status, locale }: { status: "in_stock" | "under_order"; locale: Locale }) {
+  const ok = status === "in_stock";
+  return (
+    <span
+      className={`inline-flex items-center rounded-md px-2.5 py-1 text-[12px] font-semibold ${
+        ok
+          ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
+          : "bg-amber-50 text-amber-600 border border-amber-200"
+      }`}
+    >
+      {ok ? LEAD.inStock[locale] : LEAD.underOrder[locale]}
+    </span>
   );
 }

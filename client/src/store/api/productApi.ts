@@ -5,12 +5,15 @@ interface ProductsQuery {
   page?: number;
   limit?: number;
   category?: string;
+  categorySlug?: string;
+  direction?: string;
   search?: string;
   minPrice?: string;
   maxPrice?: string;
   isFeatured?: string;
   manufacturer?: string;
   vehicleBrand?: string;
+  machineBrand?: string;
   sortBy?: string;
   sortOrder?: string;
 }

@@ -1,12 +1,12 @@
-import type { Locale } from '@/shared/types';
-import type { Metadata } from 'next';
-import { IndustriesPageClient } from './IndustriesPageClient';
+import type { Locale } from "@/shared/types";
+import type { Metadata } from "next";
+import { IndustriesClient } from "./IndustriesClient";
 
 const titles: Record<string, string> = {
-  en: 'Industries We Serve',
-  ru: 'Отрасли, которые мы обслуживаем',
-  uz: 'Biz xizmat ko\'rsatadigan sohalar',
-  kz: 'Біз қызмет көрсететін салалар',
+  en: "Industry solutions",
+  ru: "Отраслевые решения",
+  uz: "Tarmoq yechimlari",
+  kz: "Салалық шешімдер",
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
@@ -16,5 +16,5 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 
 export default async function IndustriesPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
-  return <IndustriesPageClient locale={lang as Locale} />;
+  return <IndustriesClient locale={lang as Locale} />;
 }
