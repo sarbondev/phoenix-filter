@@ -16,8 +16,10 @@ import {
 } from "lucide-react";
 import type { Locale } from "@/shared/types";
 import { useGetCategoryBySlugQuery } from "@/store/api/categoryApi";
+import { useGetProductsQuery } from "@/store/api/productApi";
 import { t } from "@/shared/lib/utils";
 import { CatalogSidebar } from "@/widgets/catalog/CatalogSidebar";
+import { ProductGrid } from "../../spetstexnika/_components/ProductGrid";
 import {
   getCategoryContent,
   TAB_LABELS,
@@ -36,6 +38,11 @@ const tr = (s: LS, l: Locale) => s[l] ?? s.en;
 
 export function CategoryClient({ locale, slug }: { locale: Locale; slug: string }) {
   const { data: category, isLoading } = useGetCategoryBySlugQuery(slug);
+  const { data: productData, isLoading: productsLoading } = useGetProductsQuery(
+    category?.id ? { category: category.id, limit: 24, page: 1 } : (undefined as unknown as void),
+    { skip: !category?.id },
+  );
+  const products = productData?.data ?? [];
   const content = getCategoryContent(slug);
   const [tab, setTab] = useState<TabKey>("overview");
 
@@ -151,6 +158,19 @@ export function CategoryClient({ locale, slug }: { locale: Locale; slug: string 
                 </p>
               </Panel>
             )}
+
+            {/* Models / products in this category */}
+            <Panel>
+              <SectionTitle>{tr(SECTION_LABELS.products, locale)}</SectionTitle>
+              <div className="mt-4">
+                <ProductGrid
+                  products={products}
+                  locale={locale}
+                  isLoading={productsLoading || isLoading}
+                  emptyText={tr(SECTION_LABELS.productsEmpty, locale)}
+                />
+              </div>
+            </Panel>
 
             {/* bottom CTA bar */}
             <div className="rounded-xl bg-[var(--color-brand-soft)] p-5 flex flex-col sm:flex-row items-center justify-between gap-4">

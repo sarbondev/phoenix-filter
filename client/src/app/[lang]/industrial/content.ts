@@ -435,6 +435,13 @@ export const SECTION_LABELS = {
   consult: ls("Konsultatsiya olish", "Получить консультацию", "Get a consultation", "Кеңес алу"),
   catalogHome: ls("Bosh", "Главная", "Home", "Басты"),
   catalogProducts: ls("Filtratsion uskunalar", "Фильтрационное оборудование", "Filtration equipment", "Сүзу жабдығы"),
+  products: ls("MODELLAR VA YECHIMLAR", "МОДЕЛИ И РЕШЕНИЯ", "MODELS & SOLUTIONS", "МОДЕЛЬДЕР МЕН ШЕШІМДЕР"),
+  productsEmpty: ls(
+    "Bu toifa bo'yicha modellar so'rov asosida tayyorlanadi — TZ yuboring.",
+    "Модели по этой категории подбираются под запрос — отправьте ТЗ.",
+    "Models for this category are configured on request — send a brief.",
+    "Бұл санат бойынша модельдер сұраныс бойынша дайындалады.",
+  ),
   sectionInProgress: ls("bo'lim tayyorlanmoqda", "раздел в подготовке", "section in progress", "бөлім дайындалуда"),
   ctaNotSure: ls(
     "Vazifangizga nima mosligiga ishonchingiz komilmi?",

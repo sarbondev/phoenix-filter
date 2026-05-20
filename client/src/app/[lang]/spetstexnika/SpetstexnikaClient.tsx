@@ -21,6 +21,7 @@ import type { Locale } from "@/shared/types";
 import { useGetCategoriesQuery } from "@/store/api/categoryApi";
 import { useGetDirectionsQuery } from "@/store/api/directionApi";
 import { useGetEquipmentTypesQuery } from "@/store/api/equipmentTypeApi";
+import { useGetSiteSettingsQuery } from "@/store/api/siteSettingsApi";
 import { t, getImageUrl } from "@/shared/lib/utils";
 import { SX, tr } from "./strings";
 
@@ -65,13 +66,14 @@ function Hero({ locale }: { locale: Locale }) {
             <Search className="h-4 w-4" />
             {tr(SX.hero.ctaPick, locale)}
           </Link>
-          <a
-            href="/uploads/catalog.pdf"
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent("phoenix:open-tz"))}
             className="inline-flex items-center gap-2 rounded-lg border border-white/30 hover:bg-white/10 px-6 py-3.5 text-[15px] font-semibold transition-colors"
           >
             <Download className="h-4 w-4" />
             {tr(SX.hero.ctaCatalog, locale)}
-          </a>
+          </button>
           <button
             type="button"
             onClick={() => window.dispatchEvent(new CustomEvent("phoenix:open-tz"))}
@@ -388,6 +390,8 @@ function HeavyDuty({ locale }: { locale: Locale }) {
 /* ─── Footer CTA ────────────────────────────────────────────────────────── */
 
 function FooterCta({ locale }: { locale: Locale }) {
+  const { data: settings } = useGetSiteSettingsQuery();
+  const waNumber = (settings?.phone || "+998712000000").replace(/[^\d]/g, "");
   return (
     <section className="py-12 lg:py-14 bg-[var(--color-brand)] text-white">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -402,7 +406,7 @@ function FooterCta({ locale }: { locale: Locale }) {
             {tr(SX.footerCta.sendOem, locale)}
           </Link>
           <a
-            href="https://wa.me/998901234567"
+            href={`https://wa.me/${waNumber}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-lg bg-[#25D366] hover:bg-[#22c35e] px-5 py-3 text-[14px] font-semibold transition-colors"

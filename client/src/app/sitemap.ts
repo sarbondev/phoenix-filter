@@ -99,8 +99,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static pages — one entry per locale (default Russian as canonical)
   const staticPaths: { path: string; priority: number; changeFreq: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = [
     { path: "", priority: 1.0, changeFreq: "daily" },
-    { path: "/directions", priority: 0.9, changeFreq: "weekly" },
     { path: "/products", priority: 0.9, changeFreq: "daily" },
+    { path: "/spetstexnika", priority: 0.9, changeFreq: "weekly" },
+    { path: "/filter-search", priority: 0.8, changeFreq: "weekly" },
+    { path: "/engineering", priority: 0.7, changeFreq: "monthly" },
+    { path: "/services", priority: 0.7, changeFreq: "monthly" },
+    { path: "/projects", priority: 0.7, changeFreq: "weekly" },
+    { path: "/industries", priority: 0.7, changeFreq: "monthly" },
+    { path: "/about", priority: 0.6, changeFreq: "monthly" },
     { path: "/blog", priority: 0.5, changeFreq: "weekly" },
     { path: "/contact", priority: 0.5, changeFreq: "monthly" },
   ];
@@ -115,26 +121,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  for (const d of directions) {
-    const path = `/directions/${d.slug}`;
-    entries.push({
-      url: `${SITE_URL}/ru${path}`,
-      lastModified: d.updatedAt ? new Date(d.updatedAt) : now,
-      changeFrequency: "weekly",
-      priority: 0.8,
-      alternates: { languages: alternates(path) },
-    });
-  }
-
+  // Category pages — URL scheme depends on the parent direction:
+  //   industrial   → /industrial/<slug>
+  //   spetstexnika → /spetstexnika/categories/<slug>
   for (const cat of categories) {
     const dir = cat.direction ? directionById.get(cat.direction) : undefined;
     if (!dir) continue;
-    const path = `/directions/${dir.slug}/${cat.slug}`;
+    const path =
+      dir.slug === "industrial"
+        ? `/industrial/${cat.slug}`
+        : dir.slug === "spetstexnika"
+          ? `/spetstexnika/categories/${cat.slug}`
+          : null;
+    if (!path) continue;
     entries.push({
       url: `${SITE_URL}/ru${path}`,
       lastModified: cat.updatedAt ? new Date(cat.updatedAt) : now,
       changeFrequency: "weekly",
-      priority: 0.7,
+      priority: 0.8,
       alternates: { languages: alternates(path) },
     });
   }

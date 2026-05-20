@@ -154,10 +154,11 @@ export function CatalogSidebar({ locale, activeSlug }: Props) {
         </ul>
       </div>
 
-      {/* Download catalog */}
-      <a
-        href="/uploads/catalog.pdf"
-        className="flex items-center gap-3 rounded-xl border border-[var(--color-border)] bg-white px-4 py-3.5 hover:border-[var(--color-brand)]/40 transition-colors"
+      {/* Download catalog — opens the request modal (no static PDF yet) */}
+      <button
+        type="button"
+        onClick={() => window.dispatchEvent(new CustomEvent("phoenix:open-tz"))}
+        className="flex w-full items-center gap-3 rounded-xl border border-[var(--color-border)] bg-white px-4 py-3.5 hover:border-[var(--color-brand)]/40 transition-colors text-left"
       >
         <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--color-brand-soft)] text-[var(--color-brand)]">
           <Download className="h-4 w-4" />
@@ -165,7 +166,7 @@ export function CatalogSidebar({ locale, activeSlug }: Props) {
         <span className="text-[12.5px] font-semibold text-slate-800 leading-tight">
           {LABELS.download[locale]}
         </span>
-      </a>
+      </button>
 
       {/* Projects card */}
       <Link
