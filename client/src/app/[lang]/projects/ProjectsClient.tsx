@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
 import {
   ChevronRight,
   Briefcase,
@@ -20,6 +19,7 @@ import { t } from "@/shared/lib/utils";
 import { useGetHomeContentQuery } from "@/store/api/homeContentApi";
 import { Editable, useEditorDict } from "@/features/inline-editor";
 import { MarketingPagesBlockEditor } from "@/features/inline-editor/blocks/MarketingPagesBlockEditor";
+import { useQueryParams } from "@/shared/hooks/useQueryParams";
 import { PageHeroImage } from "@/widgets/page-hero/PageHeroImage";
 
 const BLUE = "#1d4ed8";
@@ -119,6 +119,7 @@ const PROJECTS: Project[] = [
 export function ProjectsClient({ locale }: { locale: Locale }) {
   const { data: home } = useGetHomeContentQuery();
   const ed = useEditorDict();
+  const { params, setParams } = useQueryParams();
   const cms = home?.pages?.projects;
   const title = t(cms?.title, locale) || tr(T.title, locale);
   const subtitle = t(cms?.subtitle, locale) || tr(T.subtitle, locale);
@@ -136,11 +137,15 @@ export function ProjectsClient({ locale }: { locale: Locale }) {
           icon: s.icon,
         }));
 
-  const industries = Array.from(new Set(PROJECTS.map((p) => tr(p.industry, locale))));
-  const [filter, setFilter] = useState<string | null>(null);
+  // Locale-independent industry keys (English) so the URL filter is stable
+  // across languages; the tab label stays localized.
+  const industries = Array.from(
+    new Map(PROJECTS.map((p) => [p.industry.en, p.industry])).values(),
+  );
+  const filter = params.industry ?? null;
 
   const visible = filter
-    ? PROJECTS.filter((p) => tr(p.industry, locale) === filter)
+    ? PROJECTS.filter((p) => p.industry.en === filter)
     : PROJECTS;
 
   return (
@@ -191,12 +196,19 @@ export function ProjectsClient({ locale }: { locale: Locale }) {
 
           {/* Industry filter tabs */}
           <div className="mt-6 flex flex-wrap gap-2 border-t border-[var(--color-border)] pt-5">
-            <FilterTab active={filter === null} onClick={() => setFilter(null)}>
+            <FilterTab
+              active={filter === null}
+              onClick={() => setParams({ industry: undefined })}
+            >
               {tr(T.all, locale)}
             </FilterTab>
             {industries.map((ind) => (
-              <FilterTab key={ind} active={filter === ind} onClick={() => setFilter(ind)}>
-                {ind}
+              <FilterTab
+                key={ind.en}
+                active={filter === ind.en}
+                onClick={() => setParams({ industry: ind.en })}
+              >
+                {tr(ind, locale)}
               </FilterTab>
             ))}
           </div>

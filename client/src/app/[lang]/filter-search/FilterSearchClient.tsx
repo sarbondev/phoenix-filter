@@ -24,6 +24,7 @@ import {
   useSearchByPhotoMutation,
 } from "@/store/api/filterSearchApi";
 import { useGetEquipmentTypesQuery } from "@/store/api/equipmentTypeApi";
+import { useQueryParams } from "@/shared/hooks/useQueryParams";
 import { t, formatPrice, getImageUrl } from "@/shared/lib/utils";
 import { FS, trFs } from "./strings";
 
@@ -36,6 +37,7 @@ const TABS: { id: Tab; icon: typeof Hash }[] = [
   { id: "machine", icon: Truck },
   { id: "photo", icon: Camera },
 ];
+const TAB_IDS = TABS.map((x) => x.id);
 
 export function FilterSearchClient({
   locale,
@@ -44,7 +46,10 @@ export function FilterSearchClient({
   locale: Locale;
   initialQuery: string;
 }) {
-  const [tab, setTab] = useState<Tab>("oem");
+  const { params, setParams } = useQueryParams();
+  const tab: Tab = TAB_IDS.includes(params.tab as Tab)
+    ? (params.tab as Tab)
+    : "oem";
   const [results, setResults] = useState<Product[] | null>(null);
   const [total, setTotal] = useState(0);
   const [photoSuccess, setPhotoSuccess] = useState(false);
@@ -72,7 +77,7 @@ export function FilterSearchClient({
                   key={id}
                   type="button"
                   onClick={() => {
-                    setTab(id);
+                    setParams({ tab: id });
                     setResults(null);
                     setPhotoSuccess(false);
                   }}

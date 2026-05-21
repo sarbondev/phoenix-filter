@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { ChevronRight } from "lucide-react";
 import type { Locale } from "@/shared/types";
 import { useGetEquipmentTypeBySlugQuery } from "@/store/api/equipmentTypeApi";
 import { useGetProductsQuery } from "@/store/api/productApi";
+import { useQueryParams } from "@/shared/hooks/useQueryParams";
 import { t } from "@/shared/lib/utils";
 import { ProductGrid } from "../../_components/ProductGrid";
 import { SX_T, sx } from "../../_components/sx-i18n";
@@ -21,7 +22,8 @@ export function EquipmentClient({
     useGetEquipmentTypeBySlugQuery(slug);
 
   const brands = useMemo(() => equipment?.machineBrands ?? [], [equipment]);
-  const [activeBrand, setActiveBrand] = useState<string | null>(null);
+  const { params, setParams } = useQueryParams();
+  const activeBrand = params.brand ?? null;
 
   // When no specific brand picked, query the first brand so the page always
   // shows products. The brand pills below toggle which one is loaded.
@@ -74,7 +76,7 @@ export function EquipmentClient({
                 <button
                   key={b}
                   type="button"
-                  onClick={() => setActiveBrand(b)}
+                  onClick={() => setParams({ brand: b })}
                   className={`inline-flex items-center rounded-full border px-4 py-2 text-[13px] font-semibold transition-colors ${
                     (activeBrand ?? brands[0]) === b
                       ? "bg-[var(--color-brand)] text-white border-[var(--color-brand)]"

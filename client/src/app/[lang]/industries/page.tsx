@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Locale } from "@/shared/types";
 import type { Metadata } from "next";
 import { IndustriesClient } from "./IndustriesClient";
@@ -16,5 +17,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 
 export default async function IndustriesPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
-  return <IndustriesClient locale={lang as Locale} />;
+  return (
+    <Suspense fallback={null}>
+      <IndustriesClient locale={lang as Locale} />
+    </Suspense>
+  );
 }

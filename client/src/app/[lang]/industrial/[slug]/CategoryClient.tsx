@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import {
   ChevronRight,
   CheckCircle2,
@@ -17,6 +16,7 @@ import {
 import type { Locale } from "@/shared/types";
 import { useGetCategoryBySlugQuery } from "@/store/api/categoryApi";
 import { useGetProductsQuery } from "@/store/api/productApi";
+import { useQueryParams } from "@/shared/hooks/useQueryParams";
 import { t } from "@/shared/lib/utils";
 import { CatalogSidebar } from "@/widgets/catalog/CatalogSidebar";
 import { ProductGrid } from "../../spetstexnika/_components/ProductGrid";
@@ -44,7 +44,10 @@ export function CategoryClient({ locale, slug }: { locale: Locale; slug: string 
   );
   const products = productData?.data ?? [];
   const content = getCategoryContent(slug);
-  const [tab, setTab] = useState<TabKey>("overview");
+  const { params, setParams } = useQueryParams();
+  const tab: TabKey = TABS.includes(params.tab as TabKey)
+    ? (params.tab as TabKey)
+    : "overview";
 
   const title = category ? t(category.name, locale) : slug;
   const description = category ? t(category.description, locale) : "";
@@ -111,7 +114,7 @@ export function CategoryClient({ locale, slug }: { locale: Locale; slug: string 
                   <button
                     key={key}
                     type="button"
-                    onClick={() => setTab(key)}
+                    onClick={() => setParams({ tab: key })}
                     className={`rounded-lg px-4 py-2.5 text-[13px] font-semibold transition-colors ${
                       active
                         ? "text-white"

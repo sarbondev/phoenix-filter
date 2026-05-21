@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
 import {
   ChevronRight,
   CheckCircle2,
@@ -32,6 +31,7 @@ import { useGetHomeContentQuery } from "@/store/api/homeContentApi";
 import { Editable, useEditorDict } from "@/features/inline-editor";
 import { MarketingPagesBlockEditor } from "@/features/inline-editor/blocks/MarketingPagesBlockEditor";
 import { PageHeroImage } from "@/widgets/page-hero/PageHeroImage";
+import { useQueryParams } from "@/shared/hooks/useQueryParams";
 
 const BLUE = "#1d4ed8";
 type LS = Record<Locale, string>;
@@ -148,7 +148,9 @@ export function IndustriesClient({ locale }: { locale: Locale }) {
   const subtitle = t(cms?.subtitle, locale) || tr(T.subtitle, locale);
   const image = cms?.image || decorImg(413, 1600, 500);
 
-  const [active, setActive] = useState(0);
+  const { params, setParams } = useQueryParams();
+  const foundIdx = INDUSTRIES.findIndex((ind) => ind.name.en === params.industry);
+  const active = foundIdx === -1 ? 0 : foundIdx;
   const sel = INDUSTRIES[active];
 
   return (
@@ -205,7 +207,7 @@ export function IndustriesClient({ locale }: { locale: Locale }) {
               <button
                 key={i}
                 type="button"
-                onClick={() => setActive(i)}
+                onClick={() => setParams({ industry: ind.name.en })}
                 className={`relative rounded-xl border p-4 text-left transition-all ${
                   isActive
                     ? "border-[var(--color-brand)] bg-white shadow-md"
