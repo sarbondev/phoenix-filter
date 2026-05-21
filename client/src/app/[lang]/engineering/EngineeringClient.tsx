@@ -22,6 +22,12 @@ import {
 } from "lucide-react";
 import type { Locale } from "@/shared/types";
 import { CatalogSidebar } from "@/widgets/catalog/CatalogSidebar";
+import { t } from "@/shared/lib/utils";
+import { decorImg } from "@/shared/lib/decor";
+import { useGetHomeContentQuery } from "@/store/api/homeContentApi";
+import { Editable, useEditorDict } from "@/features/inline-editor";
+import { MarketingPagesBlockEditor } from "@/features/inline-editor/blocks/MarketingPagesBlockEditor";
+import { PageHeroImage } from "@/widgets/page-hero/PageHeroImage";
 
 const BLUE = "#1d4ed8";
 type LS = Record<Locale, string>;
@@ -134,6 +140,13 @@ const TRUST: LS[] = [
 ];
 
 export function EngineeringClient({ locale }: { locale: Locale }) {
+  const { data: home } = useGetHomeContentQuery();
+  const ed = useEditorDict();
+  const p = home?.pages?.engineering;
+  const title = t(p?.title, locale) || tr(T.title, locale);
+  const subtitle = t(p?.subtitle, locale) || tr(T.subtitle, locale);
+  const image = p?.image || decorImg(411, 1600, 500);
+
   return (
     <main className="bg-[var(--color-surface)] min-h-screen">
       <div className="bg-white border-b border-[var(--color-border)]">
@@ -152,12 +165,28 @@ export function EngineeringClient({ locale }: { locale: Locale }) {
 
           <div className="flex-1 min-w-0 space-y-6">
             {/* Hero */}
+            <Editable
+              id="page-engineering"
+              label={ed.editPageLabel}
+              block={() => ({
+                title: ed.marketingTitle,
+                description: ed.marketingDesc,
+                wide: true,
+                render: (close) => (
+                  <MarketingPagesBlockEditor
+                    close={close}
+                    initialTab="engineering"
+                  />
+                ),
+              })}
+            >
             <section className="rounded-xl bg-white border border-[var(--color-border)] p-6 lg:p-8">
+              <PageHeroImage image={image} />
               <h1 className="text-2xl lg:text-[34px] font-extrabold tracking-tight text-[var(--color-brand-strong)] uppercase">
-                {tr(T.title, locale)}
+                {title}
               </h1>
               <p className="mt-3 text-[14px] text-slate-600 leading-relaxed max-w-3xl">
-                {tr(T.subtitle, locale)}
+                {subtitle}
               </p>
               <div className="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 border-t border-[var(--color-border)] pt-5">
                 {T.pills.map((pill, i) => (
@@ -168,6 +197,7 @@ export function EngineeringClient({ locale }: { locale: Locale }) {
                 ))}
               </div>
             </section>
+            </Editable>
 
             {/* Services */}
             <section className="rounded-xl bg-white border border-[var(--color-border)] p-5 lg:p-6">

@@ -210,7 +210,7 @@ function DirectionCard({
         className="group block overflow-hidden rounded-2xl bg-[var(--color-ink)] ring-1 ring-black/5 transition-all hover:ring-[var(--color-brand)]/40 hover:shadow-xl"
       >
         {/* image + overlay + copy */}
-        <div className="relative min-h-[260px] p-7 lg:p-8 flex flex-col justify-end">
+        <div className="relative min-h-[260px] overflow-hidden p-7 lg:p-8 flex flex-col justify-end">
           {direction.image ? (
             <Image
               src={getImageUrl(direction.image)}

@@ -18,6 +18,7 @@ import {
   type ProcessStep,
   type CTABanner,
   type CTABannerVariant,
+  type MarketingPage,
 } from "@/store/api/homeContentApi";
 import { useAppDispatch } from "@/shared/hooks";
 import { addToast } from "@/store/toastSlice";
@@ -48,7 +49,24 @@ const DEFAULT_HOME: HomeContent = {
     left: emptyCTA("blue-ink"),
     right: emptyCTA("ink"),
   },
+  pages: {
+    about: emptyMarketingPage(),
+    services: emptyMarketingPage(),
+    engineering: emptyMarketingPage(),
+    projects: emptyMarketingPage(),
+    industries: emptyMarketingPage(),
+  },
 };
+
+function emptyMarketingPage(): MarketingPage {
+  return {
+    title: { ...EMPTY_TF },
+    subtitle: { ...EMPTY_TF },
+    intro: { ...EMPTY_TF },
+    image: "",
+    stats: [],
+  };
+}
 
 function emptyCTA(variant: CTABannerVariant): CTABanner {
   return {

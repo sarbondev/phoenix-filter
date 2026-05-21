@@ -5,6 +5,7 @@ import {
   IIconFeature,
   IProcessStep,
   ICTABanner,
+  IMarketingPage,
 } from "./home-content.entity";
 import { UpdateHomeContentDto } from "./home-content.schema";
 import { emitToAll } from "../../shared/services/socket.service";
@@ -58,6 +59,27 @@ async function fillCTA(c: {
   };
 }
 
+async function fillPage(p: {
+  title: TranslatedField;
+  subtitle: TranslatedField;
+  intro: TranslatedField;
+  image: string;
+  stats: { value: string; label: TranslatedField }[];
+}): Promise<IMarketingPage> {
+  return {
+    title: (await fillEmptyTranslations(p.title)) ?? p.title,
+    subtitle: (await fillEmptyTranslations(p.subtitle)) ?? p.subtitle,
+    intro: (await fillEmptyTranslations(p.intro)) ?? p.intro,
+    image: p.image,
+    stats: await Promise.all(
+      p.stats.map(async (s) => ({
+        value: s.value,
+        label: (await fillEmptyTranslations(s.label)) ?? s.label,
+      })),
+    ),
+  };
+}
+
 export class HomeContentService {
   constructor(private readonly repo: HomeContentRepository) {}
 
@@ -107,6 +129,15 @@ export class HomeContentService {
       normalized.ctaBanners = {
         left: await fillCTA(dto.ctaBanners.left),
         right: await fillCTA(dto.ctaBanners.right),
+      };
+    }
+    if (dto.pages) {
+      normalized.pages = {
+        about: await fillPage(dto.pages.about),
+        services: await fillPage(dto.pages.services),
+        engineering: await fillPage(dto.pages.engineering),
+        projects: await fillPage(dto.pages.projects),
+        industries: await fillPage(dto.pages.industries),
       };
     }
 

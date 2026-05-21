@@ -340,6 +340,135 @@ const DEFAULT_HOME: Partial<IHomeContent> = {
       variant: "ink",
     },
   },
+  pages: {
+    about: {
+      title: tf(
+        "О компании",
+        "About the company",
+        "Kompaniya haqida",
+        "Компания туралы",
+      ),
+      subtitle: tf(
+        "PHOENIX PRIME ENGINEERING — инжиниринговая компания по проектированию, производству и поставке систем промышленной фильтрации и газоочистки.",
+        "PHOENIX PRIME ENGINEERING is an engineering company designing, manufacturing and supplying industrial filtration and gas-cleaning systems.",
+        "PHOENIX PRIME ENGINEERING — sanoat filtratsiyasi va gaz tozalash tizimlarini loyihalash, ishlab chiqarish va ta'minlash bo'yicha injiniring kompaniyasi.",
+        "PHOENIX PRIME ENGINEERING — өнеркәсіптік сүзу жүйелерін жобалайтын инжиниринг компаниясы.",
+      ),
+      intro: tf(
+        "Уже более 10 лет мы обеспечиваем предприятиям различных отраслей чистый воздух и соответствие экологическим нормам. Собственный инженерный отдел подходит индивидуально к каждому проекту.",
+        "For over 10 years we have provided enterprises with clean air and environmental compliance. Our in-house engineering team approaches each project individually.",
+        "Biz 10 yildan ortiq vaqt davomida turli sanoat tarmoqlari korxonalariga toza havo va ekologik me'yorlarga muvofiqlikni ta'minlaymiz. O'z muhandislik bo'limimiz har bir loyihaga individual yondashadi.",
+        "10 жылдан астам уақыт бойы кәсіпорындарға таза ауа қамтамасыз етеміз.",
+      ),
+      image: "https://picsum.photos/seed/pf101/1600/700",
+      stats: [
+        { value: "250+", label: tf("Проектов", "Projects", "Loyiha", "Жоба") },
+        { value: "100+", label: tf("Клиентов", "Clients", "Mijoz", "Клиент") },
+        { value: "10+", label: tf("Лет опыта", "Years", "Yil tajriba", "Жыл") },
+        { value: "6", label: tf("Стран", "Countries", "Davlat", "Ел") },
+      ],
+    },
+    services: {
+      title: tf(
+        "Сервис и обслуживание",
+        "Service & maintenance",
+        "Servis va xizmat ko'rsatish",
+        "Сервис және қызмет",
+      ),
+      subtitle: tf(
+        "Мы обеспечиваем полный жизненный цикл поддержки вашего оборудования — от подбора и монтажа до регулярного обслуживания и модернизации.",
+        "We support the full lifecycle of your equipment — from selection and installation to regular maintenance and modernization.",
+        "Uskunangizning to'liq hayot tsiklini qo'llab-quvvatlaymiz — tanlash va montajdan tortib muntazam xizmat va modernizatsiyagacha.",
+        "Жабдықтың толық өмірлік циклін қолдаймыз.",
+      ),
+      intro: tf("", "", "", ""),
+      image: "https://picsum.photos/seed/pf410/1600/500",
+      stats: [],
+    },
+    engineering: {
+      title: tf(
+        "Инжиниринговые решения",
+        "Engineering solutions",
+        "Injiniring yechimlari",
+        "Инжинирингтік шешімдер",
+      ),
+      subtitle: tf(
+        "Полный комплекс инжиниринговых услуг — от анализа задачи и проектирования до поставки оборудования, монтажа и ввода в эксплуатацию систем газоочистки, аспирации и вентиляции.",
+        "A full range of engineering services — from analysis and design to equipment supply, installation and commissioning.",
+        "Vazifa tahlilidan tortib uskuna yetkazib berish, montaj va ishga tushirishgacha — to'liq injiniring xizmatlari majmuasi.",
+        "Толық инжиниринг қызметтері — талдаудан жабдықты жеткізу мен іске қосуға дейін.",
+      ),
+      intro: tf("", "", "", ""),
+      image: "https://picsum.photos/seed/pf411/1600/500",
+      stats: [],
+    },
+    projects: {
+      title: tf(
+        "Наши проекты",
+        "Our projects",
+        "Bizning loyihalar",
+        "Біздің жобалар",
+      ),
+      subtitle: tf(
+        "Мы реализуем проекты любой сложности — от индивидуальных систем аспирации до крупных промышленных комплексов под ключ.",
+        "We deliver projects of any complexity — from custom aspiration systems to large turnkey industrial complexes.",
+        "Individual aspiratsiya tizimlaridan tortib yirik sanoat majmualarigacha — har qanday murakkablikdagi loyihalarni amalga oshiramiz.",
+        "Кез келген күрделіктегі жобаларды іске асырамыз.",
+      ),
+      intro: tf("", "", "", ""),
+      image: "https://picsum.photos/seed/pf412/1600/500",
+      stats: [
+        {
+          value: "250+",
+          label: tf(
+            "Реализованных проектов",
+            "Completed projects",
+            "Amalga oshirilgan loyiha",
+            "Жобалар",
+          ),
+        },
+        {
+          value: "15+",
+          label: tf(
+            "Отраслей промышленности",
+            "Industries",
+            "Sanoat tarmog'i",
+            "Салалар",
+          ),
+        },
+        {
+          value: "6",
+          label: tf("Стран присутствия", "Countries", "Mavjud davlatlar", "Елдер"),
+        },
+        {
+          value: "100%",
+          label: tf(
+            "Соответствие экологическим нормам",
+            "Eco compliance",
+            "Ekologik me'yorlarga muvofiqlik",
+            "Экологиялық сәйкестік",
+          ),
+        },
+      ],
+    },
+    industries: {
+      title: tf(
+        "Отраслевые решения",
+        "Industry solutions",
+        "Tarmoq yechimlari",
+        "Салалық шешімдер",
+      ),
+      subtitle: tf(
+        "Профессиональные решения по фильтрации и очистке воздуха для различных отраслей промышленности. Подберите оптимальное оборудование под ваши задачи.",
+        "Professional air filtration and cleaning solutions for various industries.",
+        "Turli sanoat tarmoqlari uchun havoni filtrlash va tozalash bo'yicha professional yechimlar. Vazifangizga optimal uskunani tanlang.",
+        "Әртүрлі салаларға арналған кәсіби шешімдер.",
+      ),
+      intro: tf("", "", "", ""),
+      image: "https://picsum.photos/seed/pf413/1600/500",
+      stats: [],
+    },
+  },
 };
 
 export class HomeContentRepository {
@@ -349,7 +478,10 @@ export class HomeContentRepository {
       const created = await HomeContentModel.create(DEFAULT_HOME);
       doc = created.toObject() as IHomeContent;
     }
-    return doc;
+    // Backfill any top-level section missing on older documents (e.g. `pages`
+    // added after the doc was first created) so the storefront/editor always
+    // receive a complete shape. Stored values win; defaults only fill gaps.
+    return { ...DEFAULT_HOME, ...doc } as IHomeContent;
   }
 
   async update(data: Partial<IHomeContent>): Promise<IHomeContent> {

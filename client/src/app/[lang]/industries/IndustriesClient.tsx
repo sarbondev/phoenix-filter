@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import {
   ChevronRight,
@@ -25,6 +26,12 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { Locale } from "@/shared/types";
+import { decorImg } from "@/shared/lib/decor";
+import { t } from "@/shared/lib/utils";
+import { useGetHomeContentQuery } from "@/store/api/homeContentApi";
+import { Editable, useEditorDict } from "@/features/inline-editor";
+import { MarketingPagesBlockEditor } from "@/features/inline-editor/blocks/MarketingPagesBlockEditor";
+import { PageHeroImage } from "@/widgets/page-hero/PageHeroImage";
 
 const BLUE = "#1d4ed8";
 type LS = Record<Locale, string>;
@@ -134,6 +141,13 @@ const INDUSTRIES: Industry[] = [
 ];
 
 export function IndustriesClient({ locale }: { locale: Locale }) {
+  const { data: home } = useGetHomeContentQuery();
+  const ed = useEditorDict();
+  const cms = home?.pages?.industries;
+  const title = t(cms?.title, locale) || tr(T.title, locale);
+  const subtitle = t(cms?.subtitle, locale) || tr(T.subtitle, locale);
+  const image = cms?.image || decorImg(413, 1600, 500);
+
   const [active, setActive] = useState(0);
   const sel = INDUSTRIES[active];
 
@@ -150,13 +164,26 @@ export function IndustriesClient({ locale }: { locale: Locale }) {
       </div>
 
       <div className="mx-auto max-w-[1320px] px-4 sm:px-6 lg:px-8 py-7 lg:py-9 space-y-6">
+        <Editable
+          id="page-industries"
+          label={ed.editPageLabel}
+          block={() => ({
+            title: ed.marketingTitle,
+            description: ed.marketingDesc,
+            wide: true,
+            render: (close) => (
+              <MarketingPagesBlockEditor close={close} initialTab="industries" />
+            ),
+          })}
+        >
         <section className="rounded-xl bg-white border border-[var(--color-border)] p-6 lg:p-8">
+          <PageHeroImage image={image} />
           <div className="flex flex-col lg:flex-row gap-6 justify-between lg:items-end">
             <div className="max-w-2xl">
               <h1 className="text-2xl lg:text-[34px] font-extrabold tracking-tight text-[var(--color-brand-strong)] uppercase">
-                {tr(T.title, locale)}
+                {title}
               </h1>
-              <p className="mt-3 text-[14px] text-slate-600 leading-relaxed">{tr(T.subtitle, locale)}</p>
+              <p className="mt-3 text-[14px] text-slate-600 leading-relaxed">{subtitle}</p>
             </div>
             <div className="flex gap-5">
               {T.advantages.map((a, i) => (
@@ -168,6 +195,7 @@ export function IndustriesClient({ locale }: { locale: Locale }) {
             </div>
           </div>
         </section>
+        </Editable>
 
         {/* 12 industry cards */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -198,14 +226,24 @@ export function IndustriesClient({ locale }: { locale: Locale }) {
         </div>
 
         {/* Selected industry detail */}
-        <section className="rounded-xl bg-white border border-[var(--color-border)] p-6 lg:p-8">
-          <div className="flex items-center gap-3 mb-5">
-            <span className="flex h-12 w-12 items-center justify-center rounded-xl text-white" style={{ backgroundColor: BLUE }}>
-              <sel.icon className="h-6 w-6" />
-            </span>
-            <h2 className="text-xl lg:text-2xl font-extrabold text-[var(--color-brand-strong)]">{tr(sel.name, locale)}</h2>
+        <section className="overflow-hidden rounded-xl bg-white border border-[var(--color-border)]">
+          <div className="relative h-44 lg:h-52 overflow-hidden bg-[var(--color-ink)]">
+            <Image
+              src={decorImg(200 + active, 1600, 520)}
+              alt={tr(sel.name, locale)}
+              fill
+              sizes="100vw"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+            <div className="absolute bottom-0 left-0 flex items-center gap-3 p-6 lg:p-8">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl text-white shadow-md" style={{ backgroundColor: BLUE }}>
+                <sel.icon className="h-6 w-6" />
+              </span>
+              <h2 className="text-xl lg:text-2xl font-extrabold text-white">{tr(sel.name, locale)}</h2>
+            </div>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6 lg:p-8">
             <div className="rounded-lg bg-[var(--color-surface)] p-5">
               <h3 className="text-[12px] font-bold tracking-[0.06em] text-[var(--color-brand-strong)]">{tr(T.pollutionsTitle, locale)}</h3>
               <ul className="mt-3 space-y-2">

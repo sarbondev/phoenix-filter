@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
   ChevronRight,
   PenTool,
@@ -21,6 +22,12 @@ import {
 } from "lucide-react";
 import type { Locale } from "@/shared/types";
 import { CatalogSidebar } from "@/widgets/catalog/CatalogSidebar";
+import { decorImg } from "@/shared/lib/decor";
+import { t } from "@/shared/lib/utils";
+import { useGetHomeContentQuery } from "@/store/api/homeContentApi";
+import { Editable, useEditorDict } from "@/features/inline-editor";
+import { MarketingPagesBlockEditor } from "@/features/inline-editor/blocks/MarketingPagesBlockEditor";
+import { PageHeroImage } from "@/widgets/page-hero/PageHeroImage";
 
 const BLUE = "#1d4ed8";
 type LS = Record<Locale, string>;
@@ -132,6 +139,13 @@ const STEPS: { icon: LucideIcon; label: LS; sub: LS }[] = [
 ];
 
 export function ServicesClient({ locale }: { locale: Locale }) {
+  const { data: home } = useGetHomeContentQuery();
+  const ed = useEditorDict();
+  const p = home?.pages?.services;
+  const title = t(p?.title, locale) || tr(T.title, locale);
+  const subtitle = t(p?.subtitle, locale) || tr(T.subtitle, locale);
+  const image = p?.image || decorImg(410, 1600, 500);
+
   return (
     <main className="bg-[var(--color-surface)] min-h-screen">
       <div className="bg-white border-b border-[var(--color-border)]">
@@ -149,12 +163,26 @@ export function ServicesClient({ locale }: { locale: Locale }) {
           <CatalogSidebar locale={locale} />
 
           <div className="flex-1 min-w-0 space-y-6">
-            <section className="rounded-xl bg-white border border-[var(--color-border)] p-6 lg:p-8">
-              <h1 className="text-2xl lg:text-[34px] font-extrabold tracking-tight text-[var(--color-brand-strong)] uppercase">
-                {tr(T.title, locale)}
-              </h1>
-              <p className="mt-3 text-[14px] text-slate-600 leading-relaxed max-w-3xl">{tr(T.subtitle, locale)}</p>
-            </section>
+            <Editable
+              id="page-services"
+              label={ed.editPageLabel}
+              block={() => ({
+                title: ed.marketingTitle,
+                description: ed.marketingDesc,
+                wide: true,
+                render: (close) => (
+                  <MarketingPagesBlockEditor close={close} initialTab="services" />
+                ),
+              })}
+            >
+              <section className="rounded-xl bg-white border border-[var(--color-border)] p-6 lg:p-8">
+                <PageHeroImage image={image} />
+                <h1 className="text-2xl lg:text-[34px] font-extrabold tracking-tight text-[var(--color-brand-strong)] uppercase">
+                  {title}
+                </h1>
+                <p className="mt-3 text-[14px] text-slate-600 leading-relaxed max-w-3xl">{subtitle}</p>
+              </section>
+            </Editable>
 
             {/* Services */}
             <section className="rounded-xl bg-white border border-[var(--color-border)] p-5 lg:p-6">
@@ -162,8 +190,17 @@ export function ServicesClient({ locale }: { locale: Locale }) {
               <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {SERVICES.map((svc, i) => (
                   <div key={i} className="rounded-lg border border-[var(--color-border)] overflow-hidden hover:border-[var(--color-brand)]/40 hover:shadow-sm transition-all">
-                    <div className="h-28 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-                      <svc.icon className="h-9 w-9 text-[var(--color-brand)]/70" />
+                    <div className="relative h-28 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center overflow-hidden">
+                      <Image
+                        src={decorImg(140 + i, 800, 320)}
+                        alt=""
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover"
+                      />
+                      <span className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-white/85 backdrop-blur-sm shadow-sm">
+                        <svc.icon className="h-6 w-6 text-[var(--color-brand)]" />
+                      </span>
                     </div>
                     <div className="p-5">
                       <div className="flex items-center gap-2 mb-2">

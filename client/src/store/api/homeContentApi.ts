@@ -52,12 +52,36 @@ export interface CTABannersSectionContent {
   right: CTABanner;
 }
 
+export interface PageStat {
+  value: string;
+  label: TranslatedField;
+}
+
+export interface MarketingPage {
+  title: TranslatedField;
+  subtitle: TranslatedField;
+  intro: TranslatedField;
+  image: string;
+  stats: PageStat[];
+}
+
+export interface MarketingPages {
+  about: MarketingPage;
+  services: MarketingPage;
+  engineering: MarketingPage;
+  projects: MarketingPage;
+  industries: MarketingPage;
+}
+
+export type MarketingPageKey = keyof MarketingPages;
+
 export interface HomeContent {
   about: AboutSectionContent;
   whyUs: WhyUsSectionContent;
   process: ProcessSectionContent;
   integration: IntegrationSectionContent;
   ctaBanners: CTABannersSectionContent;
+  pages: MarketingPages;
 }
 
 export const homeContentApi = baseApi.injectEndpoints({

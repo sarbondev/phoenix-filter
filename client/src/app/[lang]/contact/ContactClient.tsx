@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { ChevronRight, Phone, Mail, MapPin, Clock, Send, CheckCircle2, Loader2 } from "lucide-react";
 import type { Locale } from "@/shared/types";
+import { decorImg } from "@/shared/lib/decor";
 import { useGetSiteSettingsQuery } from "@/store/api/siteSettingsApi";
 import { useSubmitProductRequestMutation } from "@/store/api/productRequestApi";
 import { t } from "@/shared/lib/utils";
@@ -132,8 +134,17 @@ export function ContactClient({ locale }: { locale: Locale }) {
                 </div>
               ))}
             </div>
-            <div className="mt-4 h-56 rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-              <MapPin className="h-8 w-8 text-slate-300" />
+            <div className="relative mt-4 h-56 overflow-hidden rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
+              <Image
+                src={decorImg(180, 1200, 600)}
+                alt=""
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+              />
+              <span className="relative flex h-12 w-12 items-center justify-center rounded-full bg-white/85 backdrop-blur-sm shadow-sm">
+                <MapPin className="h-6 w-6 text-[var(--color-brand)]" />
+              </span>
             </div>
           </section>
 

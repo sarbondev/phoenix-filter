@@ -52,6 +52,34 @@ export interface ICTABannersSection {
   right: ICTABanner;
 }
 
+/** A single headline stat shown on a marketing page (e.g. "250+" / "Projects"). */
+export interface IPageStat {
+  value: string;
+  label: TranslatedField;
+}
+
+/**
+ * Editable "above-the-fold" content for a standalone marketing page
+ * (About, Services, Engineering, Projects, Industries). The deep structured
+ * lists on each page (project tables, industry matrices, service bullets)
+ * stay in code — only the hero copy, intro, banner image and stats are CMS-driven.
+ */
+export interface IMarketingPage {
+  title: TranslatedField;
+  subtitle: TranslatedField;
+  intro: TranslatedField;
+  image: string;
+  stats: IPageStat[];
+}
+
+export interface IMarketingPages {
+  about: IMarketingPage;
+  services: IMarketingPage;
+  engineering: IMarketingPage;
+  projects: IMarketingPage;
+  industries: IMarketingPage;
+}
+
 export interface IHomeContent extends Document {
   _id: Types.ObjectId;
   about: IAboutSection;
@@ -59,6 +87,7 @@ export interface IHomeContent extends Document {
   process: IProcessSection;
   integration: IIntegrationSection;
   ctaBanners: ICTABannersSection;
+  pages: IMarketingPages;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -69,6 +98,7 @@ export interface HomeContentResponse {
   process: IProcessSection;
   integration: IIntegrationSection;
   ctaBanners: ICTABannersSection;
+  pages: IMarketingPages;
 }
 
 export const toHomeContentResponse = (h: IHomeContent): HomeContentResponse => ({
@@ -77,4 +107,5 @@ export const toHomeContentResponse = (h: IHomeContent): HomeContentResponse => (
   process: h.process,
   integration: h.integration,
   ctaBanners: h.ctaBanners,
+  pages: h.pages,
 });

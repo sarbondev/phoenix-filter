@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
   ChevronRight,
   Building2,
@@ -15,6 +16,11 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { Locale } from "@/shared/types";
+import { decorImg } from "@/shared/lib/decor";
+import { t, getImageUrl } from "@/shared/lib/utils";
+import { useGetHomeContentQuery } from "@/store/api/homeContentApi";
+import { Editable, useEditorDict } from "@/features/inline-editor";
+import { MarketingPagesBlockEditor } from "@/features/inline-editor/blocks/MarketingPagesBlockEditor";
 
 const BLUE = "#1d4ed8";
 type LS = Record<Locale, string>;
@@ -76,6 +82,27 @@ const WHY: LS[] = [
 ];
 
 export function AboutClient({ locale }: { locale: Locale }) {
+  const { data: home } = useGetHomeContentQuery();
+  const ed = useEditorDict();
+  const p = home?.pages?.about;
+
+  const title = t(p?.title, locale) || tr(T.title, locale);
+  const subtitle = t(p?.subtitle, locale) || tr(T.subtitle, locale);
+  const intro = t(p?.intro, locale) || tr(T.intro, locale);
+  const image = p?.image || decorImg(101, 1920, 700);
+  const stats =
+    p?.stats && p.stats.length
+      ? p.stats.map((s, i) => ({
+          value: s.value,
+          label: t(s.label, locale),
+          icon: STATS[i]?.icon ?? Building2,
+        }))
+      : STATS.map((s) => ({
+          value: s.value,
+          label: tr(s.label, locale),
+          icon: s.icon,
+        }));
+
   return (
     <main className="bg-[var(--color-surface)] min-h-screen">
       <div className="bg-white border-b border-[var(--color-border)]">
@@ -89,28 +116,59 @@ export function AboutClient({ locale }: { locale: Locale }) {
       </div>
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-[var(--color-ink)] text-white">
-        <div className="absolute inset-0 bg-diagonal-blue-ink opacity-70" />
-        <div className="relative mx-auto max-w-[1320px] px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
-          <h1 className="text-3xl lg:text-[44px] font-extrabold tracking-tight uppercase">{tr(T.title, locale)}</h1>
-          <p className="mt-4 max-w-3xl text-[15px] text-white/80 leading-relaxed">{tr(T.subtitle, locale)}</p>
-        </div>
-      </section>
+      <Editable
+        id="page-about"
+        label={ed.editPageLabel}
+        block={() => ({
+          title: ed.marketingTitle,
+          description: ed.marketingDesc,
+          wide: true,
+          render: (close) => (
+            <MarketingPagesBlockEditor close={close} initialTab="about" />
+          ),
+        })}
+      >
+        <section className="relative overflow-hidden bg-[var(--color-ink)] text-white">
+          <Image
+            src={getImageUrl(image)}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-diagonal-blue-ink opacity-80" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
+          <div className="relative mx-auto max-w-[1320px] px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
+            <h1 className="text-3xl lg:text-[44px] font-extrabold tracking-tight uppercase">{title}</h1>
+            <p className="mt-4 max-w-3xl text-[15px] text-white/80 leading-relaxed">{subtitle}</p>
+          </div>
+        </section>
+      </Editable>
 
       <div className="mx-auto max-w-[1320px] px-4 sm:px-6 lg:px-8 py-10 lg:py-12 space-y-6">
         {/* Intro + stats */}
         <section className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6">
           <div className="rounded-xl bg-white border border-[var(--color-border)] p-6 lg:p-8">
-            <p className="text-[15px] text-slate-600 leading-relaxed">{tr(T.intro, locale)}</p>
+            <p className="text-[15px] text-slate-600 leading-relaxed">{intro}</p>
+            <div className="relative mt-6 aspect-[16/7] overflow-hidden rounded-lg bg-[var(--color-surface)]">
+              <Image
+                src={decorImg(102, 1200, 525)}
+                alt=""
+                fill
+                sizes="(max-width: 1024px) 100vw, 55vw"
+                className="object-cover"
+              />
+            </div>
           </div>
           <div className="rounded-xl bg-white border border-[var(--color-border)] p-6">
             <h2 className="text-[13px] font-bold tracking-[0.06em] text-[var(--color-brand-strong)]">{tr(T.statsTitle, locale)}</h2>
             <div className="mt-4 grid grid-cols-2 gap-3">
-              {STATS.map((s, i) => (
+              {stats.map((s, i) => (
                 <div key={i} className="rounded-lg bg-[var(--color-surface)] p-4 text-center">
                   <s.icon className="h-6 w-6 mx-auto text-[var(--color-brand)]" />
                   <p className="mt-2 text-xl font-extrabold text-[var(--color-brand-strong)] leading-none">{s.value}</p>
-                  <p className="mt-1 text-[11px] text-slate-500">{tr(s.label, locale)}</p>
+                  <p className="mt-1 text-[11px] text-slate-500">{s.label}</p>
                 </div>
               ))}
             </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import {
   ChevronRight,
@@ -14,6 +15,12 @@ import {
   Calendar,
 } from "lucide-react";
 import type { Locale } from "@/shared/types";
+import { decorImg } from "@/shared/lib/decor";
+import { t } from "@/shared/lib/utils";
+import { useGetHomeContentQuery } from "@/store/api/homeContentApi";
+import { Editable, useEditorDict } from "@/features/inline-editor";
+import { MarketingPagesBlockEditor } from "@/features/inline-editor/blocks/MarketingPagesBlockEditor";
+import { PageHeroImage } from "@/widgets/page-hero/PageHeroImage";
 
 const BLUE = "#1d4ed8";
 type LS = Record<Locale, string>;
@@ -110,6 +117,25 @@ const PROJECTS: Project[] = [
 ];
 
 export function ProjectsClient({ locale }: { locale: Locale }) {
+  const { data: home } = useGetHomeContentQuery();
+  const ed = useEditorDict();
+  const cms = home?.pages?.projects;
+  const title = t(cms?.title, locale) || tr(T.title, locale);
+  const subtitle = t(cms?.subtitle, locale) || tr(T.subtitle, locale);
+  const image = cms?.image || decorImg(412, 1600, 500);
+  const stats =
+    cms?.stats && cms.stats.length
+      ? cms.stats.map((s, i) => ({
+          value: s.value,
+          label: t(s.label, locale),
+          icon: STATS[i]?.icon ?? Briefcase,
+        }))
+      : STATS.map((s) => ({
+          value: s.value,
+          label: tr(s.label, locale),
+          icon: s.icon,
+        }));
+
   const industries = Array.from(new Set(PROJECTS.map((p) => tr(p.industry, locale))));
   const [filter, setFilter] = useState<string | null>(null);
 
@@ -131,20 +157,33 @@ export function ProjectsClient({ locale }: { locale: Locale }) {
 
       <div className="mx-auto max-w-[1320px] px-4 sm:px-6 lg:px-8 py-7 lg:py-9 space-y-6">
         {/* Hero + stats */}
+        <Editable
+          id="page-projects"
+          label={ed.editPageLabel}
+          block={() => ({
+            title: ed.marketingTitle,
+            description: ed.marketingDesc,
+            wide: true,
+            render: (close) => (
+              <MarketingPagesBlockEditor close={close} initialTab="projects" />
+            ),
+          })}
+        >
         <section className="rounded-xl bg-white border border-[var(--color-border)] p-6 lg:p-8">
+          <PageHeroImage image={image} />
           <div className="flex flex-col lg:flex-row lg:items-end gap-6 justify-between">
             <div className="max-w-2xl">
               <h1 className="text-2xl lg:text-[34px] font-extrabold tracking-tight text-[var(--color-brand-strong)] uppercase">
-                {tr(T.title, locale)}
+                {title}
               </h1>
-              <p className="mt-3 text-[14px] text-slate-600 leading-relaxed">{tr(T.subtitle, locale)}</p>
+              <p className="mt-3 text-[14px] text-slate-600 leading-relaxed">{subtitle}</p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 lg:w-[480px]">
-              {STATS.map((s, i) => (
+              {stats.map((s, i) => (
                 <div key={i} className="rounded-xl bg-[var(--color-surface)] p-4 text-center">
                   <s.icon className="h-6 w-6 mx-auto text-[var(--color-brand)]" />
                   <p className="mt-2 text-xl font-extrabold text-[var(--color-brand-strong)] leading-none">{s.value}</p>
-                  <p className="mt-1 text-[10.5px] text-slate-500 leading-tight">{tr(s.label, locale)}</p>
+                  <p className="mt-1 text-[10.5px] text-slate-500 leading-tight">{s.label}</p>
                 </div>
               ))}
             </div>
@@ -162,12 +201,21 @@ export function ProjectsClient({ locale }: { locale: Locale }) {
             ))}
           </div>
         </section>
+        </Editable>
 
         {/* Project cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {visible.map((p, i) => (
             <article key={i} className="rounded-xl bg-white border border-[var(--color-border)] overflow-hidden hover:shadow-md hover:border-[var(--color-brand)]/40 transition-all">
-              <div className="relative h-40 bg-gradient-to-br from-slate-200 to-slate-300">
+              <div className="relative h-40 bg-gradient-to-br from-slate-200 to-slate-300 overflow-hidden">
+                <Image
+                  src={decorImg(120 + PROJECTS.indexOf(p), 800, 480)}
+                  alt={tr(p.title, locale)}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/35 to-transparent" />
                 <span className="absolute top-3 left-3 inline-flex items-center rounded-md bg-[var(--color-brand)] text-white px-2.5 py-1 text-[10.5px] font-semibold">
                   {tr(p.industry, locale)}
                 </span>

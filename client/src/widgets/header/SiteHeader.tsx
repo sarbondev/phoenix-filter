@@ -83,14 +83,14 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   return (
     <>
       {/* ── Desktop ──────────────────────────────────────────── */}
-      <div className="hidden lg:block bg-white border-b border-[var(--color-border)]">
+      <div className="hidden lg:block bg-white/85 backdrop-blur-md border-b border-[var(--color-border)]">
         <div className="mx-auto max-w-[1320px] px-4 sm:px-6 lg:px-8">
-          <div className="flex h-[78px] items-center gap-6">
+          <div className="flex h-16 items-center gap-5">
             <Link href={`/${locale}`} className="flex-shrink-0">
-              <PhoenixLogo />
+              <PhoenixLogo className="scale-95 origin-left" />
             </Link>
 
-            <nav className="flex items-center gap-6 mx-auto">
+            <nav className="flex items-center gap-0.5 mx-auto">
               {NAV.map((item) => {
                 const href = item.href(locale);
                 const active = isActive(href);
@@ -98,37 +98,31 @@ export function SiteHeader({ locale }: { locale: Locale }) {
                   <Link
                     key={item.key}
                     href={href}
-                    className={`relative py-2 text-[14px] font-semibold whitespace-nowrap transition-colors ${
+                    className={`rounded-lg px-3 py-1.5 text-[13.5px] font-semibold whitespace-nowrap transition-colors ${
                       active
-                        ? "text-[var(--color-brand-strong)]"
-                        : "text-slate-600 hover:text-[var(--color-brand)]"
+                        ? "text-[var(--color-brand)] bg-[var(--color-brand-soft)]"
+                        : "text-slate-600 hover:text-[var(--color-brand)] hover:bg-[var(--color-surface)]"
                     }`}
                   >
                     {item.label[locale]}
-                    {active && (
-                      <span
-                        className="absolute -bottom-[1px] left-0 right-0 h-[2.5px] rounded-full"
-                        style={{ backgroundColor: BLUE }}
-                      />
-                    )}
                   </Link>
                 );
               })}
             </nav>
 
-            <div className="flex items-center gap-4 flex-shrink-0">
+            <div className="flex items-center gap-2.5 flex-shrink-0">
               <a
                 href={`tel:${phone.replace(/\s/g, "")}`}
-                className="hidden xl:flex items-center gap-2 text-[14px] font-semibold text-[var(--color-brand-strong)] hover:text-[var(--color-brand)] transition-colors"
+                className="hidden xl:flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-brand-strong)] hover:text-[var(--color-brand)] transition-colors"
               >
-                <Phone className="h-4 w-4" />
+                <Phone className="h-3.5 w-3.5" />
                 {phone}
               </a>
 
               <div ref={langRef} className="relative">
                 <button
                   onClick={() => setLangOpen((v) => !v)}
-                  className="flex items-center gap-1.5 rounded-md border border-[var(--color-border)] px-2.5 py-1.5 text-[12px] font-semibold text-slate-700 hover:border-[var(--color-brand)]/40 transition-colors"
+                  className="flex items-center gap-1 rounded-lg border border-[var(--color-border)] px-2 py-1.5 text-[12px] font-semibold text-slate-700 hover:border-[var(--color-brand)]/40 hover:text-[var(--color-brand)] transition-colors"
                 >
                   {currentLang.code.toUpperCase()}
                   <ChevronDown
@@ -165,7 +159,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
               <button
                 type="button"
                 onClick={openTz}
-                className="rounded-lg px-5 py-2.5 text-[13.5px] font-semibold text-white transition-colors"
+                className="rounded-lg px-4 py-2 text-[13px] font-semibold text-white shadow-sm transition-all hover:shadow"
                 style={{ backgroundColor: BLUE }}
                 onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = BLUE_HOVER)}
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = BLUE)}
@@ -178,8 +172,8 @@ export function SiteHeader({ locale }: { locale: Locale }) {
       </div>
 
       {/* ── Mobile bar ───────────────────────────────────────── */}
-      <div className="lg:hidden bg-white border-b border-[var(--color-border)]">
-        <div className="flex h-16 items-center px-4 gap-3">
+      <div className="lg:hidden bg-white/85 backdrop-blur-md border-b border-[var(--color-border)]">
+        <div className="flex h-14 items-center px-4 gap-3">
           <button
             onClick={() => setDrawerOpen(true)}
             aria-label="Menu"

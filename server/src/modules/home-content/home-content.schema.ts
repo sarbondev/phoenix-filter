@@ -43,6 +43,36 @@ const ctaBannerMongo = new Schema(
   { _id: false },
 );
 
+const pageStatMongo = new Schema(
+  {
+    value: { type: String, default: "" },
+    label: { type: tfMongo, default: () => ({}) },
+  },
+  { _id: false },
+);
+
+const marketingPageMongo = new Schema(
+  {
+    title: { type: tfMongo, default: () => ({}) },
+    subtitle: { type: tfMongo, default: () => ({}) },
+    intro: { type: tfMongo, default: () => ({}) },
+    image: { type: String, default: "" },
+    stats: { type: [pageStatMongo], default: [] },
+  },
+  { _id: false },
+);
+
+const marketingPagesMongo = new Schema(
+  {
+    about: { type: marketingPageMongo, default: () => ({}) },
+    services: { type: marketingPageMongo, default: () => ({}) },
+    engineering: { type: marketingPageMongo, default: () => ({}) },
+    projects: { type: marketingPageMongo, default: () => ({}) },
+    industries: { type: marketingPageMongo, default: () => ({}) },
+  },
+  { _id: false },
+);
+
 const homeContentMongoSchema = new Schema<IHomeContent>(
   {
     about: {
@@ -97,6 +127,10 @@ const homeContentMongoSchema = new Schema<IHomeContent>(
       ),
       default: () => ({}),
     },
+    pages: {
+      type: marketingPagesMongo,
+      default: () => ({}),
+    },
   },
   { timestamps: true, versionKey: false },
 );
@@ -136,6 +170,27 @@ const ctaBannerZ = z.object({
   variant: z.enum(["blue-ink", "ink"]),
 });
 
+const pageStatZ = z.object({
+  value: z.string().max(40),
+  label: tfZ,
+});
+
+const marketingPageZ = z.object({
+  title: tfZ,
+  subtitle: tfZ,
+  intro: tfZ,
+  image: z.string().max(500),
+  stats: z.array(pageStatZ),
+});
+
+const marketingPagesZ = z.object({
+  about: marketingPageZ,
+  services: marketingPageZ,
+  engineering: marketingPageZ,
+  projects: marketingPageZ,
+  industries: marketingPageZ,
+});
+
 export const updateHomeContentSchema = z
   .object({
     about: z.object({
@@ -160,6 +215,7 @@ export const updateHomeContentSchema = z
       left: ctaBannerZ,
       right: ctaBannerZ,
     }),
+    pages: marketingPagesZ,
   })
   .partial();
 

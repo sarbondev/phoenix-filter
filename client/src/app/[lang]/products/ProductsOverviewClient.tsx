@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
   ChevronRight,
   ArrowRight,
@@ -22,7 +23,8 @@ import type { Locale, Category, Direction } from "@/shared/types";
 import { useGetDirectionsQuery } from "@/store/api/directionApi";
 import { useGetCategoriesQuery } from "@/store/api/categoryApi";
 import { CatalogSidebar } from "@/widgets/catalog/CatalogSidebar";
-import { t } from "@/shared/lib/utils";
+import { t, getImageUrl } from "@/shared/lib/utils";
+import { decorImg } from "@/shared/lib/decor";
 
 type LS = Record<Locale, string>;
 const tr = (s: LS, l: Locale) => s[l] ?? s.en;
@@ -142,15 +144,24 @@ function DirectionBlock({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {cats.map((cat) => {
+        {cats.map((cat, idx) => {
           const Icon = CAT_ICON[cat.slug] ?? FilterIcon;
           return (
             <Link
               key={cat.id}
               href={categoryHref(locale, direction.slug, cat.slug)}
-              className="group rounded-lg border border-[var(--color-border)] p-5 hover:border-[var(--color-brand)] hover:shadow-sm transition-all"
+              className="group overflow-hidden rounded-lg border border-[var(--color-border)] hover:border-[var(--color-brand)] hover:shadow-sm transition-all"
             >
-              <div className="flex items-start gap-3">
+              <div className="relative h-28 bg-[var(--color-surface)] overflow-hidden">
+                <Image
+                  src={cat.image ? getImageUrl(cat.image) : decorImg(160 + idx, 800, 320)}
+                  alt=""
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+              <div className="flex items-start gap-3 p-5">
                 <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-[var(--color-brand-soft)] text-[var(--color-brand)] flex-shrink-0">
                   <Icon className="h-5 w-5" />
                 </span>
